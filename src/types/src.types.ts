@@ -1,6 +1,3 @@
-import { Server as SocketIOServer } from "socket.io";
-import RandomWalkerNPC from "../classes/RandomWalkerNPC";
-
 export enum Direccion {
   Izquierda = "izquierda",
   Derecha = "derecha",
@@ -16,16 +13,9 @@ export enum Direccion {
 }
 
 export interface Seat {
-  obj: Phaser.GameObjects.Image;
+  depthCount: number;
   anim: string;
   depth: boolean;
   adjustedX: number;
   adjustedY: number;
-}
-
-export interface GameScene extends Phaser.Scene {
-  gameInstance: Phaser.Game;
-  io: SocketIOServer;
-  frameCount: number;
-  npcs: RandomWalkerNPC[];
 }
