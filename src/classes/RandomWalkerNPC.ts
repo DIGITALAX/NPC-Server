@@ -56,6 +56,7 @@ export default class RandomWalkerNPC extends DynamicObject<
     };
 
     this.comprobarBordesDelMundo();
+    this.recibirDireccion();
   }
 
   private setRandomDirection() {
@@ -91,7 +92,13 @@ export default class RandomWalkerNPC extends DynamicObject<
     this.io.emit("direccionCambio", {
       direccionX: this.direction.x,
       direccionY: this.direction.y,
-      texture: this.npc.texture,
+      textura: this.npc.texture,
+    });
+  }
+
+  private recibirDireccion() {
+    this.io.on("recibirDireccion", () => {
+      this.setRandomDirection();
     });
   }
 
@@ -351,6 +358,9 @@ export default class RandomWalkerNPC extends DynamicObject<
         numeroBetween: between(15000, 30000),
         originalDepth: originalDepth,
         texture: this.npc.texture,
+        direccionX: this.direction.x,
+        direccionY: this.direction.y,
+        speed: this.speed,
       },
       () => {
         this.sitting = false;
