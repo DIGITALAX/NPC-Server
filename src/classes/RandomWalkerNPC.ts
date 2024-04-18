@@ -1,8 +1,15 @@
 import { DynamicObject, GameEngine, PhysicsEngine } from "lance-gg";
-import { SCENE_LIST } from "lib/constants";
-import { between, degToRad, distanceBetween, radToDeg } from "lib/utils";
-import { Direccion, Seat } from "types/src.types";
+import { SCENE_LIST } from "./../lib/constants.js";
+import {
+  between,
+  degToRad,
+  distanceBetween,
+  radToDeg,
+} from "./../lib/utils.js";
+import { Direccion, Seat } from "./../types/src.types.js";
 import * as socketIo from "socket.io";
+import Vector2 from "./Vector2.js";
+import GameTimer from "./GameTimer.js";
 
 export default class RandomWalkerNPC extends DynamicObject<
   GameEngine<PhysicsEngine>,
@@ -26,6 +33,7 @@ export default class RandomWalkerNPC extends DynamicObject<
   private idle: boolean;
   private moveCounter: number = 0;
   private sitting: boolean;
+  private gameTimer: GameTimer;
   private randomSeat: Seat | null = null;
   private seats: Seat[];
   private avoid: {
@@ -35,8 +43,14 @@ export default class RandomWalkerNPC extends DynamicObject<
     displayWidth: number;
   }[];
 
-  constructor(sceneIndex: number, spriteIndex: number, io: socketIo.Server) {
-    super(RandomWalkerNPC, {}, {});
+  constructor(
+    sceneIndex: number,
+    spriteIndex: number,
+    io: socketIo.Server,
+    gameEngine: GameEngine<PhysicsEngine>
+  ) {
+    super(gameEngine, {}, {});
+    this.gameTimer = new GameTimer();
     this.idle = false;
     this.sitting = false;
     this.io = io;
@@ -54,18 +68,22 @@ export default class RandomWalkerNPC extends DynamicObject<
       displayWidth: SCENE_LIST[sceneIndex].sprite[spriteIndex].displayWidth,
       displayHeight: SCENE_LIST[sceneIndex].sprite[spriteIndex].displayHeight,
     };
-
+    console.log("here");
     this.comprobarBordesDelMundo();
     this.recibirDireccion();
+    this.setRandomDirection();
   }
 
   private setRandomDirection() {
+    console.log("random");
     if (
       Date.now() > this.lastIdleTime + 30000 ||
       Math.random() < this.idleProbability
     ) {
+      console.log("idle");
       this.goIdle();
     } else if (++this.moveCounter >= between(7, 13)) {
+      console.log("sit");
       this.goSit();
     } else {
       this.goMove();
@@ -86,13 +104,36 @@ export default class RandomWalkerNPC extends DynamicObject<
         this.comprobarUbicacion();
       }
     }
+    this.gameTimer.tick();
   }
 
   private actualizarAnimacion() {
+    const dx = this.direction.x;
+    const dy = this.direction.y;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+    let direccion: Direccion | null = null;
+    if (Math.abs(absX - absY) <= Math.max(absX, absY) * 0.3) {
+      if (dx > 0 && dy > 0) {
+        direccion = Direccion.DerechaAbajo;
+      } else if (dx > 0 && dy < 0) {
+        direccion = Direccion.DerechaArriba;
+      } else if (dx < 0 && dy > 0) {
+        direccion = Direccion.IzquierdaAbajo;
+      } else if (dx < 0 && dy < 0) {
+        direccion = Direccion.IzquierdaArriba;
+      }
+    } else if (absX > absY) {
+      direccion = dx > 0 ? Direccion.Derecha : Direccion.Izquierda;
+    } else {
+      direccion = dy > 0 ? Direccion.Abajo : Direccion.Arriba;
+    }
+
     this.io.emit("direccionCambio", {
       direccionX: this.direction.x,
       direccionY: this.direction.y,
       textura: this.npc.texture,
+      direccion: direccion,
     });
   }
 
@@ -264,20 +305,20 @@ export default class RandomWalkerNPC extends DynamicObject<
 
   private goIdle() {
     this.idle = true;
-    this.io.emit(
-      "goIdle",
-      {
-        between: between(5000, 20000),
-        texture: this.npc.texture,
-      },
-      () => {
-        this.lastIdleTime = Date.now();
-        this.idle = false;
-      }
-    );
+    console.log("idle emit");
+    const numero = between(5000, 20000);
+    this.io.emit("goIdle", {
+      between: numero,
+      texture: this.npc.texture,
+    });
+    this.gameTimer.setTimeout(() => {
+      this.lastIdleTime = Date.now();
+      this.idle = false;
+    }, numero);
   }
 
   private goMove() {
+    console.log("move move");
     this.moveCounter++;
     const angle = between(0, 360);
     this.direction = new Vector2(Math.cos(angle), Math.sin(angle)).scale(
@@ -349,24 +390,22 @@ export default class RandomWalkerNPC extends DynamicObject<
     );
 
     const originalDepth = this.randomSeat.depthCount;
+    const numero = between(15000, 30000);
+    this.io.emit("goSit", {
+      randomSeat: this.randomSeat,
+      duration,
+      numeroBetween: numero,
+      originalDepth: originalDepth,
+      texture: this.npc.texture,
+      direccionX: this.direction.x,
+      direccionY: this.direction.y,
+      speed: this.speed,
+    });
 
-    this.io.emit(
-      "goSit",
-      {
-        randomSeat: this.randomSeat,
-        duration,
-        numeroBetween: between(15000, 30000),
-        originalDepth: originalDepth,
-        texture: this.npc.texture,
-        direccionX: this.direction.x,
-        direccionY: this.direction.y,
-        speed: this.speed,
-      },
-      () => {
-        this.sitting = false;
-        this.randomSeat = null;
-        this.moveCounter = 0;
-      }
-    );
+    this.gameTimer.setTimeout(() => {
+      this.sitting = false;
+      this.randomSeat = null;
+      this.moveCounter = 0;
+    }, numero);
   }
 }

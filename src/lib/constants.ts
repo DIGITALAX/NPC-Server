@@ -1,4 +1,4 @@
-import { Seat } from "types/src.types";
+import { Seat } from "./../types/src.types.js";
 
 export const INFURA_GATEWAY: string = "https://thedial.infura-ipfs.io";
 

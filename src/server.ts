@@ -1,11 +1,11 @@
-import { ServerEngine, GameEngine, PhysicsEngine } from "lance-gg";
+import { ServerEngine, GameEngine, PhysicsEngine, GameWorld } from "lance-gg";
 import * as http from "http";
 import * as socketIo from "socket.io";
-import RandomWalkerNPC from "./classes/RandomWalkerNPC";
+import RandomWalkerNPC from "./classes/RandomWalkerNPC.js";
 
 class NPCStudioEngine extends ServerEngine {
   private io: socketIo.Server;
-  private globalNPC: RandomWalkerNPC;
+  private globalNPC!: RandomWalkerNPC;
 
   constructor(
     io: socketIo.Server,
@@ -14,17 +14,32 @@ class NPCStudioEngine extends ServerEngine {
   ) {
     super(io, gameEngine, inputOptions);
     this.io = io;
-    this.globalNPC = new RandomWalkerNPC(0, 0, this.io);
-    this.gameEngine.addObjectToWorld(this.globalNPC);
+    if (!this.gameEngine?.world) {
+      this.gameEngine.world = new GameWorld();
+    }
   }
 
-  start() {
+  async start() {
+    if (!this.globalNPC) {
+      this.globalNPC = new RandomWalkerNPC(0, 0, this.io, gameEngine);
+      this.gameEngine.addObjectToWorld(this.globalNPC);
+    }
     super.start();
+  }
+  onPlayerConnected(socket: socketIo.Socket) {
+    super.onPlayerConnected(socket);
   }
 }
 
 const server = http.createServer();
-const io = new socketIo.Server(server);
+const io = new socketIo.Server(server, {
+  cors: {
+    origin: "http://localhost:3000", 
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+});
+
 const gameEngine = new GameEngine({ traceLevel: 0 });
 const gameServer = new NPCStudioEngine(io, gameEngine, {
   updateRate: 6,
@@ -33,7 +48,6 @@ const gameServer = new NPCStudioEngine(io, gameEngine, {
   traceLevel: 0,
 });
 
-server.listen(3000, () => {
-  console.log("Server listening on port 3000");
+server.listen(3001, () => {
   gameServer.start();
 });
