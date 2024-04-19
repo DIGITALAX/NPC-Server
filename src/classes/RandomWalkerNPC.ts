@@ -1,4 +1,3 @@
-import { DynamicObject, GameEngine, PhysicsEngine } from "lance-gg";
 import { SCENE_LIST } from "./../lib/constants.js";
 import {
   between,
@@ -7,16 +6,14 @@ import {
   radToDeg,
 } from "./../lib/utils.js";
 import { Direccion, Seat } from "./../types/src.types.js";
-import * as socketIo from "socket.io";
 import Vector2 from "./Vector2.js";
 import GameTimer from "./GameTimer.js";
+import { Server as SocketIOServer } from "socket.io";
 
-export default class RandomWalkerNPC extends DynamicObject<
-  GameEngine<PhysicsEngine>,
-  PhysicsEngine
-> {
-  private io: socketIo.Server;
-  private direction!: Vector2;
+export default class RandomWalkerNPC {
+  direction!: Vector2;
+  animacion: Direccion | null = null;
+  socket: SocketIOServer;
   private speed: number = 60;
   private npc!: {
     x: number;
@@ -25,8 +22,18 @@ export default class RandomWalkerNPC extends DynamicObject<
     displayHeight: number;
     texture: string;
   };
+  private world: {
+    height: number;
+    width: number;
+  };
   private lastPositionCheckTime: number = 0;
   private idleProbability: number = 0.3;
+  private obs: {
+    x: number;
+    y: number;
+    displayHeight: number;
+    displayWidth: number;
+  }[];
   private lastIdleTime: number = 0;
   private previousPosition: Vector2;
   private lastDirection: Direccion | null = null;
@@ -43,20 +50,13 @@ export default class RandomWalkerNPC extends DynamicObject<
     displayWidth: number;
   }[];
 
-  constructor(
-    sceneIndex: number,
-    spriteIndex: number,
-    io: socketIo.Server,
-    gameEngine: GameEngine<PhysicsEngine>
-  ) {
-    super(gameEngine, {}, {});
+  constructor(sceneIndex: number, spriteIndex: number, socket: SocketIOServer) {
     this.gameTimer = new GameTimer();
+    this.socket = socket;
     this.idle = false;
     this.sitting = false;
-    this.io = io;
     this.seats = SCENE_LIST[sceneIndex].seats;
     this.avoid = SCENE_LIST[sceneIndex].avoid;
-    this.lastDirection;
     this.previousPosition = new Vector2(
       SCENE_LIST[sceneIndex].sprite[spriteIndex].x,
       SCENE_LIST[sceneIndex].sprite[spriteIndex].y
@@ -68,16 +68,23 @@ export default class RandomWalkerNPC extends DynamicObject<
       displayWidth: SCENE_LIST[sceneIndex].sprite[spriteIndex].displayWidth,
       displayHeight: SCENE_LIST[sceneIndex].sprite[spriteIndex].displayHeight,
     };
-    console.log("here");
-    this.comprobarBordesDelMundo();
-    this.recibirDireccion();
+    this.direction = new Vector2(
+      SCENE_LIST[sceneIndex].sprite[spriteIndex].x,
+      SCENE_LIST[sceneIndex].sprite[spriteIndex].y
+    );
+    this.obs = SCENE_LIST[sceneIndex].obs;
+    this.world = {
+      height: SCENE_LIST[sceneIndex].world.height,
+      width: SCENE_LIST[sceneIndex].world.width,
+    };
+
     this.setRandomDirection();
   }
 
   private setRandomDirection() {
-    console.log("random");
+    console.log("choose random");
     if (
-      Date.now() > this.lastIdleTime + 30000 ||
+      Date.now() > this.lastIdleTime + 30000 &&
       Math.random() < this.idleProbability
     ) {
       console.log("idle");
@@ -86,25 +93,21 @@ export default class RandomWalkerNPC extends DynamicObject<
       console.log("sit");
       this.goSit();
     } else {
+      console.log("move");
       this.goMove();
     }
   }
 
-  syncTo(other: RandomWalkerNPC) {
-    super.syncTo(other);
-    this.position.copy(other.position);
-    this.velocity.copy(other.velocity);
-  }
-
-  tick() {
+  update(deltaTime: number) {
     if (!this.idle) {
       this.willCollide();
       if (!this.sitting) {
+        this.comprobarBordesDelMundo();
         this.actualizarAnimacion();
         this.comprobarUbicacion();
       }
     }
-    this.gameTimer.tick();
+    this.gameTimer.tick(deltaTime);
   }
 
   private actualizarAnimacion() {
@@ -129,17 +132,12 @@ export default class RandomWalkerNPC extends DynamicObject<
       direccion = dy > 0 ? Direccion.Abajo : Direccion.Arriba;
     }
 
-    this.io.emit("direccionCambio", {
+    this.animacion = direccion;
+    this.socket.emit("direccionCambio", {
       direccionX: this.direction.x,
       direccionY: this.direction.y,
       textura: this.npc.texture,
       direccion: direccion,
-    });
-  }
-
-  private recibirDireccion() {
-    this.io.on("recibirDireccion", () => {
-      this.setRandomDirection();
     });
   }
 
@@ -305,15 +303,17 @@ export default class RandomWalkerNPC extends DynamicObject<
 
   private goIdle() {
     this.idle = true;
-    console.log("idle emit");
     const numero = between(5000, 20000);
-    this.io.emit("goIdle", {
+    this.animacion = Direccion.Inactivo;
+    this.socket.emit("goIdle", {
       between: numero,
       texture: this.npc.texture,
     });
     this.gameTimer.setTimeout(() => {
       this.lastIdleTime = Date.now();
       this.idle = false;
+      this.setRandomDirection();
+      console.log("idle termina");
     }, numero);
   }
 
@@ -344,36 +344,51 @@ export default class RandomWalkerNPC extends DynamicObject<
   }
 
   private comprobarBordesDelMundo() {
-    this.io.on(
-      "blocked",
-      (data: {
-        blockedRight: boolean;
-        blockedLeft: boolean;
-        blockedUp: boolean;
-        blockedDown: boolean;
-      }) => {
-        if (!this.idle && !this.sitting) {
-          if (
-            data.blockedRight ||
-            data.blockedLeft ||
-            data.blockedUp ||
-            data.blockedDown
-          ) {
-            let newAngle = 0;
-            if (data.blockedRight) newAngle = between(90, 270);
-            else if (data.blockedLeft) newAngle = between(-90, 90);
-            if (data.blockedDown) newAngle = between(180, 360);
-            else if (data.blockedUp) newAngle = between(0, 180);
-            this.direction = new Vector2(
-              Math.cos(degToRad(newAngle)),
-              Math.sin(degToRad(newAngle))
-            ).scale(this.speed);
+    const nextX = this.npc.x;
+    const nextY = this.npc.y;
+    let blockedRight = false;
+    let blockedLeft = false;
+    let blockedUp = false;
+    let blockedDown = false;
 
-            this.actualizarAnimacion();
-          }
+    if (nextX >= this.world.width - this.npc.displayWidth / 2) {
+      blockedRight = true;
+    } else if (nextX <= this.npc.displayWidth / 2) {
+      blockedLeft = true;
+    } else if (nextY >= this.world.height - this.npc.displayHeight / 2) {
+      blockedDown = true;
+    } else if (nextY <= this.npc.displayHeight / 2) {
+      blockedUp = true;
+    }
+
+    if (!blockedRight && !blockedLeft && !blockedDown && !blockedUp) {
+      this.obs.forEach((ob) => {
+        if (
+          nextX < ob.x + ob.displayWidth &&
+          nextX + this.npc.displayWidth > ob.x &&
+          nextY < ob.y + ob.displayHeight &&
+          nextY + this.npc.displayHeight > ob.y
+        ) {
+          if (nextX + this.npc.displayWidth / 2 > ob.x) blockedRight = true;
+          else if (nextX < ob.x + ob.displayWidth) blockedLeft = true;
+          else if (nextY + this.npc.displayHeight / 2 > ob.y)
+            blockedDown = true;
+          else if (nextY < ob.y + ob.displayHeight) blockedUp = true;
         }
-      }
-    );
+      });
+    }
+
+    let newAngle = 0;
+    if (blockedRight) newAngle = between(90, 270);
+    else if (blockedLeft) newAngle = between(-90, 90);
+    if (blockedDown) newAngle = between(180, 360);
+    else if (blockedUp) newAngle = between(0, 180);
+    this.direction = new Vector2(
+      Math.cos(degToRad(newAngle)),
+      Math.sin(degToRad(newAngle))
+    ).scale(this.speed);
+
+    this.actualizarAnimacion();
   }
 
   private goSit() {
@@ -388,10 +403,11 @@ export default class RandomWalkerNPC extends DynamicObject<
     this.direction = new Vector2(Math.cos(angle), Math.sin(angle)).scale(
       this.speed
     );
+    this.actualizarAnimacion();
 
     const originalDepth = this.randomSeat.depthCount;
     const numero = between(15000, 30000);
-    this.io.emit("goSit", {
+    this.socket.emit("goSit", {
       randomSeat: this.randomSeat,
       duration,
       numeroBetween: numero,
@@ -406,6 +422,7 @@ export default class RandomWalkerNPC extends DynamicObject<
       this.sitting = false;
       this.randomSeat = null;
       this.moveCounter = 0;
+      this.setRandomDirection();
     }, numero);
   }
 }

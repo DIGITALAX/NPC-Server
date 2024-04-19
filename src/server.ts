@@ -1,53 +1,47 @@
-import { ServerEngine, GameEngine, PhysicsEngine, GameWorld } from "lance-gg";
-import * as http from "http";
-import * as socketIo from "socket.io";
 import RandomWalkerNPC from "./classes/RandomWalkerNPC.js";
+import express from "express";
+import { Server as SocketIOServer } from "socket.io";
+import * as http from "http";
 
-class NPCStudioEngine extends ServerEngine {
-  private io: socketIo.Server;
+const app = express();
+const server = http.createServer(app);
+const io = new SocketIOServer(server);
+
+class NPCStudioEngine {
   private globalNPC!: RandomWalkerNPC;
+  private lastUpdateTime: number = Date.now();
+  private frameDuration: number = 50;
 
-  constructor(
-    io: socketIo.Server,
-    gameEngine: GameEngine<PhysicsEngine>,
-    inputOptions: {}
-  ) {
-    super(io, gameEngine, inputOptions);
-    this.io = io;
-    if (!this.gameEngine?.world) {
-      this.gameEngine.world = new GameWorld();
-    }
+  constructor() {
+    this.globalNPC = new RandomWalkerNPC(0, 0, io);
+    this.runGameLoop();
   }
 
-  async start() {
-    if (!this.globalNPC) {
-      this.globalNPC = new RandomWalkerNPC(0, 0, this.io, gameEngine);
-      this.gameEngine.addObjectToWorld(this.globalNPC);
-    }
-    super.start();
+  runGameLoop() {
+    const updateGame = () => {
+      const now = Date.now();
+      const deltaTime = now - this.lastUpdateTime;
+      if (deltaTime >= this.frameDuration) {
+        this.globalNPC.update(deltaTime);
+        this.lastUpdateTime = now - (deltaTime % this.frameDuration);
+      }
+      process.nextTick(updateGame);
+    };
+
+    updateGame();
   }
-  onPlayerConnected(socket: socketIo.Socket) {
-    super.onPlayerConnected(socket);
+
+  onJoin() {
+    io.emit("init", {
+      direccion: this.globalNPC.animacion,
+      direccionX: this.globalNPC.direction.x,
+      direccionY: this.globalNPC.direction.y,
+    });
   }
 }
 
-const server = http.createServer();
-const io = new socketIo.Server(server, {
-  cors: {
-    origin: "http://localhost:3000", 
-    methods: ["GET", "POST"],
-    credentials: true
-  },
-});
-
-const gameEngine = new GameEngine({ traceLevel: 0 });
-const gameServer = new NPCStudioEngine(io, gameEngine, {
-  updateRate: 6,
-  stepRate: 60,
-  fullSyncRate: 20,
-  traceLevel: 0,
-});
+new NPCStudioEngine();
 
 server.listen(3001, () => {
-  gameServer.start();
+  console.log(`Servidor corriendo en http://localhost:3001`);
 });

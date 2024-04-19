@@ -1,31 +1,32 @@
 export default class GameTimer {
   ticks: number;
-  tasks: { executeOnTick: number; callback: () => void }[];
+  timeAccumulated: number; 
+  tasks: { executeOnMs: number; callback: () => void }[];
+
   constructor() {
     this.ticks = 0;
+    this.timeAccumulated = 0;
     this.tasks = [];
   }
 
-  tick() {
+  tick(deltaTime: number) {
     this.ticks++;
+    this.timeAccumulated += deltaTime;
     this.updateTasks();
   }
 
   setTimeout(callback: () => void, delayMs: number) {
-    const delayTicks = Math.ceil(delayMs / this.getTickDuration());
-    const executeOnTick = this.ticks + delayTicks;
-    this.tasks.push({ executeOnTick, callback });
+    const executeOnMs = this.timeAccumulated + delayMs;
+    this.tasks.push({ executeOnMs, callback });
   }
 
- private updateTasks() {
+  private updateTasks() {
     const readyTasks = this.tasks.filter(
-      (task) => task.executeOnTick <= this.ticks
+      (task) => task.executeOnMs <= this.timeAccumulated
     );
     readyTasks.forEach((task) => task.callback());
-    this.tasks = this.tasks.filter((task) => task.executeOnTick > this.ticks);
-  }
-
-  private getTickDuration() {
-    return 16.67;
+    this.tasks = this.tasks.filter(
+      (task) => task.executeOnMs > this.timeAccumulated
+    );
   }
 }
