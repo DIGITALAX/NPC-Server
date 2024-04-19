@@ -1,23 +1,21 @@
 import { parentPort } from "worker_threads";
+let lastUpdateTime: number = Date.now();
+const frameDuration: number = 50;
 
-parentPort?.on("message", (message) => {
-  if (message.type === "start") {
-    const frameDuration = message.frameDuration;
-    let lastUpdateTime = message.initialTime;
+const updateGame = () => {
+  const now: number = Date.now();
+  const deltaTime: number = now - lastUpdateTime;
 
-    const updateGame = () => {
-      const now = Date.now();
-      const deltaTime = now - lastUpdateTime;
+  if (deltaTime >= frameDuration) {
+    parentPort?.postMessage({ deltaTime });
+    lastUpdateTime = now - (deltaTime % frameDuration);
+  }
 
-      if (deltaTime >= frameDuration) {
-        parentPort?.postMessage({ deltaTime });
+  setImmediate(updateGame);
+};
 
-        lastUpdateTime = now - (deltaTime % frameDuration);
-      }
-
-      setTimeout(updateGame, frameDuration);
-    };
-
+parentPort?.on("message", (msg) => {
+  if (msg.cmd === "start") {
     updateGame();
   }
 });

@@ -1,4 +1,4 @@
-import { Seat } from "./../types/src.types.js";
+import { Direccion, Seat } from "./../types/src.types.js";
 
 export const INFURA_GATEWAY: string = "https://thedial.infura-ipfs.io";
 
@@ -96,43 +96,49 @@ export const SCENE_LIST: {
     ],
     seats: [
       {
+        texture: "silla1",
         depthCount: 0,
-        anim: "sentadoEscritorio",
+        anim: Direccion.Silla,
         depth: true,
         adjustedX: 1330,
         adjustedY: 270,
       },
       {
+        texture: "silla2",
         depthCount: 0,
-        anim: "sentadoEscritorio",
+        anim: Direccion.Silla,
         depth: true,
         adjustedX: 1330,
         adjustedY: 430,
       },
       {
+        texture: "silla3",
         depthCount: 0,
-        anim: "sentadoEscritorio",
+        anim: Direccion.Silla,
         depth: true,
         adjustedX: 1000,
         adjustedY: 275,
       },
       {
+        texture: "silla4",
         depthCount: 0,
-        anim: "sentadoEscritorio",
+        anim: Direccion.Silla,
         depth: true,
         adjustedX: 1020,
         adjustedY: 430,
       },
       {
+        texture: "sofaUno",
         depthCount: 0,
-        anim: "sentadoSofa",
+        anim: Direccion.Sofa,
         depth: false,
         adjustedX: 800,
         adjustedY: 220,
       },
       {
+        texture: "sofaTwo",
         depthCount: 0,
-        anim: "sentadoSofa",
+        anim: Direccion.Sofa,
         depth: false,
         adjustedX: 1240,
         adjustedY: 220,

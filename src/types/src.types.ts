@@ -12,10 +12,17 @@ export enum Direccion {
   Silla = "sentadoEscritorio",
 }
 
+export enum Estado {
+  Sentado = "sentado",
+  Inactivo = "inactivo",
+  Moverse = "moverse",
+}
+
 export interface Seat {
-  depthCount: number;
-  anim: string;
-  depth: boolean;
-  adjustedX: number;
-  adjustedY: number;
+  texture: string | undefined;
+  depthCount: number | undefined;
+  anim: Direccion | undefined;
+  depth: boolean | undefined;
+  adjustedX: number | undefined;
+  adjustedY: number | undefined;
 }

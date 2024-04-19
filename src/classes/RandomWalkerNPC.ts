@@ -5,27 +5,26 @@ import {
   distanceBetween,
   radToDeg,
 } from "./../lib/utils.js";
-import { Direccion, Seat } from "./../types/src.types.js";
+import { Direccion, Estado, Seat } from "./../types/src.types.js";
 import Vector2 from "./Vector2.js";
 import GameTimer from "./GameTimer.js";
-import { Server as SocketIOServer } from "socket.io";
+import { Socket, Server as SocketIOServer } from "socket.io";
 
 export default class RandomWalkerNPC {
-  direction!: Vector2;
-  animacion: Direccion | null = null;
-  socket: SocketIOServer;
+  private direction!: Vector2;
+  private animacion: Direccion | null = null;
   private speed: number = 60;
   private npc!: {
-    x: number;
-    y: number;
     displayWidth: number;
     displayHeight: number;
     texture: string;
   };
+  private clients: Set<Socket>;
   private world: {
     height: number;
     width: number;
   };
+  private state!: Estado;
   private lastPositionCheckTime: number = 0;
   private idleProbability: number = 0.3;
   private obs: {
@@ -37,7 +36,6 @@ export default class RandomWalkerNPC {
   private lastIdleTime: number = 0;
   private previousPosition: Vector2;
   private lastDirection: Direccion | null = null;
-  private idle: boolean;
   private moveCounter: number = 0;
   private sitting: boolean;
   private gameTimer: GameTimer;
@@ -52,8 +50,7 @@ export default class RandomWalkerNPC {
 
   constructor(sceneIndex: number, spriteIndex: number, socket: SocketIOServer) {
     this.gameTimer = new GameTimer();
-    this.socket = socket;
-    this.idle = false;
+    this.clients = new Set();
     this.sitting = false;
     this.seats = SCENE_LIST[sceneIndex].seats;
     this.avoid = SCENE_LIST[sceneIndex].avoid;
@@ -63,8 +60,6 @@ export default class RandomWalkerNPC {
     );
     this.npc = {
       texture: SCENE_LIST[sceneIndex].sprite[spriteIndex].texture,
-      x: SCENE_LIST[sceneIndex].sprite[spriteIndex].x,
-      y: SCENE_LIST[sceneIndex].sprite[spriteIndex].y,
       displayWidth: SCENE_LIST[sceneIndex].sprite[spriteIndex].displayWidth,
       displayHeight: SCENE_LIST[sceneIndex].sprite[spriteIndex].displayHeight,
     };
@@ -81,6 +76,22 @@ export default class RandomWalkerNPC {
     this.setRandomDirection();
   }
 
+  getState(): {
+    direccion: Direccion | null;
+    direccionX: number;
+    direccionY: number;
+    state: Estado;
+    randomSeat: Seat | null;
+  } {
+    return {
+      direccion: this.animacion,
+      direccionX: this.direction.x,
+      direccionY: this.direction.y,
+      state: this.state,
+      randomSeat: this.randomSeat,
+    };
+  }
+
   private setRandomDirection() {
     console.log("choose random");
     if (
@@ -94,12 +105,13 @@ export default class RandomWalkerNPC {
       this.goSit();
     } else {
       console.log("move");
+
       this.goMove();
     }
   }
 
   update(deltaTime: number) {
-    if (!this.idle) {
+    if (this.state !== Estado.Inactivo) {
       this.willCollide();
       if (!this.sitting) {
         this.comprobarBordesDelMundo();
@@ -133,21 +145,15 @@ export default class RandomWalkerNPC {
     }
 
     this.animacion = direccion;
-    this.socket.emit("direccionCambio", {
-      direccionX: this.direction.x,
-      direccionY: this.direction.y,
-      textura: this.npc.texture,
-      direccion: direccion,
-    });
   }
 
   private willCollide() {
-    let npcMiddleX = this.npc.x;
-    let npcMiddleY = this.npc.y;
-    let npcTopY = this.npc.y - this.npc.displayHeight / 2;
-    let npcBottomY = this.npc.y + this.npc.displayHeight / 2;
-    let npcLeftX = this.npc.x - this.npc.displayWidth / 2;
-    let npcRightX = this.npc.x + this.npc.displayWidth / 2;
+    let npcMiddleX = this.direction.x;
+    let npcMiddleY = this.direction.y;
+    let npcTopY = this.direction.y - this.npc.displayHeight / 2;
+    let npcBottomY = this.direction.y + this.npc.displayHeight / 2;
+    let npcLeftX = this.direction.x - this.npc.displayWidth / 2;
+    let npcRightX = this.direction.x + this.npc.displayWidth / 2;
     let blockedDirections: Direccion[] = [];
 
     this.avoid.forEach((obstacle) => {
@@ -202,8 +208,8 @@ export default class RandomWalkerNPC {
     const maxAttempts = 36;
     let adjustedAngle = radToDeg(
       Math.atan2(
-        Number(this.randomSeat?.adjustedY) - this.npc.y,
-        Number(this.randomSeat?.adjustedX) - this.npc.x
+        Number(this.randomSeat?.adjustedY) - this.direction.y,
+        Number(this.randomSeat?.adjustedX) - this.direction.x
       )
     );
 
@@ -270,8 +276,8 @@ export default class RandomWalkerNPC {
         this.sitting && this.randomSeat
           ? radToDeg(
               Math.atan2(
-                this.randomSeat.adjustedY - this.npc.y,
-                this.randomSeat.adjustedX - this.npc.x
+                Number(this.randomSeat?.adjustedY) - this.direction.y,
+                Number(this.randomSeat?.adjustedX) - this.direction.x
               )
             )
           : between(0, 360);
@@ -302,24 +308,18 @@ export default class RandomWalkerNPC {
   }
 
   private goIdle() {
-    this.idle = true;
-    const numero = between(5000, 20000);
+    this.state = Estado.Inactivo;
     this.animacion = Direccion.Inactivo;
-    this.socket.emit("goIdle", {
-      between: numero,
-      texture: this.npc.texture,
-    });
+    const numero = between(5000, 20000);
     this.gameTimer.setTimeout(() => {
       this.lastIdleTime = Date.now();
-      this.idle = false;
       this.setRandomDirection();
-      console.log("idle termina");
     }, numero);
   }
 
   private goMove() {
-    console.log("move move");
     this.moveCounter++;
+    this.state = Estado.Moverse;
     const angle = between(0, 360);
     this.direction = new Vector2(Math.cos(angle), Math.sin(angle)).scale(
       this.speed
@@ -330,22 +330,22 @@ export default class RandomWalkerNPC {
   private comprobarUbicacion() {
     if (Date.now() > this.lastPositionCheckTime + 15000) {
       const distance = distanceBetween(
-        this.npc.x,
-        this.npc.y,
+        this.direction.x,
+        this.direction.y,
         this.previousPosition.x,
         this.previousPosition.y
       );
       if (distance < 50) {
         this.setRandomDirection();
       }
-      this.previousPosition.set(this.npc.x, this.npc.y);
+      this.previousPosition.set(this.direction.x, this.direction.y);
       this.lastPositionCheckTime = Date.now();
     }
   }
 
   private comprobarBordesDelMundo() {
-    const nextX = this.npc.x;
-    const nextY = this.npc.y;
+    const nextX = this.direction.x;
+    const nextY = this.direction.y;
     let blockedRight = false;
     let blockedLeft = false;
     let blockedUp = false;
@@ -394,35 +394,34 @@ export default class RandomWalkerNPC {
   private goSit() {
     this.sitting = true;
     this.randomSeat = this.seats[between(0, this.seats.length - 1)];
-    const dx = this.randomSeat.adjustedX - this.npc.x;
-    const dy = this.randomSeat.adjustedY - this.npc.y;
+    const dx = Number(this.randomSeat?.adjustedX) - this.direction.x;
+    const dy = Number(this.randomSeat?.adjustedY) - this.direction.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     const duration = (distance / this.speed) * 1000;
-
     const angle = Math.atan2(dy, dx);
     this.direction = new Vector2(Math.cos(angle), Math.sin(angle)).scale(
       this.speed
     );
     this.actualizarAnimacion();
 
-    const originalDepth = this.randomSeat.depthCount;
-    const numero = between(15000, 30000);
-    this.socket.emit("goSit", {
-      randomSeat: this.randomSeat,
-      duration,
-      numeroBetween: numero,
-      originalDepth: originalDepth,
-      texture: this.npc.texture,
-      direccionX: this.direction.x,
-      direccionY: this.direction.y,
-      speed: this.speed,
-    });
-
     this.gameTimer.setTimeout(() => {
-      this.sitting = false;
-      this.randomSeat = null;
-      this.moveCounter = 0;
-      this.setRandomDirection();
-    }, numero);
+      this.animacion = this.randomSeat?.anim!;
+      this.state = Estado.Sentado;
+
+      this.gameTimer.setTimeout(() => {
+        this.sitting = false;
+        this.randomSeat = null;
+        this.moveCounter = 0;
+        this.setRandomDirection();
+      }, between(15000, 30000));
+    }, duration);
+  }
+
+  registerClient(socket: Socket) {
+    this.clients.add(socket);
+  }
+
+  unregisterClient(socket: Socket) {
+    this.clients.delete(socket);
   }
 }

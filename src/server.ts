@@ -17,17 +17,15 @@ const io = new SocketIOServer(server, {
 
 class NPCStudioEngine {
   private globalNPC!: RandomWalkerNPC;
-  private frameDuration: number = 50;
 
   constructor() {
     this.globalNPC = new RandomWalkerNPC(0, 0, io);
-    console.log("const");
     io.on("connection", (socket: Socket) => {
-      console.log("connected");
-      socket.emit("init", {
-        direccion: this.globalNPC.animacion,
-        direccionX: this.globalNPC.direction.x,
-        direccionY: this.globalNPC.direction.y,
+      socket.emit("update", this.globalNPC.getState());
+      this.globalNPC.registerClient(socket);
+
+      socket.on("disconnect", () => {
+        this.globalNPC.unregisterClient(socket);
       });
     });
     this.startGameLoopWorker();
@@ -38,12 +36,11 @@ class NPCStudioEngine {
 
     gameLoopWorker.on("message", (update: { deltaTime: number }) => {
       this.globalNPC.update(update.deltaTime);
+      io.emit("direccionCambio", this.globalNPC.getState());
     });
 
     gameLoopWorker.postMessage({
-      type: "start",
-      frameDuration: this.frameDuration,
-      initialTime: Date.now(),
+      cmd: "start",
     });
   }
 }
