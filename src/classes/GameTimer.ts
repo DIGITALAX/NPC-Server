@@ -1,7 +1,7 @@
 export default class GameTimer {
-  ticks: number;
+  private ticks: number;
   timeAccumulated: number; 
-  tasks: { executeOnMs: number; callback: () => void }[];
+  private tasks: { executeOnMs: number; callback: () => void }[];
 
   constructor() {
     this.ticks = 0;

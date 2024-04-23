@@ -1,17 +1,11 @@
 import { parentPort } from "worker_threads";
-let lastUpdateTime: number = Date.now();
-const frameDuration: number = 50;
+const frameDuration: number = 1000 / 60;
 
 const updateGame = () => {
-  const now: number = Date.now();
-  const deltaTime: number = now - lastUpdateTime;
+  const deltaTime = frameDuration;
+  parentPort?.postMessage({ deltaTime });
 
-  if (deltaTime >= frameDuration) {
-    parentPort?.postMessage({ deltaTime });
-    lastUpdateTime = now - (deltaTime % frameDuration);
-  }
-
-  setImmediate(updateGame);
+  setTimeout(updateGame, frameDuration);
 };
 
 parentPort?.on("message", (msg) => {

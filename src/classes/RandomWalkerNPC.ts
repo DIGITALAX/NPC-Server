@@ -1,134 +1,158 @@
-import { SCENE_LIST } from "./../lib/constants.js";
-import {
-  between,
-  degToRad,
-  distanceBetween,
-  radToDeg,
-} from "./../lib/utils.js";
-import { Direccion, Estado, Seat } from "./../types/src.types.js";
+import { between, degToRad } from "./../lib/utils.js";
+import { Direccion, Sprite, Objeto, Seat } from "./../types/src.types.js";
 import Vector2 from "./Vector2.js";
 import GameTimer from "./GameTimer.js";
-import { Socket, Server as SocketIOServer } from "socket.io";
 
 export default class RandomWalkerNPC {
-  private direction!: Vector2;
-  private animacion: Direccion | null = null;
-  private speed: number = 60;
-  private npc!: {
-    displayWidth: number;
-    displayHeight: number;
-    texture: string;
-  };
-  private clients: Set<Socket>;
-  private world: {
+  private readonly world: {
     height: number;
     width: number;
   };
-  private state!: Estado;
+  private readonly seats: Seat[];
+  private readonly avoidAll: (Objeto & {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+  })[];
+  private readonly avoidFlex: (Objeto & {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+  })[];
+  private readonly speed: number = 60;
+  private readonly directionChangeMinInterval: number = 1000;
+  private directionChangeCooldown: number = 0;
+  private velocidad!: Vector2;
+  private animacion: Direccion | null = null;
+  private npc!: Sprite;
+  private seatsTaken: number;
+  private ultimoDirecciones: Direccion[] = [];
   private lastPositionCheckTime: number = 0;
   private idleProbability: number = 0.3;
-  private obs: {
-    x: number;
-    y: number;
-    displayHeight: number;
-    displayWidth: number;
-  }[];
   private lastIdleTime: number = 0;
-  private previousPosition: Vector2;
-  private lastDirection: Direccion | null = null;
   private moveCounter: number = 0;
   private sitting: boolean;
   private gameTimer: GameTimer;
   private randomSeat: Seat | null = null;
-  private seats: Seat[];
-  private avoid: {
-    x: number;
-    y: number;
-    displayHeight: number;
-    displayWidth: number;
-  }[];
+  private lastVisitedRegion: number[] = Array(8).fill(-Infinity);
 
-  constructor(sceneIndex: number, spriteIndex: number, socket: SocketIOServer) {
+  constructor(
+    sprite: Sprite,
+    seatsTaken: number,
+    seats: Seat[],
+    avoidAll: (Objeto & {
+      left: number;
+      top: number;
+      right: number;
+      bottom: number;
+    })[],
+    avoidFlex: (Objeto & {
+      left: number;
+      top: number;
+      right: number;
+      bottom: number;
+    })[],
+    world: {
+      height: number;
+      width: number;
+    }
+  ) {
     this.gameTimer = new GameTimer();
-    this.clients = new Set();
     this.sitting = false;
-    this.seats = SCENE_LIST[sceneIndex].seats;
-    this.avoid = SCENE_LIST[sceneIndex].avoid;
-    this.previousPosition = new Vector2(
-      SCENE_LIST[sceneIndex].sprite[spriteIndex].x,
-      SCENE_LIST[sceneIndex].sprite[spriteIndex].y
-    );
-    this.npc = {
-      texture: SCENE_LIST[sceneIndex].sprite[spriteIndex].texture,
-      displayWidth: SCENE_LIST[sceneIndex].sprite[spriteIndex].displayWidth,
-      displayHeight: SCENE_LIST[sceneIndex].sprite[spriteIndex].displayHeight,
-    };
-    this.direction = new Vector2(
-      SCENE_LIST[sceneIndex].sprite[spriteIndex].x,
-      SCENE_LIST[sceneIndex].sprite[spriteIndex].y
-    );
-    this.obs = SCENE_LIST[sceneIndex].obs;
-    this.world = {
-      height: SCENE_LIST[sceneIndex].world.height,
-      width: SCENE_LIST[sceneIndex].world.width,
-    };
-
+    this.velocidad = new Vector2();
+    this.seatsTaken = seatsTaken;
+    this.seats = seats;
+    this.avoidAll = avoidAll;
+    this.avoidFlex = avoidFlex;
+    this.world = world;
+    this.npc = sprite;
     this.setRandomDirection();
   }
 
   getState(): {
     direccion: Direccion | null;
-    direccionX: number;
-    direccionY: number;
-    state: Estado;
-    randomSeat: Seat | null;
+    velocidadX: number;
+    velocidadY: number;
+    npcX: number;
+    npcY: number;
+    texture: string;
+    randomSeat: {
+      adjustedX: number;
+      adjustedY: number;
+      depthCount: number;
+      anim: Direccion;
+      depth: boolean;
+    } | null;
   } {
     return {
       direccion: this.animacion,
-      direccionX: this.direction.x,
-      direccionY: this.direction.y,
-      state: this.state,
-      randomSeat: this.randomSeat,
+      texture: this.npc.etiqueta,
+      velocidadX:
+        this.animacion == Direccion.Inactivo ||
+        this.animacion == Direccion.Silla ||
+        this.animacion == Direccion.Sofa
+          ? 0
+          : this.velocidad.x,
+      velocidadY:
+        this.animacion == Direccion.Inactivo ||
+        this.animacion == Direccion.Silla ||
+        this.animacion == Direccion.Sofa
+          ? 0
+          : this.velocidad.y,
+      npcX: this.npc.x,
+      npcY: this.npc.y,
+      randomSeat:
+        this.animacion == Direccion.Silla || this.animacion == Direccion.Sofa
+          ? this.randomSeat
+          : null,
     };
   }
 
   private setRandomDirection() {
-    console.log("choose random");
     if (
-      Date.now() > this.lastIdleTime + 30000 &&
-      Math.random() < this.idleProbability
+      (this.gameTimer.timeAccumulated > this.lastIdleTime + 30000 ||
+        Math.random() < this.idleProbability) &&
+      this.moveCounter > 0
     ) {
-      console.log("idle");
       this.goIdle();
-    } else if (++this.moveCounter >= between(7, 13)) {
-      console.log("sit");
+    } else if (
+      this.moveCounter >= between(7, 13) &&
+      this.seatsTaken < this.seats.length
+    ) {
       this.goSit();
     } else {
-      console.log("move");
-
       this.goMove();
     }
   }
 
   update(deltaTime: number) {
-    if (this.state !== Estado.Inactivo) {
+    this.gameTimer.tick(deltaTime);
+    if (this.directionChangeCooldown > 0)
+      this.directionChangeCooldown -= deltaTime;
+    if (
+      this.animacion !== Direccion.Inactivo &&
+      this.animacion !== Direccion.Silla &&
+      this.animacion !== Direccion.Sofa
+    ) {
+      this.npc.x += this.velocidad.x * (deltaTime / 1000) * this.speed;
+      this.npc.y += this.velocidad.y * (deltaTime / 1000) * this.speed;
       this.willCollide();
       if (!this.sitting) {
-        this.comprobarBordesDelMundo();
         this.actualizarAnimacion();
         this.comprobarUbicacion();
       }
     }
-    this.gameTimer.tick(deltaTime);
   }
 
   private actualizarAnimacion() {
-    const dx = this.direction.x;
-    const dy = this.direction.y;
+    const dx = this.velocidad.x;
+    const dy = this.velocidad.y;
     const absX = Math.abs(dx);
     const absY = Math.abs(dy);
     let direccion: Direccion | null = null;
-    if (Math.abs(absX - absY) <= Math.max(absX, absY) * 0.3) {
+    if (Math.abs(absX - absY) <= Math.max(absX, absY) * 0.4) {
       if (dx > 0 && dy > 0) {
         direccion = Direccion.DerechaAbajo;
       } else if (dx > 0 && dy < 0) {
@@ -148,144 +172,165 @@ export default class RandomWalkerNPC {
   }
 
   private willCollide() {
-    let npcMiddleX = this.direction.x;
-    let npcMiddleY = this.direction.y;
-    let npcTopY = this.direction.y - this.npc.displayHeight / 2;
-    let npcBottomY = this.direction.y + this.npc.displayHeight / 2;
-    let npcLeftX = this.direction.x - this.npc.displayWidth / 2;
-    let npcRightX = this.direction.x + this.npc.displayWidth / 2;
     let blockedDirections: Direccion[] = [];
 
-    this.avoid.forEach((obstacle) => {
-      let obstacleMiddleY = obstacle.y - obstacle.displayHeight / 2;
-      let obstacleTopY = obstacle.y - obstacle.displayHeight;
-      let obstacleLeftX = obstacle.x - obstacle.displayWidth;
-      let obstacleBottomY = obstacle.y;
-      let obstacleRightX = obstacle.x;
+    this.evitarObstaculos(
+      this.npc.x + (this.npc.displayWidth * this.npc.escala.x) / 2,
+      this.npc.x - (this.npc.displayWidth * this.npc.escala.x) / 2,
+      this.npc.y + (this.npc.displayHeight * this.npc.escala.y) / 2,
+      this.npc.y - (this.npc.displayHeight * this.npc.escala.y) / 2,
+      blockedDirections
+    );
+    this.comprobarLimitesMundo(blockedDirections);
+    if (blockedDirections.length > 0 && this.directionChangeCooldown <= 0) {
+      if (!this.sitting) {
+        this.evaluarDireccion(blockedDirections);
+      } else {
+        this.adjustPathTowardsChair(blockedDirections);
+      }
+    }
+  }
 
-      if (Math.abs(npcMiddleY - obstacleMiddleY) < this.npc.displayHeight / 2) {
-        if (npcRightX >= obstacleLeftX && npcLeftX < obstacleLeftX) {
+  private evitarObstaculos(
+    npcRightX: number,
+    npcLeftX: number,
+    npcBottomY: number,
+    npcTopY: number,
+    blockedDirections: Direccion[]
+  ) {
+    this.avoidAll.forEach((obstaculo) => {
+      if (
+        npcRightX > obstaculo.left &&
+        npcLeftX < obstaculo.right &&
+        npcBottomY > obstaculo.top &&
+        npcTopY < obstaculo.bottom
+      ) {
+        const overlapRight = npcRightX - obstaculo.left;
+        const overlapLeft = obstaculo.right - npcLeftX;
+        const overlapBottom = npcBottomY - obstaculo.top;
+        const overlapTop = obstaculo.bottom - npcTopY;
+
+        if (overlapRight > 0) {
           blockedDirections.push(Direccion.Derecha);
         }
-        if (npcLeftX <= obstacleRightX && npcRightX > obstacleRightX) {
+        if (overlapLeft > 0) {
           blockedDirections.push(Direccion.Izquierda);
         }
-        if (npcTopY < obstacleBottomY && npcBottomY > obstacleTopY) {
-          if (npcMiddleX >= obstacleLeftX && npcMiddleX < obstacleRightX) {
-            if (npcBottomY > obstacleTopY) {
+        if (overlapBottom > 0) {
+          blockedDirections.push(Direccion.Abajo);
+        }
+        if (overlapTop > 0) {
+          blockedDirections.push(Direccion.Arriba);
+        }
+      }
+    });
+    this.avoidFlex.forEach((obstaculo) => {
+      if (
+        Math.abs(this.npc.y - obstaculo.y) <
+        (this.npc.displayHeight * this.npc.escala.y) / 2
+      ) {
+        if (npcRightX >= obstaculo.left && npcLeftX < obstaculo.left) {
+          blockedDirections.push(Direccion.Derecha);
+          console.log("der");
+        }
+        if (npcLeftX <= obstaculo.right && npcRightX > obstaculo.right) {
+          blockedDirections.push(Direccion.Izquierda);
+          console.log("iz");
+        }
+        if (npcTopY < obstaculo.bottom && npcBottomY > obstaculo.top) {
+          if (this.npc.x >= obstaculo.left && this.npc.x < obstaculo.right) {
+            if (npcBottomY > obstaculo.top) {
               blockedDirections.push(Direccion.Abajo);
+              console.log("ab");
             }
-            if (npcTopY < obstacleBottomY) {
+            if (npcTopY < obstaculo.bottom) {
               blockedDirections.push(Direccion.Arriba);
+              console.log("arr");
             }
           }
         }
       }
     });
+  }
 
-    if (blockedDirections.length > 0) {
-      if (this.sitting) {
-        this.adjustPathTowardsChair(blockedDirections);
-      } else {
-        let availableDirections = Object.values(Direccion).filter(
-          (dir) => !blockedDirections.includes(dir)
+  private comprobarLimitesMundo(blockedDirections: Direccion[]) {
+    const nextX = this.npc.x;
+    const nextY = this.npc.y;
+    if (
+      nextX + (this.npc.displayWidth * this.npc.escala.x) / 2 >=
+      this.world.width
+    ) {
+      blockedDirections.push(
+        ...[Direccion.Derecha, Direccion.DerechaAbajo, Direccion.DerechaArriba]
+      );
+    }
+    if (nextX - (this.npc.displayWidth * this.npc.escala.x) / 2 <= 0) {
+      blockedDirections.push(
+        ...[
+          Direccion.Izquierda,
+          Direccion.IzquierdaAbajo,
+          Direccion.IzquierdaArriba,
+        ]
+      );
+    }
+    if (
+      nextY + (this.npc.displayHeight * this.npc.escala.y) / 2 >=
+      this.world.height
+    ) {
+      blockedDirections.push(
+        ...[Direccion.Abajo, Direccion.IzquierdaAbajo, Direccion.DerechaAbajo]
+      );
+    }
+    if (nextY - (this.npc.displayHeight * this.npc.escala.y) / 2 <= 0) {
+      blockedDirections.push(
+        ...[
+          Direccion.Arriba,
+          Direccion.IzquierdaArriba,
+          Direccion.DerechaArriba,
+        ]
+      );
+    }
+  }
+
+  private evaluarDireccion(blockedDirections: Direccion[]) {
+    let availableDirections = Object.values(Direccion)
+      .filter(
+        (dir) =>
+          dir !== Direccion.Silla &&
+          dir !== Direccion.Sofa &&
+          dir !== Direccion.Inactivo
+      )
+      .filter((dir) => !blockedDirections.includes(dir));
+
+    if (availableDirections?.length > 0) {
+      let angle: number, currentDireccion: Direccion;
+      if (availableDirections?.length > 1) {
+        const newAvailableDirections = availableDirections.filter(
+          (dir) => !this.ultimoDirecciones?.includes(dir)
         );
 
-        if (availableDirections.includes(this.lastDirection!)) {
-          this.updateDirection(this.lastDirection, blockedDirections);
+        if (newAvailableDirections.length > 0) {
+          currentDireccion =
+            newAvailableDirections[
+              Math.floor(Math.random() * newAvailableDirections.length)
+            ];
         } else {
-          let newDirection =
-            availableDirections.length > 0 ? availableDirections[0] : null;
-          this.lastDirection = newDirection;
-          this.updateDirection(newDirection, blockedDirections);
+          currentDireccion =
+            availableDirections[
+              Math.floor(Math.random() * availableDirections.length)
+            ];
         }
-      }
-    }
-  }
 
-  private adjustPathTowardsChair(blockedDirections: Direccion[]) {
-    const increment = 5;
-    const maxAttempts = 36;
-    let adjustedAngle = radToDeg(
-      Math.atan2(
-        Number(this.randomSeat?.adjustedY) - this.direction.y,
-        Number(this.randomSeat?.adjustedX) - this.direction.x
-      )
-    );
+        this.ultimoDirecciones.unshift(currentDireccion);
+        this.ultimoDirecciones = this.ultimoDirecciones.slice(0, 2);
+      } else {
+        currentDireccion = availableDirections[0];
 
-    for (let i = 0; i < maxAttempts; i++) {
-      if (i > 0) {
-        adjustedAngle =
-          (adjustedAngle +
-            (i % 2 == 0 ? 1 : -1) * increment * (Math.floor(i / 2) + 1)) %
-          360;
+        this.ultimoDirecciones.unshift(currentDireccion);
+        this.ultimoDirecciones = this.ultimoDirecciones.slice(0, 2);
       }
 
-      this.direction = new Vector2(
-        Math.cos(degToRad(adjustedAngle)),
-        Math.sin(degToRad(adjustedAngle))
-      ).scale(this.speed);
-
-      if (!this.isDirectionBlocked(this.direction, blockedDirections)) {
-        this.actualizarAnimacion();
-        break;
-      }
-    }
-  }
-
-  private isDirectionBlocked(
-    vector: Vector2,
-    blockedDirections: Direccion[]
-  ): boolean {
-    let predominantDirection: Direccion;
-    if (Math.abs(vector.x) > Math.abs(vector.y)) {
-      predominantDirection =
-        vector.x > 0 ? Direccion.Derecha : Direccion.Izquierda;
-    } else {
-      predominantDirection = vector.y > 0 ? Direccion.Abajo : Direccion.Arriba;
-    }
-
-    return blockedDirections.includes(predominantDirection);
-  }
-
-  private attemptToFindPath(
-    targetAngle: number,
-    blockedDirections: Direccion[]
-  ) {
-    const increment = 5;
-    for (let i = 0; i < 360 / increment; i++) {
-      let angle = (targetAngle + i * increment) % 360;
-      let dirVector = new Vector2(
-        Math.cos(degToRad(angle)),
-        Math.sin(degToRad(angle))
-      ).scale(this.speed);
-      if (!this.isDirectionBlocked(dirVector, blockedDirections)) {
-        this.direction = this.direction;
-        this.actualizarAnimacion();
-        return;
-      }
-    }
-  }
-
-  private updateDirection(
-    direction: Direccion | null,
-    blockedDirections: Direccion[]
-  ) {
-    if (!direction) {
-      let targetAngle =
-        this.sitting && this.randomSeat
-          ? radToDeg(
-              Math.atan2(
-                Number(this.randomSeat?.adjustedY) - this.direction.y,
-                Number(this.randomSeat?.adjustedX) - this.direction.x
-              )
-            )
-          : between(0, 360);
-      this.attemptToFindPath(targetAngle, blockedDirections);
-      return;
-    } else {
-      let angle;
-      switch (direction) {
+      switch (currentDireccion) {
         case Direccion.Arriba:
           angle = -90;
           break;
@@ -295,133 +340,247 @@ export default class RandomWalkerNPC {
         case Direccion.Izquierda:
           angle = 180;
           break;
-        default:
+        case Direccion.Derecha:
           angle = 0;
           break;
+        case Direccion.DerechaAbajo:
+          angle = 45;
+          break;
+        case Direccion.DerechaArriba:
+          angle = -45;
+          break;
+        case Direccion.IzquierdaAbajo:
+          angle = 135;
+          break;
+        case Direccion.IzquierdaArriba:
+          angle = 225;
+          break;
+        default:
+          angle = 0;
       }
-      this.direction = new Vector2(
+      this.velocidad = new Vector2(
         Math.cos(degToRad(angle)),
         Math.sin(degToRad(angle))
-      ).scale(this.speed);
-      this.actualizarAnimacion();
+      );
+      this.directionChangeCooldown = this.directionChangeMinInterval;
     }
   }
 
   private goIdle() {
-    this.state = Estado.Inactivo;
     this.animacion = Direccion.Inactivo;
-    const numero = between(5000, 20000);
+    this.velocidad = new Vector2();
+    this.moveCounter = 0;
     this.gameTimer.setTimeout(() => {
-      this.lastIdleTime = Date.now();
+      this.lastIdleTime = this.gameTimer.timeAccumulated;
       this.setRandomDirection();
-    }, numero);
+    }, between(20000, 120000));
   }
 
   private goMove() {
     this.moveCounter++;
-    this.state = Estado.Moverse;
     const angle = between(0, 360);
-    this.direction = new Vector2(Math.cos(angle), Math.sin(angle)).scale(
-      this.speed
-    );
+    this.velocidad = new Vector2(Math.cos(angle), Math.sin(angle));
     this.actualizarAnimacion();
   }
 
   private comprobarUbicacion() {
-    if (Date.now() > this.lastPositionCheckTime + 15000) {
-      const distance = distanceBetween(
-        this.direction.x,
-        this.direction.y,
-        this.previousPosition.x,
-        this.previousPosition.y
+    if (this.gameTimer.timeAccumulated > this.lastPositionCheckTime + 30000) {
+      const currentRegionX = Math.floor(this.npc.x / (this.world.width / 8));
+      const currentRegionY = Math.floor(this.npc.y / (this.world.height / 8));
+      const currentRegionIndex = currentRegionY * 8 + currentRegionX;
+      this.lastVisitedRegion[currentRegionIndex] =
+        this.gameTimer.timeAccumulated;
+
+      const leastVisitedRegionIndex = this.lastVisitedRegion.indexOf(
+        Math.min(...this.lastVisitedRegion)
       );
-      if (distance < 50) {
-        this.setRandomDirection();
-      }
-      this.previousPosition.set(this.direction.x, this.direction.y);
-      this.lastPositionCheckTime = Date.now();
+      const targetRegionX =
+        (leastVisitedRegionIndex % 8) * (this.world.width / 8) +
+        this.world.width / 8 / 2;
+      const targetRegionY =
+        Math.floor(leastVisitedRegionIndex / 8) * (this.world.height / 8) +
+        this.world.height / 8 / 2;
+
+      const directionToTarget = Math.atan2(
+        targetRegionY - this.npc.y,
+        targetRegionX - this.npc.x
+      );
+      this.velocidad = new Vector2(
+        Math.cos(directionToTarget),
+        Math.sin(directionToTarget)
+      );
+
+      this.lastPositionCheckTime = this.gameTimer.timeAccumulated;
     }
-  }
-
-  private comprobarBordesDelMundo() {
-    const nextX = this.direction.x;
-    const nextY = this.direction.y;
-    let blockedRight = false;
-    let blockedLeft = false;
-    let blockedUp = false;
-    let blockedDown = false;
-
-    if (nextX >= this.world.width - this.npc.displayWidth / 2) {
-      blockedRight = true;
-    } else if (nextX <= this.npc.displayWidth / 2) {
-      blockedLeft = true;
-    } else if (nextY >= this.world.height - this.npc.displayHeight / 2) {
-      blockedDown = true;
-    } else if (nextY <= this.npc.displayHeight / 2) {
-      blockedUp = true;
-    }
-
-    if (!blockedRight && !blockedLeft && !blockedDown && !blockedUp) {
-      this.obs.forEach((ob) => {
-        if (
-          nextX < ob.x + ob.displayWidth &&
-          nextX + this.npc.displayWidth > ob.x &&
-          nextY < ob.y + ob.displayHeight &&
-          nextY + this.npc.displayHeight > ob.y
-        ) {
-          if (nextX + this.npc.displayWidth / 2 > ob.x) blockedRight = true;
-          else if (nextX < ob.x + ob.displayWidth) blockedLeft = true;
-          else if (nextY + this.npc.displayHeight / 2 > ob.y)
-            blockedDown = true;
-          else if (nextY < ob.y + ob.displayHeight) blockedUp = true;
-        }
-      });
-    }
-
-    let newAngle = 0;
-    if (blockedRight) newAngle = between(90, 270);
-    else if (blockedLeft) newAngle = between(-90, 90);
-    if (blockedDown) newAngle = between(180, 360);
-    else if (blockedUp) newAngle = between(0, 180);
-    this.direction = new Vector2(
-      Math.cos(degToRad(newAngle)),
-      Math.sin(degToRad(newAngle))
-    ).scale(this.speed);
-
-    this.actualizarAnimacion();
   }
 
   private goSit() {
     this.sitting = true;
+    this.seatsTaken++;
+    console.log("go to seat");
     this.randomSeat = this.seats[between(0, this.seats.length - 1)];
-    const dx = Number(this.randomSeat?.adjustedX) - this.direction.x;
-    const dy = Number(this.randomSeat?.adjustedY) - this.direction.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const duration = (distance / this.speed) * 1000;
+    const dx = Number(this.randomSeat?.adjustedX) - this.npc.x;
+    const dy = Number(this.randomSeat?.adjustedY) - this.npc.y;
     const angle = Math.atan2(dy, dx);
-    this.direction = new Vector2(Math.cos(angle), Math.sin(angle)).scale(
-      this.speed
-    );
+    this.velocidad = new Vector2(Math.cos(angle), Math.sin(angle));
     this.actualizarAnimacion();
 
-    this.gameTimer.setTimeout(() => {
-      this.animacion = this.randomSeat?.anim!;
-      this.state = Estado.Sentado;
+    const checkArrival = () => {
+      const distance = Math.sqrt(
+        Math.pow(this.npc.x - Number(this.randomSeat?.adjustedX), 2) +
+          Math.pow(this.npc.y - Number(this.randomSeat?.adjustedY), 2)
+      );
+      if (distance < 1) {
+        this.velocidad = new Vector2();
+        this.npc = {
+          ...this.npc,
+          x: this.randomSeat?.adjustedX!,
+          y: this.randomSeat?.adjustedY!,
+        };
+        console.log("sitting");
+        this.animacion = this.randomSeat?.anim!;
+        this.gameTimer.setTimeout(() => {
+          this.sitting = false;
+          console.log("finished sitting");
+          this.randomSeat = null;
+          this.moveCounter = 0;
+          this.seatsTaken--;
+          this.setRandomDirection();
+        }, between(120000, 240000));
+      } else {
+        this.gameTimer.setTimeout(checkArrival, 100);
+      }
+    };
 
-      this.gameTimer.setTimeout(() => {
-        this.sitting = false;
-        this.randomSeat = null;
-        this.moveCounter = 0;
-        this.setRandomDirection();
-      }, between(15000, 30000));
-    }, duration);
+    checkArrival();
   }
 
-  registerClient(socket: Socket) {
-    this.clients.add(socket);
+  private adjustPathTowardsChair(blockedDirections: Direccion[]) {
+    if (!this.randomSeat) return;
+
+    const dx = this.randomSeat.adjustedX - this.npc.x;
+    const dy = this.randomSeat.adjustedY - this.npc.y;
+    const angleToChair = Math.atan2(dy, dx);
+
+    let isPathBlocked: boolean = false;
+    this.avoidAll.concat(this.avoidFlex).forEach((obstaculo) => {
+      if (
+        this.isBlockingPath(
+          this.npc.x,
+          this.npc.y,
+          this.randomSeat?.adjustedX!,
+          this.randomSeat?.adjustedY!,
+          obstaculo
+        )
+      ) {
+        isPathBlocked = true;
+      }
+    });
+
+    if (!isPathBlocked) {
+      this.velocidad = new Vector2(
+        Math.cos(angleToChair),
+        Math.sin(angleToChair)
+      );
+    } else {
+      const alternativePath = this.findAlternativePath(
+        angleToChair,
+        blockedDirections
+      );
+      this.velocidad = new Vector2(
+        Math.cos(alternativePath),
+        Math.sin(alternativePath)
+      );
+    }
   }
 
-  unregisterClient(socket: Socket) {
-    this.clients.delete(socket);
+  private findAlternativePath(
+    angleToChair: number,
+    blockedDirections: Direccion[]
+  ): number {
+    let alternativeAngle = angleToChair;
+    const angleAdjustment = Math.PI / 18;
+
+    for (let i = 1; i <= 18; i++) {
+      if (
+        !blockedDirections.includes(
+          this.angleToDirection(alternativeAngle + i * angleAdjustment)
+        )
+      ) {
+        return alternativeAngle + i * angleAdjustment;
+      }
+      if (
+        !blockedDirections.includes(
+          this.angleToDirection(alternativeAngle - i * angleAdjustment)
+        )
+      ) {
+        return alternativeAngle - i * angleAdjustment;
+      }
+    }
+
+    return angleToChair;
+  }
+
+  private isBlockingPath(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    obstaculo: Objeto & {
+      left: number;
+      top: number;
+      right: number;
+      bottom: number;
+    }
+  ): boolean {
+    const ox = (obstaculo.left + obstaculo.right) / 2;
+    const oy = (obstaculo.top + obstaculo.bottom) / 2;
+    const minDistance =
+      Math.abs((y2 - y1) * ox - (x2 - x1) * oy + x2 * y1 - y2 * x1) /
+      Math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2);
+    return minDistance < (obstaculo.right - obstaculo.left) / 2;
+  }
+
+  private angleToDirection(angle: number): Direccion {
+    let normalizedAngle: number = angle % (2 * Math.PI);
+    if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
+    if (
+      normalizedAngle < Math.PI / 8 ||
+      normalizedAngle >= (15 * Math.PI) / 8
+    ) {
+      return Direccion.Derecha;
+    } else if (
+      normalizedAngle >= Math.PI / 8 &&
+      normalizedAngle < (3 * Math.PI) / 8
+    ) {
+      return Direccion.DerechaArriba;
+    } else if (
+      normalizedAngle >= (3 * Math.PI) / 8 &&
+      normalizedAngle < (5 * Math.PI) / 8
+    ) {
+      return Direccion.Arriba;
+    } else if (
+      normalizedAngle >= (5 * Math.PI) / 8 &&
+      normalizedAngle < (7 * Math.PI) / 8
+    ) {
+      return Direccion.IzquierdaArriba;
+    } else if (
+      normalizedAngle >= (7 * Math.PI) / 8 &&
+      normalizedAngle < (9 * Math.PI) / 8
+    ) {
+      return Direccion.Izquierda;
+    } else if (
+      normalizedAngle >= (9 * Math.PI) / 8 &&
+      normalizedAngle < (11 * Math.PI) / 8
+    ) {
+      return Direccion.IzquierdaAbajo;
+    } else if (
+      normalizedAngle >= (11 * Math.PI) / 8 &&
+      normalizedAngle < (13 * Math.PI) / 8
+    ) {
+      return Direccion.Abajo;
+    } else {
+      return Direccion.DerechaAbajo;
+    }
   }
 }

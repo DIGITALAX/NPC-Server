@@ -1,8 +1,10 @@
-import RandomWalkerNPC from "./classes/RandomWalkerNPC.js";
 import express from "express";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import * as http from "http";
 import { Worker } from "worker_threads";
+import { SCENE_LIST } from "./lib/constants.js";
+import { Escena } from "./types/src.types.js";
+import EscenaEstudio from "./classes/ConfigurarScene.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -16,16 +18,22 @@ const io = new SocketIOServer(server, {
 });
 
 class NPCStudioEngine {
-  private globalNPC!: RandomWalkerNPC;
+  private escenas: EscenaEstudio[] = [];
 
   constructor() {
-    this.globalNPC = new RandomWalkerNPC(0, 0, io);
-    io.on("connection", (socket: Socket) => {
-      socket.emit("update", this.globalNPC.getState());
-      this.globalNPC.registerClient(socket);
+    SCENE_LIST.forEach((escena: Escena) => {
+      this.escenas.push(new EscenaEstudio(escena));
+    });
 
-      socket.on("disconnect", () => {
-        this.globalNPC.unregisterClient(socket);
+    io.on("connection", (socket: Socket) => {
+      socket.on("enviarSceneIndex", (claveEscena: string) => {
+        const scene = SCENE_LIST.find((e) => e.key == claveEscena);
+        socket.emit("configurarEscena", {
+          scene,
+          state: this.escenas
+            .find((e) => e.key == scene?.key)
+            ?.npcs.map((npc) => npc.getState()),
+        });
       });
     });
     this.startGameLoopWorker();
@@ -35,8 +43,13 @@ class NPCStudioEngine {
     const gameLoopWorker = new Worker(new URL("gameLoop.js", import.meta.url));
 
     gameLoopWorker.on("message", (update: { deltaTime: number }) => {
-      this.globalNPC.update(update.deltaTime);
-      io.emit("direccionCambio", this.globalNPC.getState());
+      this.escenas.forEach((escena) => {
+        escena.npcs.forEach((npc) => npc.update(update.deltaTime));
+        io.emit(
+          escena.key,
+          escena.npcs.map((npc) => npc.getState())
+        );
+      });
     });
 
     gameLoopWorker.postMessage({
@@ -47,6 +60,4 @@ class NPCStudioEngine {
 
 new NPCStudioEngine();
 
-server.listen(3000, () => {
-  console.log(`Servidor corriendo en http://localhost:3000`);
-});
+server.listen(3000, () => {});
