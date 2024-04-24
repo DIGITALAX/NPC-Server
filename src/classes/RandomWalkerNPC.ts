@@ -1,5 +1,11 @@
 import { between, degToRad } from "./../lib/utils.js";
-import { Direccion, Sprite, Objeto, Seat } from "./../types/src.types.js";
+import {
+  Direccion,
+  Sprite,
+  Objeto,
+  Seat,
+  Articulo,
+} from "./../types/src.types.js";
 import Vector2 from "./Vector2.js";
 import GameTimer from "./GameTimer.js";
 
@@ -15,7 +21,7 @@ export default class RandomWalkerNPC {
     right: number;
     bottom: number;
   })[];
-  private readonly avoidFlex: (Objeto & {
+  private readonly avoidFlex: (Articulo & {
     left: number;
     top: number;
     right: number;
@@ -48,7 +54,7 @@ export default class RandomWalkerNPC {
       right: number;
       bottom: number;
     })[],
-    avoidFlex: (Objeto & {
+    avoidFlex: (Articulo & {
       left: number;
       top: number;
       right: number;
@@ -78,13 +84,7 @@ export default class RandomWalkerNPC {
     npcX: number;
     npcY: number;
     texture: string;
-    randomSeat: {
-      adjustedX: number;
-      adjustedY: number;
-      depthCount: number;
-      anim: Direccion;
-      depth: boolean;
-    } | null;
+    randomSeat: Seat | null;
   } {
     return {
       direccion: this.animacion,
@@ -153,23 +153,41 @@ export default class RandomWalkerNPC {
   private actualizarAnimacion() {
     const dx = this.velocidad.x;
     const dy = this.velocidad.y;
-    const absX = Math.abs(dx);
-    const absY = Math.abs(dy);
     let direccion: Direccion | null = null;
-    if (Math.abs(absX - absY) <= Math.max(absX, absY) * 0.4) {
-      if (dx > 0 && dy > 0) {
-        direccion = Direccion.DerechaAbajo;
-      } else if (dx > 0 && dy < 0) {
-        direccion = Direccion.DerechaArriba;
-      } else if (dx < 0 && dy > 0) {
-        direccion = Direccion.IzquierdaAbajo;
-      } else if (dx < 0 && dy < 0) {
-        direccion = Direccion.IzquierdaArriba;
-      }
-    } else if (absX > absY) {
-      direccion = dx > 0 ? Direccion.Derecha : Direccion.Izquierda;
-    } else {
-      direccion = dy > 0 ? Direccion.Abajo : Direccion.Arriba;
+    let angulo = Math.atan2(dy, dx) * (180 / Math.PI);
+    if (angulo < 0) angulo += 360;
+    if (angulo >= 348.75 || angulo < 11.25) {
+      direccion = Direccion.Derecha;
+    } else if (angulo >= 11.25 && angulo < 33.75) {
+      direccion = Direccion.DerechaAbajo;
+    } else if (angulo >= 33.75 && angulo < 56.25) {
+      direccion = Direccion.DerechaAbajo;
+    } else if (angulo >= 56.25 && angulo < 78.75) {
+      direccion = Direccion.DerechaAbajo;
+    } else if (angulo >= 78.75 && angulo < 101.25) {
+      direccion = Direccion.Abajo;
+    } else if (angulo >= 101.25 && angulo < 123.75) {
+      direccion = Direccion.IzquierdaAbajo;
+    } else if (angulo >= 123.75 && angulo < 146.25) {
+      direccion = Direccion.IzquierdaAbajo;
+    } else if (angulo >= 146.25 && angulo < 168.75) {
+      direccion = Direccion.IzquierdaAbajo;
+    } else if (angulo >= 168.75 && angulo < 191.25) {
+      direccion = Direccion.Izquierda;
+    } else if (angulo >= 191.25 && angulo < 213.75) {
+      direccion = Direccion.IzquierdaArriba;
+    } else if (angulo >= 213.75 && angulo < 236.25) {
+      direccion = Direccion.IzquierdaArriba;
+    } else if (angulo >= 236.25 && angulo < 258.75) {
+      direccion = Direccion.IzquierdaArriba;
+    } else if (angulo >= 258.75 && angulo < 281.25) {
+      direccion = Direccion.Arriba;
+    } else if (angulo >= 281.25 && angulo < 303.75) {
+      direccion = Direccion.DerechaArriba;
+    } else if (angulo >= 303.75 && angulo < 326.25) {
+      direccion = Direccion.DerechaArriba;
+    } else if (angulo >= 326.25 && angulo < 348.75) {
+      direccion = Direccion.DerechaArriba;
     }
 
     this.animacion = direccion;
@@ -186,30 +204,13 @@ export default class RandomWalkerNPC {
       blockedDirections
     );
     this.comprobarLimitesMundo(blockedDirections);
-    if (blockedDirections.length > 0) {
+    if (blockedDirections.length > 0 && this.directionChangeCooldown <= 0) {
       if (!this.sitting) {
         this.evaluarDireccion(blockedDirections);
       } else {
-        this.adjustPathTowardsChair(blockedDirections);
+        // this.adjustPathTowardsChair(blockedDirections);
       }
     }
-  }
-
-  private actualEvitacion(blockedDirections: Direccion[]): boolean {
-    console.log(
-      blockedDirections.includes(
-        this.angleToDirection(
-          Math.atan2(this.npc.y, this.npc.x) * (180 / Math.PI)
-        )
-      )
-    );
-    return blockedDirections.includes(
-      this.angleToDirection(
-        Math.atan2(this.npc.y, this.npc.x) * (180 / Math.PI)
-      )
-    )
-      ? false
-      : true;
   }
 
   private evitarObstaculos(
@@ -222,35 +223,63 @@ export default class RandomWalkerNPC {
     this.avoidAll.forEach((obstaculo) => {
       if (
         npcLeftX <= obstaculo.right &&
-        npcRightX >= obstaculo.left &&
+        npcRightX >= obstaculo.right &&
         npcTopY <= obstaculo.bottom &&
         npcBottomY >= obstaculo.top
       ) {
-        blockedDirections.push(Direccion.Izquierda);
+        console.log("eviIz");
+        blockedDirections.push(
+          ...[
+            Direccion.Izquierda,
+            Direccion.IzquierdaArribaIzquierda,
+            Direccion.IzquierdaAbajoIzquierda,
+          ]
+        );
       }
       if (
         npcRightX >= obstaculo.left &&
-        npcLeftX <= obstaculo.right &&
+        npcLeftX <= obstaculo.left &&
         npcTopY <= obstaculo.bottom &&
         npcBottomY >= obstaculo.top
       ) {
-        blockedDirections.push(Direccion.Derecha);
+        console.log("eviDer");
+        blockedDirections.push(
+          ...[
+            Direccion.Derecha,
+            Direccion.DerechaAbajoDerecha,
+            Direccion.DerechaArribaDerecha,
+          ]
+        );
       }
       if (
         npcBottomY >= obstaculo.top &&
-        npcTopY <= obstaculo.bottom &&
+        npcTopY <= obstaculo.top &&
         npcRightX >= obstaculo.left &&
         npcLeftX <= obstaculo.right
       ) {
-        blockedDirections.push(Direccion.Abajo);
+        console.log("eviAb");
+        blockedDirections.push(
+          ...[
+            Direccion.Abajo,
+            Direccion.AbajoAbajoIzquierda,
+            Direccion.AbajoAbajoDerecha,
+          ]
+        );
       }
       if (
         npcTopY <= obstaculo.bottom &&
-        npcBottomY >= obstaculo.top &&
+        npcBottomY >= obstaculo.bottom &&
         npcRightX >= obstaculo.left &&
         npcLeftX <= obstaculo.right
       ) {
-        blockedDirections.push(Direccion.Arriba);
+        console.log("eviArr");
+        blockedDirections.push(
+          ...[
+            Direccion.Arriba,
+            Direccion.ArribaArribaIzquierda,
+            Direccion.ArribaArribaDerecha,
+          ]
+        );
       }
     });
     // this.avoidFlex.forEach((obstaculo) => {
@@ -312,7 +341,15 @@ export default class RandomWalkerNPC {
       this.world.width
     ) {
       blockedDirections.push(
-        ...[Direccion.Derecha, Direccion.DerechaAbajo, Direccion.DerechaArriba]
+        ...[
+          Direccion.Derecha,
+          Direccion.DerechaAbajo,
+          Direccion.DerechaArriba,
+          Direccion.DerechaAbajoDerecha,
+          Direccion.DerechaArribaDerecha,
+          Direccion.AbajoAbajoDerecha,
+          Direccion.ArribaArribaDerecha,
+        ]
       );
       console.log("paredDer");
     }
@@ -322,6 +359,10 @@ export default class RandomWalkerNPC {
           Direccion.Izquierda,
           Direccion.IzquierdaAbajo,
           Direccion.IzquierdaArriba,
+          Direccion.IzquierdaAbajoIzquierda,
+          Direccion.IzquierdaArribaIzquierda,
+          Direccion.AbajoAbajoIzquierda,
+          Direccion.ArribaArribaIzquierda,
         ]
       );
       console.log("paredIz");
@@ -331,7 +372,15 @@ export default class RandomWalkerNPC {
       this.world.height
     ) {
       blockedDirections.push(
-        ...[Direccion.Abajo, Direccion.IzquierdaAbajo, Direccion.DerechaAbajo]
+        ...[
+          Direccion.Abajo,
+          Direccion.IzquierdaAbajo,
+          Direccion.DerechaAbajo,
+          Direccion.AbajoAbajoIzquierda,
+          Direccion.AbajoAbajoDerecha,
+          Direccion.DerechaAbajoDerecha,
+          Direccion.IzquierdaAbajoIzquierda,
+        ]
       );
       console.log("paredAbajo");
     }
@@ -341,6 +390,10 @@ export default class RandomWalkerNPC {
           Direccion.Arriba,
           Direccion.IzquierdaArriba,
           Direccion.DerechaArriba,
+          Direccion.ArribaArribaIzquierda,
+          Direccion.ArribaArribaDerecha,
+          Direccion.DerechaArribaDerecha,
+          Direccion.IzquierdaArribaIzquierda,
         ]
       );
       console.log("paredArriba");
@@ -511,134 +564,5 @@ export default class RandomWalkerNPC {
     };
 
     checkArrival();
-  }
-
-  private adjustPathTowardsChair(blockedDirections: Direccion[]) {
-    if (!this.randomSeat) return;
-
-    const dx = this.randomSeat.adjustedX - this.npc.x;
-    const dy = this.randomSeat.adjustedY - this.npc.y;
-    const angleToChair = Math.atan2(dy, dx);
-
-    let isPathBlocked: boolean = false;
-    this.avoidAll.concat(this.avoidFlex).forEach((obstaculo) => {
-      if (
-        this.isBlockingPath(
-          this.npc.x,
-          this.npc.y,
-          this.randomSeat?.adjustedX!,
-          this.randomSeat?.adjustedY!,
-          obstaculo
-        )
-      ) {
-        isPathBlocked = true;
-      }
-    });
-
-    if (!isPathBlocked) {
-      this.velocidad = new Vector2(
-        Math.cos(angleToChair),
-        Math.sin(angleToChair)
-      );
-    } else {
-      const alternativePath = this.findAlternativePath(
-        angleToChair,
-        blockedDirections
-      );
-      this.velocidad = new Vector2(
-        Math.cos(alternativePath),
-        Math.sin(alternativePath)
-      );
-    }
-  }
-
-  private findAlternativePath(
-    angleToChair: number,
-    blockedDirections: Direccion[]
-  ): number {
-    let alternativeAngle = angleToChair;
-    const angleAdjustment = Math.PI / 18;
-
-    for (let i = 1; i <= 18; i++) {
-      if (
-        !blockedDirections.includes(
-          this.angleToDirection(alternativeAngle + i * angleAdjustment)
-        )
-      ) {
-        return alternativeAngle + i * angleAdjustment;
-      }
-      if (
-        !blockedDirections.includes(
-          this.angleToDirection(alternativeAngle - i * angleAdjustment)
-        )
-      ) {
-        return alternativeAngle - i * angleAdjustment;
-      }
-    }
-
-    return angleToChair;
-  }
-
-  private isBlockingPath(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    obstaculo: Objeto & {
-      left: number;
-      top: number;
-      right: number;
-      bottom: number;
-    }
-  ): boolean {
-    const ox = (obstaculo.left + obstaculo.right) / 2;
-    const oy = (obstaculo.top + obstaculo.bottom) / 2;
-    const minDistance =
-      Math.abs((y2 - y1) * ox - (x2 - x1) * oy + x2 * y1 - y2 * x1) /
-      Math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2);
-    return minDistance < (obstaculo.right - obstaculo.left) / 2;
-  }
-
-  private angleToDirection(angle: number): Direccion {
-    let normalizedAngle: number = angle % (2 * Math.PI);
-    if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
-    if (
-      normalizedAngle < Math.PI / 8 ||
-      normalizedAngle >= (15 * Math.PI) / 8
-    ) {
-      return Direccion.Derecha;
-    } else if (
-      normalizedAngle >= Math.PI / 8 &&
-      normalizedAngle < (3 * Math.PI) / 8
-    ) {
-      return Direccion.DerechaArriba;
-    } else if (
-      normalizedAngle >= (3 * Math.PI) / 8 &&
-      normalizedAngle < (5 * Math.PI) / 8
-    ) {
-      return Direccion.Arriba;
-    } else if (
-      normalizedAngle >= (5 * Math.PI) / 8 &&
-      normalizedAngle < (7 * Math.PI) / 8
-    ) {
-      return Direccion.IzquierdaArriba;
-    } else if (
-      normalizedAngle >= (7 * Math.PI) / 8 &&
-      normalizedAngle < (9 * Math.PI) / 8
-    ) {
-      return Direccion.Izquierda;
-    } else if (
-      normalizedAngle >= (9 * Math.PI) / 8 &&
-      normalizedAngle < (11 * Math.PI) / 8
-    ) {
-      return Direccion.IzquierdaAbajo;
-    } else if (
-      normalizedAngle >= (11 * Math.PI) / 8 &&
-      normalizedAngle < (13 * Math.PI) / 8
-    ) {
-      return Direccion.Abajo;
-    } else {
-      return Direccion.DerechaAbajo;
-    }
   }
 }

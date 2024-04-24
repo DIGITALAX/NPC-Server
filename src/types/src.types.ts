@@ -7,6 +7,14 @@ export enum Direccion {
   IzquierdaAbajo = "izquierdaAbajo",
   DerechaArriba = "derechaArriba",
   DerechaAbajo = "derechaAbajo",
+  DerechaArribaDerecha = "derechaArriba",
+  ArribaArribaDerecha = "derechaArriba",
+  ArribaArribaIzquierda = "izquierdaArriba",
+  IzquierdaArribaIzquierda = "izquierdaArriba",
+  IzquierdaAbajoIzquierda = "izquierdaAbajo",
+  AbajoAbajoIzquierda = "izquierdaAbajo",
+  AbajoAbajoDerecha = "derechaAbajo",
+  DerechaAbajoDerecha = "derechaAbajo",
   Inactivo = "inactivo",
   Sofa = "sentadoSofa",
   Silla = "sentadoEscritorio",
@@ -24,12 +32,8 @@ export interface Escena {
     displayHeight: number;
     displayWidth: number;
   }[];
-  profundidad: {
-    x: number;
-    y: number;
-    displayHeight: number;
-    displayWidth: number;
-  }[];
+  profundidad: Articulo[];
+  sillas: Seat[];
   fondo: {
     etiqueta: string;
     uri: string;
@@ -44,37 +48,29 @@ export interface Escena {
       y: number;
     };
   };
-  objects: {
-    uri: string;
-    etiqueta: string;
-    sitio: {
-      x: number;
-      y: number;
-    };
-    origen: {
-      x: number;
-      y: number;
-    };
-    escala: {
-      x: number;
-      y: number;
-    };
-    talla: {
-      x: number;
-      y: number;
-    };
-    depth: number;
-    seatInfo?: {
-      adjustedX: number;
-      adjustedY: number;
-      depthCount: number;
-      anim: Direccion;
-      depth: boolean;
-      texture: string;
-    };
-    profound?: boolean;
-  }[];
+  objects: Articulo[];
   sprites: Sprite[];
+}
+
+export interface Articulo {
+  uri: string;
+  etiqueta: string;
+  sitio: {
+    x: number;
+    y: number;
+  };
+  origen: {
+    x: number;
+    y: number;
+  };
+  escala: {
+    x: number;
+    y: number;
+  };
+  talla: {
+    x: number;
+    y: number;
+  };
 }
 
 export interface Objeto {
@@ -82,16 +78,31 @@ export interface Objeto {
   y: number;
   displayHeight: number;
   displayWidth: number;
-  all?: boolean | undefined;
 }
 
 export interface Seat {
   adjustedX: number;
   adjustedY: number;
-  depthCount: number;
+  profundidad: boolean;
   anim: Direccion;
-  depth: boolean;
-  texture: string;
+  etiqueta: string;
+  sitio: {
+    x: number;
+    y: number;
+  };
+  talla: {
+    x: number;
+    y: number;
+  };
+  uri: string;
+  origen: {
+    x: number;
+    y: number;
+  };
+  escala: {
+    x: number;
+    y: number;
+  };
 }
 
 export interface Sprite {

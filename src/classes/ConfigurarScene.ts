@@ -1,4 +1,4 @@
-import { Escena, Objeto, Seat } from "./../types/src.types";
+import { Articulo, Escena, Objeto, Seat } from "./../types/src.types";
 import RandomWalkerNPC from "./RandomWalkerNPC.js";
 
 export default class EscenaEstudio {
@@ -9,29 +9,18 @@ export default class EscenaEstudio {
   constructor(escena: Escena) {
     this.key = escena.key;
     this.npcs = escena.sprites.map((sprite) => {
-      let seats: Seat[] = [],
-        avoidAll: (Objeto & {
+      let avoidAll: (Objeto & {
           left: number;
           top: number;
           right: number;
           bottom: number;
         })[] = [],
-        avoidFlex: (Objeto & {
+        avoidFlex: (Articulo & {
           left: number;
           top: number;
           right: number;
           bottom: number;
         })[] = [];
-
-      escena.objects
-        .map((item) => {
-          if (item?.seatInfo !== null && item?.seatInfo !== undefined) {
-            seats.push(item.seatInfo);
-          } else {
-            return false;
-          }
-        })
-        ?.filter(Boolean);
 
       escena.evitar.map((obj) => {
         const halfWidth = obj.displayWidth / 2;
@@ -49,15 +38,15 @@ export default class EscenaEstudio {
       });
 
       escena.profundidad.map((obj) => {
-        const halfWidth = obj.displayWidth / 2;
-        const halfHeight = obj.displayHeight / 2;
+        const halfWidth = obj.talla.x / 2;
+        const halfHeight = obj.talla.y / 2;
 
         let coded = {
           ...obj,
-          left: obj.x - halfWidth,
-          top: obj.y - halfHeight,
-          right: obj.x + halfWidth,
-          bottom: obj.y + halfHeight,
+          left: obj.talla.x - halfWidth,
+          top: obj.talla.y - halfHeight,
+          right: obj.talla.x + halfWidth,
+          bottom: obj.talla.y + halfHeight,
         };
 
         avoidFlex.push(coded);
@@ -66,7 +55,7 @@ export default class EscenaEstudio {
       return new RandomWalkerNPC(
         sprite,
         this.sillasOcupadas,
-        seats,
+        escena.sillas,
         avoidAll,
         avoidFlex,
         escena.world

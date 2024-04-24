@@ -23,6 +23,152 @@ export const SCENE_LIST: Escena[] = [
         y: 0,
       },
     },
+    sillas: [
+      {
+        anim: Direccion.Sofa,
+        profundidad: false,
+        adjustedX: 820,
+        adjustedY: 220,
+        etiqueta: "sofaUno",
+        sitio: {
+          x: 680,
+          y: 145.71428571428572,
+        },
+        talla: {
+          x: 197,
+          y: 107,
+        },
+        uri: "QmQfqKAD2Hepe9kQ9VxBSNmwZrywCvuPrnAr5AiF4bMvwB",
+        origen: {
+          x: 0,
+          y: 0,
+        },
+        escala: {
+          x: 1.2,
+          y: 1.2,
+        },
+      },
+      {
+        anim: Direccion.Sofa,
+        profundidad: false,
+        adjustedX: 1250,
+        adjustedY: 220,
+        etiqueta: "sofaDos",
+        sitio: {
+          x: 1153.3333333333333,
+          y: 145.71428571428572,
+        },
+        talla: {
+          x: 194,
+          y: 109,
+        },
+        uri: "QmUFsXQpp1ZZWKWCnHAED4pgZgeLSBnp4ofMz9ae1BkhAR",
+        origen: {
+          x: 0,
+          y: 0,
+        },
+        escala: {
+          x: 1.2,
+          y: 1.2,
+        },
+      },
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 1330,
+        adjustedY: 260,
+        etiqueta: "silla1",
+        sitio: {
+          x: 1322,
+          y: 325,
+        },
+        talla: {
+          x: 92,
+          y: 116,
+        },
+        uri: "QmariT81Kgxw4mNHCt8wGHmgH5avzrZt2r6vNiik4qeSwK",
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 1330,
+        adjustedY: 480,
+        etiqueta: "silla2",
+        sitio: {
+          x: 1322,
+          y: 470,
+        },
+        talla: {
+          x: 89,
+          y: 109,
+        },
+        uri: "Qmc8VyBMDALMJJknadELsL9SBQuYSuTHpa3e1SqfX61Egn",
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 1000,
+        adjustedY: 265,
+        etiqueta: "silla3",
+        sitio: {
+          x: 992.5,
+          y: 325,
+        },
+        talla: {
+          x: 100,
+          y: 108,
+        },
+        uri: "QmUuHUnrMHhusH1JrgG6WonoCUxG1t7LQe348gru2d4uHM",
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 1020,
+        adjustedY: 460,
+        uri: "QmfZPky9neYWSuQcZ7wtyajqMCRPBaq7WiPjaab4ZxC8PZ",
+        etiqueta: "silla4",
+        sitio: {
+          x: 998.5,
+          y: 485,
+        },
+        talla: {
+          x: 98,
+          y: 103,
+        },
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+    ],
     objects: [
       {
         etiqueta: "pared",
@@ -30,7 +176,7 @@ export const SCENE_LIST: Escena[] = [
           x: 850,
           y: 110,
         },
-        depth: 0,
+
         talla: {
           x: 1022,
           y: 204,
@@ -47,7 +193,6 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "nevera",
-        depth: 0,
         sitio: {
           x: 145,
           y: 205,
@@ -68,7 +213,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "maquina",
-        depth: 0,
+
         sitio: {
           x: 470,
           y: 200,
@@ -88,68 +233,8 @@ export const SCENE_LIST: Escena[] = [
         },
       },
       {
-        etiqueta: "sofaUno",
-        depth: 0,
-        sitio: {
-          x: 680,
-          y: 145.71428571428572,
-        },
-        talla: {
-          x: 197,
-          y: 107,
-        },
-        uri: "QmQfqKAD2Hepe9kQ9VxBSNmwZrywCvuPrnAr5AiF4bMvwB",
-        origen: {
-          x: 0,
-          y: 0,
-        },
-        escala: {
-          x: 1.2,
-          y: 1.2,
-        },
-
-        seatInfo: {
-          depthCount: 0,
-          anim: Direccion.Sofa,
-          depth: false,
-          adjustedX: 820,
-          adjustedY: 220,
-          texture: "sofaUno",
-        },
-      },
-      {
-        etiqueta: "sofaDos",
-        depth: 0,
-        sitio: {
-          x: 1153.3333333333333,
-          y: 145.71428571428572,
-        },
-        talla: {
-          x: 194,
-          y: 109,
-        },
-        uri: "QmUFsXQpp1ZZWKWCnHAED4pgZgeLSBnp4ofMz9ae1BkhAR",
-        origen: {
-          x: 0,
-          y: 0,
-        },
-        escala: {
-          x: 1.2,
-          y: 1.2,
-        },
-
-        seatInfo: {
-          depthCount: 0,
-          anim: Direccion.Sofa,
-          depth: false,
-          adjustedX: 1250,
-          adjustedY: 220,
-          texture: "sofaDos",
-        },
-      },
-      {
         etiqueta: "alfombra",
-        depth: 0,
+
         sitio: {
           x: 255,
           y: 384,
@@ -169,238 +254,7 @@ export const SCENE_LIST: Escena[] = [
         },
       },
       {
-        etiqueta: "escritorio1",
-        depth: 0.1,
-        sitio: {
-          x: 1342,
-          y: 310,
-        },
-        talla: {
-          x: 319,
-          y: 186,
-        },
-        uri: "QmWtr9iRZ4HiPe1PBxrJfiB9hEQNa3GWxtipt7hqFvBPvs",
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-        profound: true,
-      },
-      {
-        etiqueta: "silla1",
-        depth: 0.2,
-        sitio: {
-          x: 1322,
-          y: 325,
-        },
-        talla: {
-          x: 92,
-          y: 116,
-        },
-        uri: "QmariT81Kgxw4mNHCt8wGHmgH5avzrZt2r6vNiik4qeSwK",
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-
-        seatInfo: {
-          depthCount: 0,
-          anim: Direccion.Silla,
-          depth: true,
-          adjustedX: 1330,
-          adjustedY: 260,
-          texture: "silla1",
-        },
-        profound: true,
-      },
-      {
-        etiqueta: "escritorio2",
-        depth: 0.3,
-        sitio: {
-          x: 1342,
-          y: 430,
-        },
-        talla: {
-          x: 307,
-          y: 177,
-        },
-        uri: "QmTwbtXhizeCxBbZk9Nbd3yrt67kcB7Ytm6sKAzx5rFtCd",
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-
-        profound: true,
-      },
-      {
-        etiqueta: "silla2",
-        depth: 0.4,
-        sitio: {
-          x: 1322,
-          y: 470,
-        },
-        talla: {
-          x: 89,
-          y: 109,
-        },
-        uri: "Qmc8VyBMDALMJJknadELsL9SBQuYSuTHpa3e1SqfX61Egn",
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-
-        seatInfo: {
-          depthCount: 0,
-          anim: Direccion.Silla,
-          depth: true,
-          adjustedX: 1330,
-          adjustedY: 480,
-          texture: "silla2",
-        },
-        profound: true,
-      },
-      {
-        etiqueta: "escritorio3",
-        depth: 0.1,
-        sitio: {
-          x: 1012.5,
-          y: 310,
-        },
-        talla: {
-          x: 307,
-          y: 165,
-        },
-        uri: "Qmcy6nTw4YaGj8AEtba2WVm8gYy1vj9LbyMNk9qGptz4ny",
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-        profound: true,
-      },
-      {
-        etiqueta: "silla3",
-        depth: 0.2,
-        sitio: {
-          x: 992.5,
-          y: 325,
-        },
-        talla: {
-          x: 100,
-          y: 108,
-        },
-        uri: "QmUuHUnrMHhusH1JrgG6WonoCUxG1t7LQe348gru2d4uHM",
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-
-        seatInfo: {
-          depthCount: 0,
-          anim: Direccion.Silla,
-          depth: true,
-          adjustedX: 1000,
-          adjustedY: 265,
-          texture: "silla3",
-        },
-        profound: true,
-      },
-      {
-        etiqueta: "escritorio4",
-        depth: 0.3,
-        sitio: {
-          x: 1018.5,
-          y: 440,
-        },
-        talla: {
-          x: 307,
-          y: 160,
-        },
-        uri: "Qmd8VH1yPkPGtxoRM1bdAvLJnjyTG21pgswddCVnECxDHh",
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-
-        profound: true,
-      },
-      {
-        uri: "QmfZPky9neYWSuQcZ7wtyajqMCRPBaq7WiPjaab4ZxC8PZ",
-        etiqueta: "silla4",
-        depth: 0.4,
-        sitio: {
-          x: 998.5,
-          y: 485,
-        },
-        talla: {
-          x: 98,
-          y: 103,
-        },
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-
-        seatInfo: {
-          depthCount: 0,
-          anim: Direccion.Silla,
-          depth: true,
-          adjustedX: 1020,
-          adjustedY: 460,
-          texture: "silla4",
-        },
-        profound: true,
-      },
-      {
-        etiqueta: "panelDeControl",
-        depth: 0.5,
-        uri: "QmWMPF4YYvRLGW4F76kufDSxg2LnYojDNZK7cfdkwQxdXw",
-        origen: {
-          x: 0.5,
-          y: 0.5,
-        },
-        escala: {
-          x: 1,
-          y: 1,
-        },
-        sitio: { x: 1320, y: 630 },
-        talla: { x: 390, y: 228 },
-        profound: true,
-      },
-      {
         etiqueta: "arcade",
-        depth: 10000,
         sitio: {
           x: 1442,
           y: 700,
@@ -422,7 +276,6 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "audio1",
-        depth: 10000,
         sitio: {
           x: 756,
           y: 830,
@@ -443,7 +296,6 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "audio2",
-        depth: 10000,
         sitio: {
           x: 916,
           y: 830,
@@ -464,7 +316,6 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "planta1",
-        depth: 10000,
         sitio: {
           x: 604.8,
           y: 830,
@@ -485,7 +336,6 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "planta2",
-        depth: 10000,
         sitio: {
           x: 507.79999999999995,
           y: 830,
@@ -506,7 +356,6 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "capsula",
-        depth: 10000,
         sitio: {
           x: 50,
           y: 468,
@@ -527,7 +376,6 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "telefono",
-        depth: 10000,
         sitio: {
           x: 50,
           y: 710,
@@ -560,16 +408,109 @@ export const SCENE_LIST: Escena[] = [
         displayHeight: 230,
         displayWidth: 500,
       },
-      { x: 1442, y: 700, displayHeight: 220, displayWidth: 163 },
+      { x: 1442, y: 750, displayHeight: 160, displayWidth: 163 },
       { x: 470, y: 0, displayHeight: 260, displayWidth: 225 },
       { x: 60, y: 415, displayHeight: 830, displayWidth: 100 },
     ],
     profundidad: [
-      { x: 1302, y: 630, displayWidth: 390, displayHeight: 228 },
-      { x: 1018.5, y: 440, displayWidth: 307, displayHeight: 160 },
-      { x: 1012.5, y: 310, displayWidth: 307, displayHeight: 165 },
-      { x: 1342, y: 430, displayWidth: 307, displayHeight: 177 },
-      { x: 1342, y: 310, displayWidth: 319, displayHeight: 186 },
+      {
+        etiqueta: "panelDeControl",
+        uri: "QmWMPF4YYvRLGW4F76kufDSxg2LnYojDNZK7cfdkwQxdXw",
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: { x: 1320, y: 630 },
+        talla: { x: 390, y: 228 },
+      },
+      {
+        etiqueta: "escritorio1",
+        sitio: {
+          x: 1342,
+          y: 310,
+        },
+        talla: {
+          x: 319,
+          y: 186,
+        },
+        uri: "QmWtr9iRZ4HiPe1PBxrJfiB9hEQNa3GWxtipt7hqFvBPvs",
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+
+      {
+        etiqueta: "escritorio2",
+
+        sitio: {
+          x: 1342,
+          y: 430,
+        },
+        talla: {
+          x: 307,
+          y: 177,
+        },
+        uri: "QmTwbtXhizeCxBbZk9Nbd3yrt67kcB7Ytm6sKAzx5rFtCd",
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+      {
+        etiqueta: "escritorio3",
+        sitio: {
+          x: 1012.5,
+          y: 310,
+        },
+        talla: {
+          x: 307,
+          y: 165,
+        },
+        uri: "Qmcy6nTw4YaGj8AEtba2WVm8gYy1vj9LbyMNk9qGptz4ny",
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+
+      {
+        etiqueta: "escritorio4",
+
+        sitio: {
+          x: 1018.5,
+          y: 440,
+        },
+        talla: {
+          x: 307,
+          y: 160,
+        },
+        uri: "Qmd8VH1yPkPGtxoRM1bdAvLJnjyTG21pgswddCVnECxDHh",
+        origen: {
+          x: 0.5,
+          y: 0.5,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
     ],
     sprites: [
       {
