@@ -123,7 +123,8 @@ export default class RandomWalkerNPC {
     if (
       this.animacion !== Direccion.Inactivo &&
       this.animacion !== Direccion.Silla &&
-      this.animacion !== Direccion.Sofa
+      this.animacion !== Direccion.Sofa &&
+      this.velocidad !== new Vector2()
     ) {
       this.npc.x += this.velocidad.x * (deltaTime / 1000) * this.speed;
       this.npc.y += this.velocidad.y * (deltaTime / 1000) * this.speed;
@@ -140,7 +141,12 @@ export default class RandomWalkerNPC {
   }
 
   private actualizarAnimacion() {
-    if (this.animacion == Direccion.Inactivo || this.velocidad == new Vector2())
+    if (
+      this.velocidad == new Vector2() &&
+      (this.animacion == Direccion.Inactivo ||
+        this.animacion == Direccion.Silla ||
+        this.animacion == Direccion.Sofa)
+    )
       return;
     const dx = this.velocidad.x;
     const dy = this.velocidad.y;
@@ -471,8 +477,8 @@ export default class RandomWalkerNPC {
   }
 
   private goIdle() {
-    this.animacion = Direccion.Inactivo;
     this.velocidad = new Vector2();
+    this.animacion = Direccion.Inactivo;
     this.moveCounter = 0;
     this.gameTimer.setTimeout(() => {
       this.setRandomDirection();
