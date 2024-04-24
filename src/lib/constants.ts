@@ -44,19 +44,6 @@ export const SCENE_LIST: Escena[] = [
           x: 1.3,
           y: 1.1,
         },
-        centro: false,
-        fisica: true,
-        offset: {
-          x: 0,
-          y: 0,
-        },
-        avoid: {
-          x: 339,
-          y: 8,
-          displayHeight: 44.88,
-          displayWidth: 1965.6000000000001,
-          all: true,
-        },
       },
       {
         etiqueta: "nevera",
@@ -77,18 +64,6 @@ export const SCENE_LIST: Escena[] = [
         escala: {
           x: 1.3,
           y: 1.1,
-        },
-        centro: false,
-        fisica: true,
-        offset: {
-          x: 0,
-          y: 0,
-        },
-        avoid: {
-          x: 20,
-          y: 19.5,
-          displayHeight: 120.025,
-          displayWidth: 400,
         },
       },
       {
@@ -111,19 +86,6 @@ export const SCENE_LIST: Escena[] = [
           x: 1.6,
           y: 1.1,
         },
-        fisica: true,
-        centro: false,
-        offset: {
-          x: 0,
-          y: -60,
-        },
-        avoid: {
-          x: 390,
-          y: 27.5,
-          displayHeight: 120,
-          displayWidth: 220,
-          all: true,
-        },
       },
       {
         etiqueta: "sofaUno",
@@ -145,12 +107,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1.2,
           y: 1.2,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
+
         seatInfo: {
           depthCount: 0,
           anim: Direccion.Sofa,
@@ -180,12 +137,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1.2,
           y: 1.2,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
+
         seatInfo: {
           depthCount: 0,
           anim: Direccion.Sofa,
@@ -215,12 +167,6 @@ export const SCENE_LIST: Escena[] = [
           x: 1.5,
           y: 1.2,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
       },
       {
         etiqueta: "escritorio1",
@@ -242,20 +188,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: true,
-        centro: true,
-        offset: {
-          x: 0,
-          y: 0,
-        },
         profound: true,
-
-        avoid: {
-          x: 1018.5,
-          y: 440,
-          displayWidth: 307,
-          displayHeight: 160,
-        },
       },
       {
         etiqueta: "silla1",
@@ -277,12 +210,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
+
         seatInfo: {
           depthCount: 0,
           anim: Direccion.Silla,
@@ -313,19 +241,8 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: true,
-        centro: true,
-        offset: {
-          x: 0,
-          y: 0,
-        },
+
         profound: true,
-        avoid: {
-          x: 1342,
-          y: 430,
-          displayWidth: 307,
-          displayHeight: 177,
-        },
       },
       {
         etiqueta: "silla2",
@@ -347,12 +264,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
+
         seatInfo: {
           depthCount: 0,
           anim: Direccion.Silla,
@@ -383,19 +295,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: true,
-        centro: true,
-        offset: {
-          x: 0,
-          y: 0,
-        },
         profound: true,
-        avoid: {
-          x: 1342,
-          y: 310,
-          displayWidth: 319,
-          displayHeight: 186,
-        },
       },
       {
         etiqueta: "silla3",
@@ -417,12 +317,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
+
         seatInfo: {
           depthCount: 0,
           anim: Direccion.Silla,
@@ -453,19 +348,8 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: true,
-        centro: true,
-        offset: {
-          x: 0,
-          y: 0,
-        },
+
         profound: true,
-        avoid: {
-          x: 1012.5,
-          y: 340,
-          displayWidth: 307,
-          displayHeight: 165,
-        },
       },
       {
         uri: "QmfZPky9neYWSuQcZ7wtyajqMCRPBaq7WiPjaab4ZxC8PZ",
@@ -487,12 +371,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
+
         seatInfo: {
           depthCount: 0,
           anim: Direccion.Silla,
@@ -516,20 +395,8 @@ export const SCENE_LIST: Escena[] = [
           y: 1,
         },
         sitio: { x: 1320, y: 630 },
-        fisica: true,
-        centro: true,
-        offset: {
-          x: 0,
-          y: 0,
-        },
         talla: { x: 390, y: 228 },
         profound: true,
-        avoid: {
-          x: 1302,
-          y: 630,
-          displayWidth: 390,
-          displayHeight: 228,
-        },
       },
       {
         etiqueta: "arcade",
@@ -538,13 +405,7 @@ export const SCENE_LIST: Escena[] = [
           x: 1442,
           y: 700,
         },
-        avoid: {
-          x: 1340.5,
-          y: 566.5,
-          displayHeight: 267,
-          displayWidth: 163,
-          all: true,
-        },
+
         talla: {
           x: 163,
           y: 267,
@@ -557,12 +418,6 @@ export const SCENE_LIST: Escena[] = [
         escala: {
           x: 1,
           y: 1,
-        },
-        fisica: true,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
         },
       },
       {
@@ -585,12 +440,6 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
       },
       {
         etiqueta: "audio2",
@@ -611,12 +460,6 @@ export const SCENE_LIST: Escena[] = [
         escala: {
           x: 1,
           y: 1,
-        },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
         },
       },
       {
@@ -639,12 +482,6 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
       },
       {
         etiqueta: "planta2",
@@ -665,12 +502,6 @@ export const SCENE_LIST: Escena[] = [
         escala: {
           x: 1,
           y: 1,
-        },
-        fisica: false,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
         },
       },
       {
@@ -693,31 +524,9 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: true,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
-
-        avoid: {
-          x: 2.5,
-          y: 317,
-          displayHeight: 302,
-          displayWidth: 95,
-          all: true,
-        },
       },
       {
         etiqueta: "telefono",
-
-        avoid: {
-          x: 7,
-          y: 589,
-          displayHeight: 242,
-          displayWidth: 86,
-          all: true,
-        },
         depth: 10000,
         sitio: {
           x: 50,
@@ -736,13 +545,31 @@ export const SCENE_LIST: Escena[] = [
           x: 1,
           y: 1,
         },
-        fisica: true,
-        centro: false,
-        offset: {
-          x: 0,
-          y: 0,
-        },
       },
+    ],
+    evitar: [
+      {
+        x: 756,
+        y: 0,
+        displayHeight: 110,
+        displayWidth: 1512,
+      },
+      {
+        x: 145,
+        y: 0,
+        displayHeight: 230,
+        displayWidth: 500,
+      },
+      { x: 1442, y: 700, displayHeight: 220, displayWidth: 163 },
+      { x: 470, y: 0, displayHeight: 260, displayWidth: 225 },
+      { x: 60, y: 415, displayHeight: 830, displayWidth: 100 },
+    ],
+    profundidad: [
+      { x: 1302, y: 630, displayWidth: 390, displayHeight: 228 },
+      { x: 1018.5, y: 440, displayWidth: 307, displayHeight: 160 },
+      { x: 1012.5, y: 310, displayWidth: 307, displayHeight: 165 },
+      { x: 1342, y: 430, displayWidth: 307, displayHeight: 177 },
+      { x: 1342, y: 310, displayWidth: 319, displayHeight: 186 },
     ],
     sprites: [
       {
@@ -765,7 +592,6 @@ export const SCENE_LIST: Escena[] = [
           x: 0.5,
           y: 0.5,
         },
-        centro: true,
       },
     ],
   },

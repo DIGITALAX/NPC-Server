@@ -27,28 +27,41 @@ export default class EscenaEstudio {
         .map((item) => {
           if (item?.seatInfo !== null && item?.seatInfo !== undefined) {
             seats.push(item.seatInfo);
-          } else if (item?.avoid !== null && item?.avoid !== undefined) {
-            const halfWidth = item.avoid.displayWidth / 2;
-            const halfHeight = item.avoid.displayHeight / 2;
-
-            let coded = {
-              ...item?.avoid,
-              left: item.avoid.x - halfWidth,
-              top: item.avoid.y - halfHeight,
-              right: item.avoid.x + halfWidth,
-              bottom: item.avoid.y + halfHeight,
-            };
-
-            if (item.avoid?.all) {
-              avoidAll.push(coded);
-            } else {
-              avoidFlex.push(coded);
-            }
           } else {
             return false;
           }
         })
         ?.filter(Boolean);
+
+      escena.evitar.map((obj) => {
+        const halfWidth = obj.displayWidth / 2;
+        const halfHeight = obj.displayHeight / 2;
+
+        let coded = {
+          ...obj,
+          left: obj.x - halfWidth,
+          top: obj.y - halfHeight,
+          right: obj.x + halfWidth,
+          bottom: obj.y + halfHeight,
+        };
+
+        avoidAll.push(coded);
+      });
+
+      escena.profundidad.map((obj) => {
+        const halfWidth = obj.displayWidth / 2;
+        const halfHeight = obj.displayHeight / 2;
+
+        let coded = {
+          ...obj,
+          left: obj.x - halfWidth,
+          top: obj.y - halfHeight,
+          right: obj.x + halfWidth,
+          bottom: obj.y + halfHeight,
+        };
+
+        avoidFlex.push(coded);
+      });
 
       return new RandomWalkerNPC(
         sprite,

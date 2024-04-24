@@ -18,6 +18,18 @@ export interface Escena {
     width: number;
     height: number;
   };
+  evitar: {
+    x: number;
+    y: number;
+    displayHeight: number;
+    displayWidth: number;
+  }[];
+  profundidad: {
+    x: number;
+    y: number;
+    displayHeight: number;
+    displayWidth: number;
+  }[];
   fondo: {
     etiqueta: string;
     uri: string;
@@ -47,16 +59,10 @@ export interface Escena {
       x: number;
       y: number;
     };
-    offset: {
-      x: number;
-      y: number;
-    };
     talla: {
       x: number;
       y: number;
     };
-    centro: boolean;
-    fisica: boolean;
     depth: number;
     seatInfo?: {
       adjustedX: number;
@@ -65,13 +71,6 @@ export interface Escena {
       anim: Direccion;
       depth: boolean;
       texture: string;
-    };
-    avoid?: {
-      x: number;
-      y: number;
-      displayHeight: number;
-      displayWidth: number;
-      all?: boolean;
     };
     profound?: boolean;
   }[];
@@ -115,5 +114,4 @@ export interface Sprite {
     x: number;
     y: number;
   };
-  centro: boolean;
 }

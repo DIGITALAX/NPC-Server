@@ -111,6 +111,10 @@ export default class RandomWalkerNPC {
   }
 
   private setRandomDirection() {
+    console.log(
+      this.moveCounter >= between(7, 13),
+      this.seatsTaken < this.seats.length
+    );
     if (
       (this.gameTimer.timeAccumulated > this.lastIdleTime + 30000 ||
         Math.random() < this.idleProbability) &&
@@ -182,13 +186,30 @@ export default class RandomWalkerNPC {
       blockedDirections
     );
     this.comprobarLimitesMundo(blockedDirections);
-    if (blockedDirections.length > 0 && this.directionChangeCooldown <= 0) {
+    if (blockedDirections.length > 0) {
       if (!this.sitting) {
         this.evaluarDireccion(blockedDirections);
       } else {
         this.adjustPathTowardsChair(blockedDirections);
       }
     }
+  }
+
+  private actualEvitacion(blockedDirections: Direccion[]): boolean {
+    console.log(
+      blockedDirections.includes(
+        this.angleToDirection(
+          Math.atan2(this.npc.y, this.npc.x) * (180 / Math.PI)
+        )
+      )
+    );
+    return blockedDirections.includes(
+      this.angleToDirection(
+        Math.atan2(this.npc.y, this.npc.x) * (180 / Math.PI)
+      )
+    )
+      ? false
+      : true;
   }
 
   private evitarObstaculos(
@@ -200,57 +221,87 @@ export default class RandomWalkerNPC {
   ) {
     this.avoidAll.forEach((obstaculo) => {
       if (
-        npcRightX > obstaculo.left &&
-        npcLeftX < obstaculo.right &&
-        npcBottomY > obstaculo.top &&
-        npcTopY < obstaculo.bottom
+        npcLeftX <= obstaculo.right &&
+        npcRightX >= obstaculo.left &&
+        npcTopY <= obstaculo.bottom &&
+        npcBottomY >= obstaculo.top
       ) {
-        const overlapRight = npcRightX - obstaculo.left;
-        const overlapLeft = obstaculo.right - npcLeftX;
-        const overlapBottom = npcBottomY - obstaculo.top;
-        const overlapTop = obstaculo.bottom - npcTopY;
-
-        if (overlapRight > 0) {
-          blockedDirections.push(Direccion.Derecha);
-        }
-        if (overlapLeft > 0) {
-          blockedDirections.push(Direccion.Izquierda);
-        }
-        if (overlapBottom > 0) {
-          blockedDirections.push(Direccion.Abajo);
-        }
-        if (overlapTop > 0) {
-          blockedDirections.push(Direccion.Arriba);
-        }
+        blockedDirections.push(Direccion.Izquierda);
       }
-    });
-    this.avoidFlex.forEach((obstaculo) => {
       if (
-        Math.abs(this.npc.y - obstaculo.y) <
-        (this.npc.displayHeight * this.npc.escala.y) / 2
+        npcRightX >= obstaculo.left &&
+        npcLeftX <= obstaculo.right &&
+        npcTopY <= obstaculo.bottom &&
+        npcBottomY >= obstaculo.top
       ) {
-        if (npcRightX >= obstaculo.left && npcLeftX < obstaculo.left) {
-          blockedDirections.push(Direccion.Derecha);
-          console.log("der");
-        }
-        if (npcLeftX <= obstaculo.right && npcRightX > obstaculo.right) {
-          blockedDirections.push(Direccion.Izquierda);
-          console.log("iz");
-        }
-        if (npcTopY < obstaculo.bottom && npcBottomY > obstaculo.top) {
-          if (this.npc.x >= obstaculo.left && this.npc.x < obstaculo.right) {
-            if (npcBottomY > obstaculo.top) {
-              blockedDirections.push(Direccion.Abajo);
-              console.log("ab");
-            }
-            if (npcTopY < obstaculo.bottom) {
-              blockedDirections.push(Direccion.Arriba);
-              console.log("arr");
-            }
-          }
-        }
+        blockedDirections.push(Direccion.Derecha);
+      }
+      if (
+        npcBottomY >= obstaculo.top &&
+        npcTopY <= obstaculo.bottom &&
+        npcRightX >= obstaculo.left &&
+        npcLeftX <= obstaculo.right
+      ) {
+        blockedDirections.push(Direccion.Abajo);
+      }
+      if (
+        npcTopY <= obstaculo.bottom &&
+        npcBottomY >= obstaculo.top &&
+        npcRightX >= obstaculo.left &&
+        npcLeftX <= obstaculo.right
+      ) {
+        blockedDirections.push(Direccion.Arriba);
       }
     });
+    // this.avoidFlex.forEach((obstaculo) => {
+    //   if (
+    //     npcRightX > obstaculo.left &&
+    //     npcLeftX < obstaculo.right &&
+    //     npcBottomY > obstaculo.top &&
+    //     npcTopY < obstaculo.bottom
+    //     //  &&
+    //     // newDepth === obstacle.depth
+    //   ) {
+    //     let horizontalOverlap = Math.min(
+    //       npcRightX - obstaculo.left,
+    //       obstaculo.right - npcLeftX
+    //     );
+    //     let verticalOverlap = Math.min(
+    //       npcBottomY - obstaculo.top,
+    //       obstaculo.bottom - npcTopY
+    //     );
+
+    //     if (horizontalOverlap < verticalOverlap) {
+    //       blockedDirections.push(
+    //         ...(this.npc.x < obstaculo.x
+    //           ? [
+    //               Direccion.Izquierda,
+    //               Direccion.IzquierdaAbajo,
+    //               Direccion.IzquierdaArriba,
+    //             ]
+    //           : [
+    //               Direccion.Derecha,
+    //               Direccion.DerechaAbajo,
+    //               Direccion.DerechaArriba,
+    //             ])
+    //       );
+    //     } else {
+    //       blockedDirections.push(
+    //         ...(this.npc.y < obstaculo.y
+    //           ? [
+    //               Direccion.Arriba,
+    //               Direccion.DerechaArriba,
+    //               Direccion.IzquierdaArriba,
+    //             ]
+    //           : [
+    //               Direccion.Abajo,
+    //               Direccion.DerechaAbajo,
+    //               Direccion.IzquierdaAbajo,
+    //             ])
+    //       );
+    //     }
+    //   }
+    // });
   }
 
   private comprobarLimitesMundo(blockedDirections: Direccion[]) {
@@ -263,6 +314,7 @@ export default class RandomWalkerNPC {
       blockedDirections.push(
         ...[Direccion.Derecha, Direccion.DerechaAbajo, Direccion.DerechaArriba]
       );
+      console.log("paredDer");
     }
     if (nextX - (this.npc.displayWidth * this.npc.escala.x) / 2 <= 0) {
       blockedDirections.push(
@@ -272,6 +324,7 @@ export default class RandomWalkerNPC {
           Direccion.IzquierdaArriba,
         ]
       );
+      console.log("paredIz");
     }
     if (
       nextY + (this.npc.displayHeight * this.npc.escala.y) / 2 >=
@@ -280,6 +333,7 @@ export default class RandomWalkerNPC {
       blockedDirections.push(
         ...[Direccion.Abajo, Direccion.IzquierdaAbajo, Direccion.DerechaAbajo]
       );
+      console.log("paredAbajo");
     }
     if (nextY - (this.npc.displayHeight * this.npc.escala.y) / 2 <= 0) {
       blockedDirections.push(
@@ -289,6 +343,7 @@ export default class RandomWalkerNPC {
           Direccion.DerechaArriba,
         ]
       );
+      console.log("paredArriba");
     }
   }
 
@@ -302,7 +357,10 @@ export default class RandomWalkerNPC {
       )
       .filter((dir) => !blockedDirections.includes(dir));
 
+    console.log({ blockedDirections });
+
     if (availableDirections?.length > 0) {
+      console.log("si");
       let angle: number, currentDireccion: Direccion;
       if (availableDirections?.length > 1) {
         const newAvailableDirections = availableDirections.filter(
