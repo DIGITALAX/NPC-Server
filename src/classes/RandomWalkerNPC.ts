@@ -35,8 +35,6 @@ export default class RandomWalkerNPC {
   private npc!: Sprite;
   private seatsTaken: number;
   private ultimoDirecciones: Direccion[] = [];
-  private idleProbability: number = 0.3;
-  private lastIdleTime: number = 0;
   private moveCounter: number = 0;
   private sitting: boolean;
   private gameTimer: GameTimer;
@@ -109,16 +107,9 @@ export default class RandomWalkerNPC {
   }
 
   private setRandomDirection() {
-    if (
-      (this.gameTimer.timeAccumulated > this.lastIdleTime + 30000 ||
-        Math.random() < this.idleProbability) &&
-      this.moveCounter > 0
-    ) {
+    if (this.moveCounter++ >= 6) {
       this.goIdle();
-    } else if (
-      this.moveCounter++ >= between(7, 13) &&
-      this.seatsTaken < this.seats.length
-    ) {
+    } else if (this.moveCounter++ >= 5 && this.seatsTaken < this.seats.length) {
       this.goSit();
     } else {
       this.goMove();
@@ -136,6 +127,11 @@ export default class RandomWalkerNPC {
     ) {
       this.npc.x += this.velocidad.x * (deltaTime / 1000) * this.speed;
       this.npc.y += this.velocidad.y * (deltaTime / 1000) * this.speed;
+
+      if (this.moveCounter > 10) {
+        this.setRandomDirection();
+      }
+
       this.willCollide();
       if (!this.sitting) {
         this.actualizarAnimacion();
@@ -144,6 +140,8 @@ export default class RandomWalkerNPC {
   }
 
   private actualizarAnimacion() {
+    if (this.animacion == Direccion.Inactivo || this.velocidad == new Vector2())
+      return;
     const dx = this.velocidad.x;
     const dy = this.velocidad.y;
     let direccion: Direccion | null = null;
@@ -220,27 +218,13 @@ export default class RandomWalkerNPC {
     blockedDirections: Direccion[]
   ) {
     this.avoidFlex.forEach((obstaculo) => {
-      const isNearY = Math.abs(this.npc.y - obstaculo.sitio.y) <= 50;
-
-      if (isNearY) {
-        if (
-          npcLeftX <= obstaculo.right &&
-          npcTopY <= obstaculo.bottom &&
-          npcBottomY >= obstaculo.top
-        ) {
-          blockedDirections.push(
-            ...[
-              Direccion.Izquierda,
-              Direccion.IzquierdaArribaIzquierda,
-              Direccion.IzquierdaAbajoIzquierda,
-            ]
-          );
-        }
-        if (
-          npcRightX >= obstaculo.left &&
-          npcTopY <= obstaculo.bottom &&
-          npcBottomY >= obstaculo.top
-        ) {
+      if (
+        npcBottomY >= obstaculo.sitio.y &&
+        npcTopY <= obstaculo.sitio.y &&
+        npcRightX >= obstaculo.left - 20 &&
+        npcLeftX <= obstaculo.right + 20
+      ) {
+        if (this.animacion == Direccion.Derecha) {
           blockedDirections.push(
             ...[
               Direccion.Derecha,
@@ -248,30 +232,28 @@ export default class RandomWalkerNPC {
               Direccion.DerechaArribaDerecha,
             ]
           );
-        }
-        if (
-          npcBottomY >= obstaculo.top &&
-          npcRightX >= obstaculo.left &&
-          npcLeftX <= obstaculo.right
-        ) {
+        } else if (this.animacion == Direccion.Izquierda) {
           blockedDirections.push(
             ...[
-              Direccion.Abajo,
-              Direccion.AbajoAbajoIzquierda,
-              Direccion.AbajoAbajoDerecha,
+              Direccion.Izquierda,
+              Direccion.IzquierdaArribaIzquierda,
+              Direccion.IzquierdaAbajoIzquierda,
             ]
           );
-        }
-        if (
-          npcTopY <= obstaculo.bottom &&
-          npcRightX >= obstaculo.left &&
-          npcLeftX <= obstaculo.right
-        ) {
+        } else if (this.animacion?.toLowerCase()?.includes("arriba")) {
           blockedDirections.push(
             ...[
               Direccion.Arriba,
               Direccion.ArribaArribaIzquierda,
               Direccion.ArribaArribaDerecha,
+            ]
+          );
+        } else if (this.animacion?.toLowerCase()?.includes("abajo")) {
+          blockedDirections.push(
+            ...[
+              Direccion.Abajo,
+              Direccion.AbajoAbajoIzquierda,
+              Direccion.AbajoAbajoDerecha,
             ]
           );
         }
@@ -439,12 +421,16 @@ export default class RandomWalkerNPC {
         }
 
         this.ultimoDirecciones.unshift(currentDireccion);
-        this.ultimoDirecciones = this.ultimoDirecciones.slice(0, 2);
+        this.ultimoDirecciones = this.ultimoDirecciones
+          .slice(0, 3)
+          .filter(Boolean);
       } else {
         currentDireccion = availableDirections[0];
 
         this.ultimoDirecciones.unshift(currentDireccion);
-        this.ultimoDirecciones = this.ultimoDirecciones.slice(0, 2);
+        this.ultimoDirecciones = this.ultimoDirecciones
+          .slice(0, 3)
+          .filter(Boolean);
       }
 
       switch (currentDireccion) {
@@ -479,7 +465,7 @@ export default class RandomWalkerNPC {
         Math.cos(degToRad(angle)),
         Math.sin(degToRad(angle))
       );
-      this.moveCounter++
+      this.moveCounter++;
       this.directionChangeCooldown = this.directionChangeMinInterval;
     }
   }
@@ -489,7 +475,6 @@ export default class RandomWalkerNPC {
     this.velocidad = new Vector2();
     this.moveCounter = 0;
     this.gameTimer.setTimeout(() => {
-      this.lastIdleTime = this.gameTimer.timeAccumulated;
       this.setRandomDirection();
     }, between(20000, 120000));
   }

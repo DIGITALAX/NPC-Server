@@ -1,4 +1,4 @@
-import { Articulo, Escena, Objeto, Seat } from "./../types/src.types";
+import { Articulo, Escena, Objeto } from "./../types/src.types";
 import RandomWalkerNPC from "./RandomWalkerNPC.js";
 
 export default class EscenaEstudio {
@@ -43,10 +43,10 @@ export default class EscenaEstudio {
 
         let coded = {
           ...obj,
-          left: obj.talla.x - halfWidth,
-          top: obj.talla.y - halfHeight,
-          right: obj.talla.x + halfWidth,
-          bottom: obj.talla.y + halfHeight,
+          left: obj.sitio.x - halfWidth,
+          top: obj.sitio.y - halfHeight,
+          right: obj.sitio.x + halfWidth,
+          bottom: obj.sitio.y + halfHeight,
         };
 
         avoidFlex.push(coded);
