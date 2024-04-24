@@ -39,10 +39,6 @@ export interface Escena {
     uri: string;
     displayWidth: number;
     displayHeight: number;
-    origen: {
-      x: number;
-      y: number;
-    };
     sitio: {
       x: number;
       y: number;
@@ -59,10 +55,6 @@ export interface Articulo {
     x: number;
     y: number;
   };
-  origen: {
-    x: number;
-    y: number;
-  };
   escala: {
     x: number;
     y: number;
@@ -71,6 +63,7 @@ export interface Articulo {
     x: number;
     y: number;
   };
+  profundidad?: number;
 }
 
 export interface Objeto {
@@ -95,10 +88,6 @@ export interface Seat {
     y: number;
   };
   uri: string;
-  origen: {
-    x: number;
-    y: number;
-  };
   escala: {
     x: number;
     y: number;
@@ -117,10 +106,6 @@ export interface Sprite {
   margin: number;
   startFrame: number;
   endFrame: number;
-  origen: {
-    x: number;
-    y: number;
-  };
   escala: {
     x: number;
     y: number;

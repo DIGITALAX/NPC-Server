@@ -35,14 +35,12 @@ export default class RandomWalkerNPC {
   private npc!: Sprite;
   private seatsTaken: number;
   private ultimoDirecciones: Direccion[] = [];
-  private lastPositionCheckTime: number = 0;
   private idleProbability: number = 0.3;
   private lastIdleTime: number = 0;
   private moveCounter: number = 0;
   private sitting: boolean;
   private gameTimer: GameTimer;
   private randomSeat: Seat | null = null;
-  private lastVisitedRegion: number[] = Array(8).fill(-Infinity);
 
   constructor(
     sprite: Sprite,
@@ -111,10 +109,6 @@ export default class RandomWalkerNPC {
   }
 
   private setRandomDirection() {
-    console.log(
-      this.moveCounter >= between(7, 13),
-      this.seatsTaken < this.seats.length
-    );
     if (
       (this.gameTimer.timeAccumulated > this.lastIdleTime + 30000 ||
         Math.random() < this.idleProbability) &&
@@ -122,7 +116,7 @@ export default class RandomWalkerNPC {
     ) {
       this.goIdle();
     } else if (
-      this.moveCounter >= between(7, 13) &&
+      this.moveCounter++ >= between(7, 13) &&
       this.seatsTaken < this.seats.length
     ) {
       this.goSit();
@@ -145,7 +139,6 @@ export default class RandomWalkerNPC {
       this.willCollide();
       if (!this.sitting) {
         this.actualizarAnimacion();
-        this.comprobarUbicacion();
       }
     }
   }
@@ -196,7 +189,14 @@ export default class RandomWalkerNPC {
   private willCollide() {
     let blockedDirections: Direccion[] = [];
 
-    this.evitarObstaculos(
+    this.evitarObstaculosFijos(
+      this.npc.x + (this.npc.displayWidth * this.npc.escala.x) / 2,
+      this.npc.x - (this.npc.displayWidth * this.npc.escala.x) / 2,
+      this.npc.y + (this.npc.displayHeight * this.npc.escala.y) / 2,
+      this.npc.y - (this.npc.displayHeight * this.npc.escala.y) / 2,
+      blockedDirections
+    );
+    this.evitarObstaculosProfundos(
       this.npc.x + (this.npc.displayWidth * this.npc.escala.x) / 2,
       this.npc.x - (this.npc.displayWidth * this.npc.escala.x) / 2,
       this.npc.y + (this.npc.displayHeight * this.npc.escala.y) / 2,
@@ -212,8 +212,74 @@ export default class RandomWalkerNPC {
       }
     }
   }
+  private evitarObstaculosProfundos(
+    npcRightX: number,
+    npcLeftX: number,
+    npcBottomY: number,
+    npcTopY: number,
+    blockedDirections: Direccion[]
+  ) {
+    this.avoidFlex.forEach((obstaculo) => {
+      const isNearY = Math.abs(this.npc.y - obstaculo.sitio.y) <= 50;
 
-  private evitarObstaculos(
+      if (isNearY) {
+        if (
+          npcLeftX <= obstaculo.right &&
+          npcTopY <= obstaculo.bottom &&
+          npcBottomY >= obstaculo.top
+        ) {
+          blockedDirections.push(
+            ...[
+              Direccion.Izquierda,
+              Direccion.IzquierdaArribaIzquierda,
+              Direccion.IzquierdaAbajoIzquierda,
+            ]
+          );
+        }
+        if (
+          npcRightX >= obstaculo.left &&
+          npcTopY <= obstaculo.bottom &&
+          npcBottomY >= obstaculo.top
+        ) {
+          blockedDirections.push(
+            ...[
+              Direccion.Derecha,
+              Direccion.DerechaAbajoDerecha,
+              Direccion.DerechaArribaDerecha,
+            ]
+          );
+        }
+        if (
+          npcBottomY >= obstaculo.top &&
+          npcRightX >= obstaculo.left &&
+          npcLeftX <= obstaculo.right
+        ) {
+          blockedDirections.push(
+            ...[
+              Direccion.Abajo,
+              Direccion.AbajoAbajoIzquierda,
+              Direccion.AbajoAbajoDerecha,
+            ]
+          );
+        }
+        if (
+          npcTopY <= obstaculo.bottom &&
+          npcRightX >= obstaculo.left &&
+          npcLeftX <= obstaculo.right
+        ) {
+          blockedDirections.push(
+            ...[
+              Direccion.Arriba,
+              Direccion.ArribaArribaIzquierda,
+              Direccion.ArribaArribaDerecha,
+            ]
+          );
+        }
+      }
+    });
+  }
+
+  private evitarObstaculosFijos(
     npcRightX: number,
     npcLeftX: number,
     npcBottomY: number,
@@ -227,7 +293,6 @@ export default class RandomWalkerNPC {
         npcTopY <= obstaculo.bottom &&
         npcBottomY >= obstaculo.top
       ) {
-        console.log("eviIz");
         blockedDirections.push(
           ...[
             Direccion.Izquierda,
@@ -242,7 +307,6 @@ export default class RandomWalkerNPC {
         npcTopY <= obstaculo.bottom &&
         npcBottomY >= obstaculo.top
       ) {
-        console.log("eviDer");
         blockedDirections.push(
           ...[
             Direccion.Derecha,
@@ -257,7 +321,6 @@ export default class RandomWalkerNPC {
         npcRightX >= obstaculo.left &&
         npcLeftX <= obstaculo.right
       ) {
-        console.log("eviAb");
         blockedDirections.push(
           ...[
             Direccion.Abajo,
@@ -272,7 +335,6 @@ export default class RandomWalkerNPC {
         npcRightX >= obstaculo.left &&
         npcLeftX <= obstaculo.right
       ) {
-        console.log("eviArr");
         blockedDirections.push(
           ...[
             Direccion.Arriba,
@@ -282,55 +344,6 @@ export default class RandomWalkerNPC {
         );
       }
     });
-    // this.avoidFlex.forEach((obstaculo) => {
-    //   if (
-    //     npcRightX > obstaculo.left &&
-    //     npcLeftX < obstaculo.right &&
-    //     npcBottomY > obstaculo.top &&
-    //     npcTopY < obstaculo.bottom
-    //     //  &&
-    //     // newDepth === obstacle.depth
-    //   ) {
-    //     let horizontalOverlap = Math.min(
-    //       npcRightX - obstaculo.left,
-    //       obstaculo.right - npcLeftX
-    //     );
-    //     let verticalOverlap = Math.min(
-    //       npcBottomY - obstaculo.top,
-    //       obstaculo.bottom - npcTopY
-    //     );
-
-    //     if (horizontalOverlap < verticalOverlap) {
-    //       blockedDirections.push(
-    //         ...(this.npc.x < obstaculo.x
-    //           ? [
-    //               Direccion.Izquierda,
-    //               Direccion.IzquierdaAbajo,
-    //               Direccion.IzquierdaArriba,
-    //             ]
-    //           : [
-    //               Direccion.Derecha,
-    //               Direccion.DerechaAbajo,
-    //               Direccion.DerechaArriba,
-    //             ])
-    //       );
-    //     } else {
-    //       blockedDirections.push(
-    //         ...(this.npc.y < obstaculo.y
-    //           ? [
-    //               Direccion.Arriba,
-    //               Direccion.DerechaArriba,
-    //               Direccion.IzquierdaArriba,
-    //             ]
-    //           : [
-    //               Direccion.Abajo,
-    //               Direccion.DerechaAbajo,
-    //               Direccion.IzquierdaAbajo,
-    //             ])
-    //       );
-    //     }
-    //   }
-    // });
   }
 
   private comprobarLimitesMundo(blockedDirections: Direccion[]) {
@@ -351,7 +364,6 @@ export default class RandomWalkerNPC {
           Direccion.ArribaArribaDerecha,
         ]
       );
-      console.log("paredDer");
     }
     if (nextX - (this.npc.displayWidth * this.npc.escala.x) / 2 <= 0) {
       blockedDirections.push(
@@ -365,7 +377,6 @@ export default class RandomWalkerNPC {
           Direccion.ArribaArribaIzquierda,
         ]
       );
-      console.log("paredIz");
     }
     if (
       nextY + (this.npc.displayHeight * this.npc.escala.y) / 2 >=
@@ -382,7 +393,6 @@ export default class RandomWalkerNPC {
           Direccion.IzquierdaAbajoIzquierda,
         ]
       );
-      console.log("paredAbajo");
     }
     if (nextY - (this.npc.displayHeight * this.npc.escala.y) / 2 <= 0) {
       blockedDirections.push(
@@ -396,7 +406,6 @@ export default class RandomWalkerNPC {
           Direccion.IzquierdaArribaIzquierda,
         ]
       );
-      console.log("paredArriba");
     }
   }
 
@@ -410,10 +419,7 @@ export default class RandomWalkerNPC {
       )
       .filter((dir) => !blockedDirections.includes(dir));
 
-    console.log({ blockedDirections });
-
     if (availableDirections?.length > 0) {
-      console.log("si");
       let angle: number, currentDireccion: Direccion;
       if (availableDirections?.length > 1) {
         const newAvailableDirections = availableDirections.filter(
@@ -473,6 +479,7 @@ export default class RandomWalkerNPC {
         Math.cos(degToRad(angle)),
         Math.sin(degToRad(angle))
       );
+      this.moveCounter++
       this.directionChangeCooldown = this.directionChangeMinInterval;
     }
   }
@@ -492,37 +499,6 @@ export default class RandomWalkerNPC {
     const angle = between(0, 360);
     this.velocidad = new Vector2(Math.cos(angle), Math.sin(angle));
     this.actualizarAnimacion();
-  }
-
-  private comprobarUbicacion() {
-    if (this.gameTimer.timeAccumulated > this.lastPositionCheckTime + 30000) {
-      const currentRegionX = Math.floor(this.npc.x / (this.world.width / 8));
-      const currentRegionY = Math.floor(this.npc.y / (this.world.height / 8));
-      const currentRegionIndex = currentRegionY * 8 + currentRegionX;
-      this.lastVisitedRegion[currentRegionIndex] =
-        this.gameTimer.timeAccumulated;
-
-      const leastVisitedRegionIndex = this.lastVisitedRegion.indexOf(
-        Math.min(...this.lastVisitedRegion)
-      );
-      const targetRegionX =
-        (leastVisitedRegionIndex % 8) * (this.world.width / 8) +
-        this.world.width / 8 / 2;
-      const targetRegionY =
-        Math.floor(leastVisitedRegionIndex / 8) * (this.world.height / 8) +
-        this.world.height / 8 / 2;
-
-      const directionToTarget = Math.atan2(
-        targetRegionY - this.npc.y,
-        targetRegionX - this.npc.x
-      );
-      this.velocidad = new Vector2(
-        Math.cos(directionToTarget),
-        Math.sin(directionToTarget)
-      );
-
-      this.lastPositionCheckTime = this.gameTimer.timeAccumulated;
-    }
   }
 
   private goSit() {
