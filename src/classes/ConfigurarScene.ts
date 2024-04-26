@@ -1,5 +1,6 @@
-import { Articulo, Escena, Objeto } from "./../types/src.types";
+import { Escena } from "./../types/src.types";
 import RandomWalkerNPC from "./RandomWalkerNPC.js";
+import PF from "pathfinding";
 
 export default class EscenaEstudio {
   readonly key: string;
@@ -8,58 +9,37 @@ export default class EscenaEstudio {
 
   constructor(escena: Escena) {
     this.key = escena.key;
+    const aStar = this.initializeGrid(escena);
+
     this.npcs = escena.sprites.map((sprite) => {
-      let avoidAll: (Objeto & {
-          left: number;
-          top: number;
-          right: number;
-          bottom: number;
-        })[] = [],
-        avoidFlex: (Articulo & {
-          left: number;
-          top: number;
-          right: number;
-          bottom: number;
-        })[] = [];
-
-      escena.evitar.map((obj) => {
-        const halfWidth = obj.displayWidth / 2;
-        const halfHeight = obj.displayHeight / 2;
-
-        let coded = {
-          ...obj,
-          left: obj.x - halfWidth,
-          top: obj.y - halfHeight,
-          right: obj.x + halfWidth,
-          bottom: obj.y + halfHeight,
-        };
-
-        avoidAll.push(coded);
-      });
-
-      escena.profundidad.map((obj) => {
-        const halfWidth = obj.talla.x / 2;
-        const halfHeight = obj.talla.y / 2;
-
-        let coded = {
-          ...obj,
-          left: obj.sitio.x - halfWidth,
-          top: obj.sitio.y - halfHeight,
-          right: obj.sitio.x + halfWidth,
-          bottom: obj.sitio.y + halfHeight,
-        };
-
-        avoidFlex.push(coded);
-      });
-
       return new RandomWalkerNPC(
         sprite,
         this.sillasOcupadas,
         escena.sillas,
-        avoidAll,
-        avoidFlex,
+        aStar,
         escena.world
       );
     });
+  }
+
+  private initializeGrid(escena: Escena): {
+    grid: PF.Grid;
+    astar: PF.AStarFinder;
+  } {
+    const grid = new PF.Grid(escena.world.width, escena.world.height);
+
+    escena.prohibited.forEach((area) => {
+      const startX = Math.max(0, area.x);
+      const endX = Math.min(escena.world.width - 1, area.x + area.width - 1);
+      const startY = Math.max(0, area.y);
+      const endY = Math.min(escena.world.height - 1, area.y + area.height - 1);
+      for (let y = startY; y <= endY; y++) {
+        for (let x = startX; x <= endX; x++) {
+          grid.setWalkableAt(x, y, false);
+        }
+      }
+    });
+
+    return { grid, astar: new PF.AStarFinder() };
   }
 }

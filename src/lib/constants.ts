@@ -44,6 +44,7 @@ export const SCENE_LIST: Escena[] = [
         talla: { x: 92, y: 116 },
         uri: "QmariT81Kgxw4mNHCt8wGHmgH5avzrZt2r6vNiik4qeSwK",
         escala: { x: 1, y: 1 },
+        par: "escritorio1",
       },
       {
         anim: Direccion.Silla,
@@ -55,6 +56,7 @@ export const SCENE_LIST: Escena[] = [
         talla: { x: 89, y: 109 },
         uri: "Qmc8VyBMDALMJJknadELsL9SBQuYSuTHpa3e1SqfX61Egn",
         escala: { x: 1, y: 1 },
+        par: "escritorio2",
       },
       {
         anim: Direccion.Silla,
@@ -66,6 +68,7 @@ export const SCENE_LIST: Escena[] = [
         talla: { x: 100, y: 108 },
         uri: "QmUuHUnrMHhusH1JrgG6WonoCUxG1t7LQe348gru2d4uHM",
         escala: { x: 1, y: 1 },
+        par: "escritorio3",
       },
       {
         anim: Direccion.Silla,
@@ -77,6 +80,7 @@ export const SCENE_LIST: Escena[] = [
         sitio: { x: 998.5, y: 485 },
         talla: { x: 98, y: 103 },
         escala: { x: 1, y: 1 },
+        par: "escritorio4",
       },
     ],
     objects: [
@@ -163,13 +167,6 @@ export const SCENE_LIST: Escena[] = [
         escala: { x: 1, y: 1 },
       },
     ],
-    evitar: [
-      { x: 756, y: 0, displayHeight: 110, displayWidth: 1512 },
-      { x: 145, y: 0, displayHeight: 230, displayWidth: 500 },
-      { x: 1442, y: 750, displayHeight: 160, displayWidth: 163 },
-      { x: 470, y: 0, displayHeight: 210, displayWidth: 225 },
-      { x: 60, y: 415, displayHeight: 830, displayWidth: 100 },
-    ],
     profundidad: [
       {
         etiqueta: "panelDeControl",
@@ -221,6 +218,43 @@ export const SCENE_LIST: Escena[] = [
         startFrame: 0,
         endFrame: 143,
         escala: { x: 0.5, y: 0.5 },
+      },
+    ],
+    prohibited: [
+      { x: 0, y: 0, height: 110, width: 1512 },
+      { x: 0, y: 0, height: 230, width: 600 },
+      { x: 1349, y: 670, height: 160, width: 163 },
+      { x: 357, y: 0, height: 210, width: 225 },
+      { x: 0, y: 0, height: 830, width: 100 },
+      {
+        x: 1122,
+        y: 625,
+        height: 10,
+        width: 390,
+      },
+      {
+        x: 1182,
+        y: 305,
+        height: 10,
+        width: 319,
+      },
+      {
+        x: 1205,
+        y: 425,
+        height: 10,
+        width: 307,
+      },
+      {
+        x: 859,
+        y: 305,
+        height: 10,
+        width: 307,
+      },
+      {
+        x: 865,
+        y: 435,
+        height: 10,
+        width: 307,
       },
     ],
   },

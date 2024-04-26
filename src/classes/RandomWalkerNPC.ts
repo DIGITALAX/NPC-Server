@@ -1,76 +1,46 @@
-import { between, degToRad } from "./../lib/utils.js";
-import {
-  Direccion,
-  Sprite,
-  Objeto,
-  Seat,
-  Articulo,
-} from "./../types/src.types.js";
+import { between } from "./../lib/utils.js";
+import { Direccion, Sprite, Seat } from "./../types/src.types.js";
 import Vector2 from "./Vector2.js";
 import GameTimer from "./GameTimer.js";
+import PF from "pathfinding";
 
 export default class RandomWalkerNPC {
-  private readonly world: {
-    height: number;
-    width: number;
-  };
   private readonly seats: Seat[];
-  private readonly avoidAll: (Objeto & {
-    left: number;
-    top: number;
-    right: number;
-    bottom: number;
-  })[];
-  private readonly avoidFlex: (Articulo & {
-    left: number;
-    top: number;
-    right: number;
-    bottom: number;
-  })[];
   private readonly speed: number = 60;
-  private readonly directionChangeMinInterval: number = 1000;
-  private directionChangeCooldown: number = 0;
+  private readonly grid: PF.Grid;
+  private readonly world: { height: number; width: number };
   private velocidad!: Vector2;
+  private aStar: PF.AStarFinder;
+  private idle: boolean = false;
   private animacion: Direccion | null = null;
   private npc!: Sprite;
   private seatsTaken: number;
-  private ultimoDirecciones: Direccion[] = [];
   private moveCounter: number = 0;
-  private sitting: boolean;
+  private sitting: boolean = false;
+  private onPath: boolean = false;
   private gameTimer: GameTimer;
   private randomSeat: Seat | null = null;
+  private currentPathIndex: number = 0;
+  private currentPath: { x: number; y: number }[] = [];
 
   constructor(
     sprite: Sprite,
     seatsTaken: number,
     seats: Seat[],
-    avoidAll: (Objeto & {
-      left: number;
-      top: number;
-      right: number;
-      bottom: number;
-    })[],
-    avoidFlex: (Articulo & {
-      left: number;
-      top: number;
-      right: number;
-      bottom: number;
-    })[],
-    world: {
-      height: number;
-      width: number;
-    }
+    aStar: {
+      grid: PF.Grid;
+      astar: PF.AStarFinder;
+    },
+    world: { height: number; width: number }
   ) {
     this.gameTimer = new GameTimer();
-    this.sitting = false;
     this.velocidad = new Vector2();
     this.seatsTaken = seatsTaken;
     this.seats = seats;
-    this.avoidAll = avoidAll;
-    this.avoidFlex = avoidFlex;
-    this.world = world;
+    this.grid = aStar.grid;
+    this.aStar = aStar.astar;
     this.npc = sprite;
-    this.setRandomDirection();
+    this.world = world;
   }
 
   getState(): {
@@ -83,7 +53,11 @@ export default class RandomWalkerNPC {
     randomSeat: Seat | null;
   } {
     return {
-      direccion: this.animacion,
+      direccion: this.idle
+        ? Direccion.Inactivo
+        : this.velocidad == new Vector2() && this.randomSeat
+        ? this.randomSeat?.anim
+        : this.animacion,
       texture: this.npc.etiqueta,
       velocidadX:
         this.animacion == Direccion.Inactivo ||
@@ -107,36 +81,34 @@ export default class RandomWalkerNPC {
   }
 
   private setRandomDirection() {
-    if (this.moveCounter++ >= 6) {
+    const probabilidadSit: number =
+      this.seatsTaken < this.seats.length ? 0.5 : 0;
+    const ajusteProbabilidad: number = this.seatsTaken / this.seats.length;
+    const probabilidadFinalSit: number =
+      probabilidadSit * (1 - ajusteProbabilidad);
+    const decision: number = Math.random();
+    // if (this.moveCounter >= 3 && decision < probabilidadFinalSit) {
+    // this.goSit();
+    // }
+    // else
+    if (this.moveCounter >= 6 && decision >= probabilidadFinalSit) {
       this.goIdle();
-    } else if (this.moveCounter++ >= 5 && this.seatsTaken < this.seats.length) {
-      this.goSit();
     } else {
       this.goMove();
     }
   }
 
   update(deltaTime: number) {
-    this.gameTimer.tick(deltaTime);
-    if (this.directionChangeCooldown > 0)
-      this.directionChangeCooldown -= deltaTime;
-    if (
-      this.animacion !== Direccion.Inactivo &&
-      this.animacion !== Direccion.Silla &&
-      this.animacion !== Direccion.Sofa &&
-      this.velocidad !== new Vector2()
-    ) {
+    if (this.grid) {
+      this.gameTimer.tick(deltaTime);
       this.npc.x += this.velocidad.x * (deltaTime / 1000) * this.speed;
       this.npc.y += this.velocidad.y * (deltaTime / 1000) * this.speed;
 
-      if (this.moveCounter > 10) {
+      if (!this.sitting && !this.onPath) {
         this.setRandomDirection();
       }
-
-      this.willCollide();
-      if (!this.sitting) {
-        this.actualizarAnimacion();
-      }
+      this.seguirCamino();
+      this.actualizarAnimacion();
     }
   }
 
@@ -190,346 +162,110 @@ export default class RandomWalkerNPC {
     this.animacion = direccion;
   }
 
-  private willCollide() {
-    let blockedDirections: Direccion[] = [];
-
-    this.evitarObstaculosFijos(
-      this.npc.x + (this.npc.displayWidth * this.npc.escala.x) / 2,
-      this.npc.x - (this.npc.displayWidth * this.npc.escala.x) / 2,
-      this.npc.y + (this.npc.displayHeight * this.npc.escala.y) / 2,
-      this.npc.y - (this.npc.displayHeight * this.npc.escala.y) / 2,
-      blockedDirections
-    );
-    this.evitarObstaculosProfundos(
-      this.npc.x + (this.npc.displayWidth * this.npc.escala.x) / 2,
-      this.npc.x - (this.npc.displayWidth * this.npc.escala.x) / 2,
-      this.npc.y + (this.npc.displayHeight * this.npc.escala.y) / 2,
-      this.npc.y - (this.npc.displayHeight * this.npc.escala.y) / 2,
-      blockedDirections
-    );
-    this.comprobarLimitesMundo(blockedDirections);
-    if (blockedDirections.length > 0 && this.directionChangeCooldown <= 0) {
-      if (!this.sitting) {
-        this.evaluarDireccion(blockedDirections);
-      } else {
-        // this.adjustPathTowardsChair(blockedDirections);
-      }
-    }
-  }
-  private evitarObstaculosProfundos(
-    npcRightX: number,
-    npcLeftX: number,
-    npcBottomY: number,
-    npcTopY: number,
-    blockedDirections: Direccion[]
-  ) {
-    this.avoidFlex.forEach((obstaculo) => {
-      if (
-        npcBottomY >= obstaculo.sitio.y &&
-        npcTopY <= obstaculo.sitio.y &&
-        npcRightX >= obstaculo.left - 20 &&
-        npcLeftX <= obstaculo.right + 20
-      ) {
-        if (this.animacion == Direccion.Derecha) {
-          blockedDirections.push(
-            ...[
-              Direccion.Derecha,
-              Direccion.DerechaAbajoDerecha,
-              Direccion.DerechaArribaDerecha,
-            ]
-          );
-        } else if (this.animacion == Direccion.Izquierda) {
-          blockedDirections.push(
-            ...[
-              Direccion.Izquierda,
-              Direccion.IzquierdaArribaIzquierda,
-              Direccion.IzquierdaAbajoIzquierda,
-            ]
-          );
-        } else if (this.animacion?.toLowerCase()?.includes("arriba")) {
-          blockedDirections.push(
-            ...[
-              Direccion.Arriba,
-              Direccion.ArribaArribaIzquierda,
-              Direccion.ArribaArribaDerecha,
-            ]
-          );
-        } else if (this.animacion?.toLowerCase()?.includes("abajo")) {
-          blockedDirections.push(
-            ...[
-              Direccion.Abajo,
-              Direccion.AbajoAbajoIzquierda,
-              Direccion.AbajoAbajoDerecha,
-            ]
-          );
-        }
-      }
-    });
-  }
-
-  private evitarObstaculosFijos(
-    npcRightX: number,
-    npcLeftX: number,
-    npcBottomY: number,
-    npcTopY: number,
-    blockedDirections: Direccion[]
-  ) {
-    this.avoidAll.forEach((obstaculo) => {
-      if (
-        npcLeftX <= obstaculo.right &&
-        npcRightX >= obstaculo.right &&
-        npcTopY <= obstaculo.bottom &&
-        npcBottomY >= obstaculo.top
-      ) {
-        blockedDirections.push(
-          ...[
-            Direccion.Izquierda,
-            Direccion.IzquierdaArribaIzquierda,
-            Direccion.IzquierdaAbajoIzquierda,
-          ]
-        );
-      }
-      if (
-        npcRightX >= obstaculo.left &&
-        npcLeftX <= obstaculo.left &&
-        npcTopY <= obstaculo.bottom &&
-        npcBottomY >= obstaculo.top
-      ) {
-        blockedDirections.push(
-          ...[
-            Direccion.Derecha,
-            Direccion.DerechaAbajoDerecha,
-            Direccion.DerechaArribaDerecha,
-          ]
-        );
-      }
-      if (
-        npcBottomY >= obstaculo.top &&
-        npcTopY <= obstaculo.top &&
-        npcRightX >= obstaculo.left &&
-        npcLeftX <= obstaculo.right
-      ) {
-        blockedDirections.push(
-          ...[
-            Direccion.Abajo,
-            Direccion.AbajoAbajoIzquierda,
-            Direccion.AbajoAbajoDerecha,
-          ]
-        );
-      }
-      if (
-        npcTopY <= obstaculo.bottom &&
-        npcBottomY >= obstaculo.bottom &&
-        npcRightX >= obstaculo.left &&
-        npcLeftX <= obstaculo.right
-      ) {
-        blockedDirections.push(
-          ...[
-            Direccion.Arriba,
-            Direccion.ArribaArribaIzquierda,
-            Direccion.ArribaArribaDerecha,
-          ]
-        );
-      }
-    });
-  }
-
-  private comprobarLimitesMundo(blockedDirections: Direccion[]) {
-    const nextX = this.npc.x;
-    const nextY = this.npc.y;
-    if (
-      nextX + (this.npc.displayWidth * this.npc.escala.x) / 2 >=
-      this.world.width
-    ) {
-      blockedDirections.push(
-        ...[
-          Direccion.Derecha,
-          Direccion.DerechaAbajo,
-          Direccion.DerechaArriba,
-          Direccion.DerechaAbajoDerecha,
-          Direccion.DerechaArribaDerecha,
-          Direccion.AbajoAbajoDerecha,
-          Direccion.ArribaArribaDerecha,
-        ]
-      );
-    }
-    if (nextX - (this.npc.displayWidth * this.npc.escala.x) / 2 <= 0) {
-      blockedDirections.push(
-        ...[
-          Direccion.Izquierda,
-          Direccion.IzquierdaAbajo,
-          Direccion.IzquierdaArriba,
-          Direccion.IzquierdaAbajoIzquierda,
-          Direccion.IzquierdaArribaIzquierda,
-          Direccion.AbajoAbajoIzquierda,
-          Direccion.ArribaArribaIzquierda,
-        ]
-      );
-    }
-    if (
-      nextY + (this.npc.displayHeight * this.npc.escala.y) / 2 >=
-      this.world.height
-    ) {
-      blockedDirections.push(
-        ...[
-          Direccion.Abajo,
-          Direccion.IzquierdaAbajo,
-          Direccion.DerechaAbajo,
-          Direccion.AbajoAbajoIzquierda,
-          Direccion.AbajoAbajoDerecha,
-          Direccion.DerechaAbajoDerecha,
-          Direccion.IzquierdaAbajoIzquierda,
-        ]
-      );
-    }
-    if (nextY - (this.npc.displayHeight * this.npc.escala.y) / 2 <= 0) {
-      blockedDirections.push(
-        ...[
-          Direccion.Arriba,
-          Direccion.IzquierdaArriba,
-          Direccion.DerechaArriba,
-          Direccion.ArribaArribaIzquierda,
-          Direccion.ArribaArribaDerecha,
-          Direccion.DerechaArribaDerecha,
-          Direccion.IzquierdaArribaIzquierda,
-        ]
-      );
-    }
-  }
-
-  private evaluarDireccion(blockedDirections: Direccion[]) {
-    let availableDirections = Object.values(Direccion)
-      .filter(
-        (dir) =>
-          dir !== Direccion.Silla &&
-          dir !== Direccion.Sofa &&
-          dir !== Direccion.Inactivo
-      )
-      .filter((dir) => !blockedDirections.includes(dir));
-
-    if (availableDirections?.length > 0) {
-      let angle: number, currentDireccion: Direccion;
-      if (availableDirections?.length > 1) {
-        const newAvailableDirections = availableDirections.filter(
-          (dir) => !this.ultimoDirecciones?.includes(dir)
-        );
-
-        if (newAvailableDirections.length > 0) {
-          currentDireccion =
-            newAvailableDirections[
-              Math.floor(Math.random() * newAvailableDirections.length)
-            ];
-        } else {
-          currentDireccion =
-            availableDirections[
-              Math.floor(Math.random() * availableDirections.length)
-            ];
-        }
-
-        this.ultimoDirecciones.unshift(currentDireccion);
-        this.ultimoDirecciones = this.ultimoDirecciones
-          .slice(0, 3)
-          .filter(Boolean);
-      } else {
-        currentDireccion = availableDirections[0];
-
-        this.ultimoDirecciones.unshift(currentDireccion);
-        this.ultimoDirecciones = this.ultimoDirecciones
-          .slice(0, 3)
-          .filter(Boolean);
-      }
-
-      switch (currentDireccion) {
-        case Direccion.Arriba:
-          angle = -90;
-          break;
-        case Direccion.Abajo:
-          angle = 90;
-          break;
-        case Direccion.Izquierda:
-          angle = 180;
-          break;
-        case Direccion.Derecha:
-          angle = 0;
-          break;
-        case Direccion.DerechaAbajo:
-          angle = 45;
-          break;
-        case Direccion.DerechaArriba:
-          angle = -45;
-          break;
-        case Direccion.IzquierdaAbajo:
-          angle = 135;
-          break;
-        case Direccion.IzquierdaArriba:
-          angle = 225;
-          break;
-        default:
-          angle = 0;
-      }
-      this.velocidad = new Vector2(
-        Math.cos(degToRad(angle)),
-        Math.sin(degToRad(angle))
-      );
-      this.moveCounter++;
-      this.directionChangeCooldown = this.directionChangeMinInterval;
-    }
-  }
-
   private goIdle() {
+    this.idle = true;
     this.velocidad = new Vector2();
     this.animacion = Direccion.Inactivo;
     this.moveCounter = 0;
     this.gameTimer.setTimeout(() => {
       this.setRandomDirection();
+      this.idle = false;
     }, between(20000, 120000));
   }
 
   private goMove() {
+    this.onPath = true;
     this.moveCounter++;
-    const angle = between(0, 360);
-    this.velocidad = new Vector2(Math.cos(angle), Math.sin(angle));
-    this.actualizarAnimacion();
+
+    const destination = this.getRandomDestination();
+    console.log(this.npc.x, this.npc.y, destination.x, destination.y);
+    const path = this.aStar.findPath(
+      Math.round(this.npc.x),
+      Math.round(this.npc.y),
+      destination.x,
+      destination.y,
+      this.grid.clone()
+    );
+    console.log({ path });
+
+    this.currentPathIndex = 0;
+    this.currentPath = path.map((p) => ({ x: p[0], y: p[1] }));
   }
 
-  private goSit() {
-    this.sitting = true;
-    this.seatsTaken++;
-    console.log("go to seat");
-    this.randomSeat = this.seats[between(0, this.seats.length - 1)];
-    const dx = Number(this.randomSeat?.adjustedX) - this.npc.x;
-    const dy = Number(this.randomSeat?.adjustedY) - this.npc.y;
-    const angle = Math.atan2(dy, dx);
-    this.velocidad = new Vector2(Math.cos(angle), Math.sin(angle));
-    this.actualizarAnimacion();
+  private getRandomDestination(): { x: number; y: number } {
+    let x: number, y: number;
+    do {
+      x = Math.floor(Math.random() * this.world.width);
+      y = Math.floor(Math.random() * this.world.height);
+    } while (!this.grid.isWalkableAt(x, y));
+    return { x, y };
+  }
 
-    const checkArrival = () => {
-      const distance = Math.sqrt(
-        Math.pow(this.npc.x - Number(this.randomSeat?.adjustedX), 2) +
-          Math.pow(this.npc.y - Number(this.randomSeat?.adjustedY), 2)
-      );
-      if (distance < 1) {
-        this.velocidad = new Vector2();
-        this.npc = {
-          ...this.npc,
-          x: this.randomSeat?.adjustedX!,
-          y: this.randomSeat?.adjustedY!,
-        };
-        console.log("sitting");
-        this.animacion = this.randomSeat?.anim!;
-        this.gameTimer.setTimeout(() => {
-          this.sitting = false;
-          console.log("finished sitting");
-          this.randomSeat = null;
-          this.moveCounter = 0;
-          this.seatsTaken--;
-          this.setRandomDirection();
-        }, between(120000, 240000));
-      } else {
-        this.gameTimer.setTimeout(checkArrival, 100);
+  private seguirCamino() {
+    if (
+      this.currentPath.length > 0 &&
+      this.currentPathIndex < this.currentPath.length
+    ) {
+      console.log("in");
+      const point = this.currentPath[this.currentPathIndex];
+      if (Math.hypot(point.x - this.npc.x, point.y - this.npc.y) < 10) {
+        this.currentPathIndex++;
+        this.moveToNextPoint();
       }
-    };
-
-    checkArrival();
+    }
   }
+
+  private moveToNextPoint(): void {
+    if (this.currentPath && this.currentPathIndex < this.currentPath.length) {
+      const target = this.currentPath[this.currentPathIndex];
+      this.velocidad = this.calculateDirection(
+        this.npc.x,
+        this.npc.y,
+        target.x,
+        target.y
+      );
+      this.actualizarAnimacion();
+    } else {
+      this.velocidad = new Vector2(0, 0);
+      this.currentPath = [];
+    }
+  }
+
+  private calculateDirection(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+  ): Vector2 {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance === 0) return new Vector2(0, 0);
+    const dirX = (dx / distance) * this.speed;
+    const dirY = (dy / distance) * this.speed;
+    return new Vector2(dirX, dirY);
+  }
+
+  // private async goSit() {
+  //   this.sitting = true;
+  //   this.seatsTaken++;
+  //   this.randomSeat = this.seats[between(0, this.seats.length - 1)];
+
+  //   this.animacion = this.randomSeat?.anim!;
+  //   this.velocidad = new Vector2();
+  //   this.npc = {
+  //     ...this.npc,
+  //     x: this.randomSeat?.adjustedX!,
+  //     y: this.randomSeat?.adjustedY!,
+  //   };
+  //   console.log("sitting");
+  //   this.gameTimer.setTimeout(() => {
+  //     this.sitting = false;
+  //     console.log("finished sitting");
+  //     this.randomSeat = null;
+  //     this.moveCounter = 0;
+  //     this.seatsTaken--;
+  //     this.setRandomDirection();
+  //   }, between(120000, 240000));
+  // }
 }

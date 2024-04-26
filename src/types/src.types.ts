@@ -26,11 +26,11 @@ export interface Escena {
     width: number;
     height: number;
   };
-  evitar: {
+  prohibited: {
     x: number;
     y: number;
-    displayHeight: number;
-    displayWidth: number;
+    width: number;
+    height: number;
   }[];
   profundidad: Articulo[];
   sillas: Seat[];
@@ -92,6 +92,7 @@ export interface Seat {
     x: number;
     y: number;
   };
+  par?: string;
 }
 
 export interface Sprite {
