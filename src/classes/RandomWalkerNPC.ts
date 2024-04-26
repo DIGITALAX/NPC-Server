@@ -82,13 +82,13 @@ export default class RandomWalkerNPC {
   }
 
   private setRandomDirection() {
-    const probabilidadSit: number =
-      this.seatsTaken < this.seats.length ? 0.5 : 0;
-    const ajusteProbabilidad: number = this.seatsTaken / this.seats.length;
-    const probabilidadFinalSit: number =
-      probabilidadSit * (1 - ajusteProbabilidad);
-    const decision: number = Math.random();
     if (this.moveCounter >= 6) {
+      const probabilidadSit: number =
+        this.seatsTaken < this.seats.length ? 0.5 : 0;
+      const ajusteProbabilidad: number = this.seatsTaken / this.seats.length;
+      const probabilidadFinalSit: number =
+        probabilidadSit * (1 - ajusteProbabilidad);
+      const decision: number = Math.random();
       if (decision < probabilidadFinalSit) {
         this.goSit();
       } else {
@@ -177,6 +177,7 @@ export default class RandomWalkerNPC {
   }
 
   private findPath(destination: { x: number; y: number }) {
+    console.log("encontrar", { destination });
     const path = this.aStar.findPath(
       Math.round(this.npc.x),
       Math.round(this.npc.y),
@@ -227,13 +228,13 @@ export default class RandomWalkerNPC {
           y: this.randomSeat?.adjustedY!,
         };
         this.gameTimer.setTimeout(() => {
+          this.randomSeat = null;
+          this.sitting = false;
           this.npc = {
             ...this.npc,
             x: this.closestSeat!?.x,
             y: this.closestSeat!?.y,
           };
-          this.sitting = false;
-          this.randomSeat = null;
           this.closestSeat = null;
           this.moveCounter = 0;
           this.seatsTaken--;
