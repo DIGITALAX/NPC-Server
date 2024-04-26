@@ -1,4 +1,4 @@
-import { between } from "./../lib/utils.js";
+import { between, degToRad } from "./../lib/utils.js";
 import { Direccion, Sprite, Seat } from "./../types/src.types.js";
 import Vector2 from "./Vector2.js";
 import GameTimer from "./GameTimer.js";
@@ -104,7 +104,7 @@ export default class RandomWalkerNPC {
       this.npc.x += this.velocidad.x * (deltaTime / 1000) * this.speed;
       this.npc.y += this.velocidad.y * (deltaTime / 1000) * this.speed;
 
-      if (!this.sitting && !this.onPath) {
+      if (!this.sitting && !this.onPath && !this.idle) {
         this.setRandomDirection();
       }
       this.seguirCamino();
@@ -113,13 +113,6 @@ export default class RandomWalkerNPC {
   }
 
   private actualizarAnimacion() {
-    if (
-      this.velocidad == new Vector2() &&
-      (this.animacion == Direccion.Inactivo ||
-        this.animacion == Direccion.Silla ||
-        this.animacion == Direccion.Sofa)
-    )
-      return;
     const dx = this.velocidad.x;
     const dy = this.velocidad.y;
     let direccion: Direccion | null = null;
@@ -167,18 +160,18 @@ export default class RandomWalkerNPC {
     this.velocidad = new Vector2();
     this.animacion = Direccion.Inactivo;
     this.moveCounter = 0;
+    const espera = between(20000, 120000);
+    console.log({ espera });
     this.gameTimer.setTimeout(() => {
       this.setRandomDirection();
       this.idle = false;
-    }, between(20000, 120000));
+    }, espera);
   }
 
   private goMove() {
     this.onPath = true;
     this.moveCounter++;
-
     const destination = this.getRandomDestination();
-    console.log(this.npc.x, this.npc.y, destination.x, destination.y);
     const path = this.aStar.findPath(
       Math.round(this.npc.x),
       Math.round(this.npc.y),
@@ -186,18 +179,27 @@ export default class RandomWalkerNPC {
       destination.y,
       this.grid.clone()
     );
-    console.log({ path });
-
     this.currentPathIndex = 0;
     this.currentPath = path.map((p) => ({ x: p[0], y: p[1] }));
+    console.log({ destination, l: this.currentPath.length });
   }
 
   private getRandomDestination(): { x: number; y: number } {
     let x: number, y: number;
+    let attempts = 0,
+      minDistance = 500;
     do {
       x = Math.floor(Math.random() * this.world.width);
       y = Math.floor(Math.random() * this.world.height);
-    } while (!this.grid.isWalkableAt(x, y));
+      attempts++;
+      if (attempts > 100) {
+        minDistance = 0;
+      }
+    } while (
+      !this.grid.isWalkableAt(x, y) ||
+      Math.hypot(x - this.npc.x, y - this.npc.y) < minDistance
+    );
+
     return { x, y };
   }
 
@@ -206,44 +208,26 @@ export default class RandomWalkerNPC {
       this.currentPath.length > 0 &&
       this.currentPathIndex < this.currentPath.length
     ) {
-      console.log("in");
       const point = this.currentPath[this.currentPathIndex];
-      if (Math.hypot(point.x - this.npc.x, point.y - this.npc.y) < 10) {
+      if (Math.hypot(point.x - this.npc.x, point.y - this.npc.y) < 50) {
         this.currentPathIndex++;
-        this.moveToNextPoint();
+        this.moveToNextPoint(point);
       }
-    }
-  }
-
-  private moveToNextPoint(): void {
-    if (this.currentPath && this.currentPathIndex < this.currentPath.length) {
-      const target = this.currentPath[this.currentPathIndex];
-      this.velocidad = this.calculateDirection(
-        this.npc.x,
-        this.npc.y,
-        target.x,
-        target.y
-      );
-      this.actualizarAnimacion();
     } else {
+      this.onPath = false;
       this.velocidad = new Vector2(0, 0);
-      this.currentPath = [];
     }
   }
 
-  private calculateDirection(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number
-  ): Vector2 {
-    const dx = x2 - x1;
-    const dy = y2 - y1;
+  private moveToNextPoint(target: { x: number; y: number }): void {
+    const dx = target.x - this.npc.x;
+    const dy = target.y - this.npc.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    if (distance === 0) return new Vector2(0, 0);
-    const dirX = (dx / distance) * this.speed;
-    const dirY = (dy / distance) * this.speed;
-    return new Vector2(dirX, dirY);
+    if (distance < 10) return;
+    const angulo = Math.atan2(dy, dx);
+
+    this.velocidad = new Vector2(Math.cos(angulo), Math.sin(angulo));
+    this.actualizarAnimacion();
   }
 
   // private async goSit() {
