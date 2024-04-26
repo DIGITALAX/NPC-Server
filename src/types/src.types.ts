@@ -77,6 +77,7 @@ export interface Seat {
   adjustedX: number;
   adjustedY: number;
   profundidad: boolean;
+  depth?: number;
   anim: Direccion;
   etiqueta: string;
   sitio: {

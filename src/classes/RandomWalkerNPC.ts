@@ -22,6 +22,7 @@ export default class RandomWalkerNPC {
   private randomSeat: Seat | null = null;
   private currentPathIndex: number = 0;
   private currentPath: { x: number; y: number }[] = [];
+  private closestSeat: { x: number; y: number } | null = null;
 
   constructor(
     sprite: Sprite,
@@ -87,12 +88,12 @@ export default class RandomWalkerNPC {
     const probabilidadFinalSit: number =
       probabilidadSit * (1 - ajusteProbabilidad);
     const decision: number = Math.random();
-    // if (this.moveCounter >= 3 && decision < probabilidadFinalSit) {
-    // this.goSit();
-    // }
-    // else
-    if (this.moveCounter >= 6 && decision >= probabilidadFinalSit) {
-      this.goIdle();
+    if (this.moveCounter >= 6) {
+      if (decision < probabilidadFinalSit) {
+        this.goSit();
+      } else {
+        this.goIdle();
+      }
     } else {
       this.goMove();
     }
@@ -113,6 +114,7 @@ export default class RandomWalkerNPC {
   }
 
   private actualizarAnimacion() {
+    if (this.randomSeat || this.idle) return;
     const dx = this.velocidad.x;
     const dy = this.velocidad.y;
     let direccion: Direccion | null = null;
@@ -161,7 +163,6 @@ export default class RandomWalkerNPC {
     this.animacion = Direccion.Inactivo;
     this.moveCounter = 0;
     const espera = between(20000, 120000);
-    console.log({ espera });
     this.gameTimer.setTimeout(() => {
       this.setRandomDirection();
       this.idle = false;
@@ -172,6 +173,10 @@ export default class RandomWalkerNPC {
     this.onPath = true;
     this.moveCounter++;
     const destination = this.getRandomDestination();
+    this.findPath(destination);
+  }
+
+  private findPath(destination: { x: number; y: number }) {
     const path = this.aStar.findPath(
       Math.round(this.npc.x),
       Math.round(this.npc.y),
@@ -181,7 +186,6 @@ export default class RandomWalkerNPC {
     );
     this.currentPathIndex = 0;
     this.currentPath = path.map((p) => ({ x: p[0], y: p[1] }));
-    console.log({ destination, l: this.currentPath.length });
   }
 
   private getRandomDestination(): { x: number; y: number } {
@@ -214,8 +218,29 @@ export default class RandomWalkerNPC {
         this.moveToNextPoint(point);
       }
     } else {
-      this.onPath = false;
-      this.velocidad = new Vector2(0, 0);
+      this.velocidad = new Vector2();
+      if (this.sitting) {
+        this.animacion = this.randomSeat?.anim!;
+        this.npc = {
+          ...this.npc,
+          x: this.randomSeat?.adjustedX!,
+          y: this.randomSeat?.adjustedY!,
+        };
+        this.gameTimer.setTimeout(() => {
+          this.npc = {
+            ...this.npc,
+            x: this.closestSeat!?.x,
+            y: this.closestSeat!?.y,
+          };
+          this.sitting = false;
+          this.randomSeat = null;
+          this.closestSeat = null;
+          this.moveCounter = 0;
+          this.seatsTaken--;
+        }, between(120000, 240000));
+      } else {
+        this.onPath = false;
+      }
     }
   }
 
@@ -230,26 +255,46 @@ export default class RandomWalkerNPC {
     this.actualizarAnimacion();
   }
 
-  // private async goSit() {
-  //   this.sitting = true;
-  //   this.seatsTaken++;
-  //   this.randomSeat = this.seats[between(0, this.seats.length - 1)];
+  private async goSit() {
+    this.sitting = true;
+    this.seatsTaken++;
+    this.randomSeat = this.seats[between(0, this.seats.length - 1)];
 
-  //   this.animacion = this.randomSeat?.anim!;
-  //   this.velocidad = new Vector2();
-  //   this.npc = {
-  //     ...this.npc,
-  //     x: this.randomSeat?.adjustedX!,
-  //     y: this.randomSeat?.adjustedY!,
-  //   };
-  //   console.log("sitting");
-  //   this.gameTimer.setTimeout(() => {
-  //     this.sitting = false;
-  //     console.log("finished sitting");
-  //     this.randomSeat = null;
-  //     this.moveCounter = 0;
-  //     this.seatsTaken--;
-  //     this.setRandomDirection();
-  //   }, between(120000, 240000));
-  // }
+    let seatX: number = this.randomSeat?.adjustedX,
+      seatY: number = this.randomSeat?.adjustedY;
+
+    if (!this.grid.isWalkableAt(seatX, seatY)) {
+      const nearestWalkable = this.findNearestWalkable(seatX, seatY);
+      seatX = nearestWalkable.x;
+      seatY = nearestWalkable.y;
+    }
+
+    this.closestSeat = {
+      x: seatX,
+      y: seatY,
+    };
+
+    this.findPath(this.closestSeat);
+  }
+
+  private findNearestWalkable(x: number, y: number): { x: number; y: number } {
+    let currentY = y;
+
+    while (currentY < this.world.height) {
+      if (this.grid.isWalkableAt(x, currentY)) {
+        return { x, y: currentY };
+      }
+      currentY++;
+    }
+
+    currentY = y;
+    while (currentY >= 0) {
+      if (this.grid.isWalkableAt(x, currentY)) {
+        return { x, y: currentY };
+      }
+      currentY--;
+    }
+
+    return { x, y };
+  }
 }
