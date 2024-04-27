@@ -1,4 +1,4 @@
-import { between, degToRad } from "./../lib/utils.js";
+import { between, configurarDireccion } from "./../lib/utils.js";
 import { Direccion, Sprite, Seat } from "./../types/src.types.js";
 import Vector2 from "./Vector2.js";
 import GameTimer from "./GameTimer.js";
@@ -9,15 +9,17 @@ export default class RandomWalkerNPC {
   private readonly speed: number = 60;
   private readonly grid: PF.Grid;
   private readonly world: { height: number; width: number };
+  private readonly maxMoves: number;
   private velocidad!: Vector2;
   private aStar: PF.AStarFinder;
   private idle: boolean = false;
-  private animacion: Direccion | null = null;
+  private animacion: string | null = null;
   private npc!: Sprite;
-  private seatsTaken: number;
+  private seatsTaken: Seat[];
   private moveCounter: number = 0;
   private sitting: boolean = false;
   private onPath: boolean = false;
+  private seated: boolean = false;
   private gameTimer: GameTimer;
   private randomSeat: Seat | null = null;
   private currentPathIndex: number = 0;
@@ -26,7 +28,7 @@ export default class RandomWalkerNPC {
 
   constructor(
     sprite: Sprite,
-    seatsTaken: number,
+    seatsTaken: Seat[],
     seats: Seat[],
     aStar: {
       grid: PF.Grid;
@@ -42,10 +44,11 @@ export default class RandomWalkerNPC {
     this.aStar = aStar.astar;
     this.npc = sprite;
     this.world = world;
+    this.maxMoves = sprite.maxMoves;
   }
 
   getState(): {
-    direccion: Direccion | null;
+    direccion: string | null;
     velocidadX: number;
     velocidadY: number;
     npcX: number;
@@ -55,37 +58,44 @@ export default class RandomWalkerNPC {
   } {
     return {
       direccion: this.idle
-        ? Direccion.Inactivo
-        : this.velocidad == new Vector2() && this.randomSeat
-        ? this.randomSeat?.anim
+        ? configurarDireccion(this.npc.etiqueta, Direccion.Inactivo)
+        : this.seated
+        ? configurarDireccion(this.npc.etiqueta, this.randomSeat?.anim!)
         : this.animacion,
       texture: this.npc.etiqueta,
       velocidadX:
-        this.animacion == Direccion.Inactivo ||
-        this.animacion == Direccion.Silla ||
-        this.animacion == Direccion.Sofa
+        this.animacion ==
+          configurarDireccion(this.npc.etiqueta, Direccion.Inactivo) ||
+        this.animacion ==
+          configurarDireccion(this.npc.etiqueta, Direccion.Silla) ||
+        this.animacion == configurarDireccion(this.npc.etiqueta, Direccion.Sofa)
           ? 0
           : this.velocidad.x,
       velocidadY:
-        this.animacion == Direccion.Inactivo ||
-        this.animacion == Direccion.Silla ||
-        this.animacion == Direccion.Sofa
+        this.animacion ==
+          configurarDireccion(this.npc.etiqueta, Direccion.Inactivo) ||
+        this.animacion ==
+          configurarDireccion(this.npc.etiqueta, Direccion.Silla) ||
+        this.animacion == configurarDireccion(this.npc.etiqueta, Direccion.Sofa)
           ? 0
           : this.velocidad.y,
       npcX: this.npc.x,
       npcY: this.npc.y,
       randomSeat:
-        this.animacion == Direccion.Silla || this.animacion == Direccion.Sofa
+        this.animacion ==
+          configurarDireccion(this.npc.etiqueta, Direccion.Silla) ||
+        this.animacion == configurarDireccion(this.npc.etiqueta, Direccion.Sofa)
           ? this.randomSeat
           : null,
     };
   }
 
   private setRandomDirection() {
-    if (this.moveCounter >= 6) {
+    if (this.moveCounter >= this.maxMoves) {
       const probabilidadSit: number =
-        this.seatsTaken < this.seats.length ? 0.5 : 0;
-      const ajusteProbabilidad: number = this.seatsTaken / this.seats.length;
+        this.seatsTaken.length < this.seats.length ? 0.5 : 0;
+      const ajusteProbabilidad: number =
+        this.seatsTaken.length / this.seats.length;
       const probabilidadFinalSit: number =
         probabilidadSit * (1 - ajusteProbabilidad);
       const decision: number = Math.random();
@@ -108,64 +118,62 @@ export default class RandomWalkerNPC {
       if (!this.sitting && !this.onPath && !this.idle) {
         this.setRandomDirection();
       }
-      this.seguirCamino();
+
+      if (!this.seated) {
+        this.seguirCamino();
+      }
+
       this.actualizarAnimacion();
     }
   }
 
   private actualizarAnimacion() {
-    if (this.randomSeat || this.idle) return;
+    if (this.velocidad == new Vector2() || this.idle || this.seated) return;
     const dx = this.velocidad.x;
     const dy = this.velocidad.y;
-    let direccion: Direccion | null = null;
+    let direccion: string | null = null;
     let angulo = Math.atan2(dy, dx) * (180 / Math.PI);
     if (angulo < 0) angulo += 360;
-    if (angulo >= 348.75 || angulo < 11.25) {
-      direccion = Direccion.Derecha;
-    } else if (angulo >= 11.25 && angulo < 33.75) {
-      direccion = Direccion.DerechaAbajo;
-    } else if (angulo >= 33.75 && angulo < 56.25) {
-      direccion = Direccion.DerechaAbajo;
-    } else if (angulo >= 56.25 && angulo < 78.75) {
-      direccion = Direccion.DerechaAbajo;
-    } else if (angulo >= 78.75 && angulo < 101.25) {
-      direccion = Direccion.Abajo;
-    } else if (angulo >= 101.25 && angulo < 123.75) {
-      direccion = Direccion.IzquierdaAbajo;
-    } else if (angulo >= 123.75 && angulo < 146.25) {
-      direccion = Direccion.IzquierdaAbajo;
-    } else if (angulo >= 146.25 && angulo < 168.75) {
-      direccion = Direccion.IzquierdaAbajo;
-    } else if (angulo >= 168.75 && angulo < 191.25) {
-      direccion = Direccion.Izquierda;
-    } else if (angulo >= 191.25 && angulo < 213.75) {
-      direccion = Direccion.IzquierdaArriba;
-    } else if (angulo >= 213.75 && angulo < 236.25) {
-      direccion = Direccion.IzquierdaArriba;
-    } else if (angulo >= 236.25 && angulo < 258.75) {
-      direccion = Direccion.IzquierdaArriba;
-    } else if (angulo >= 258.75 && angulo < 281.25) {
-      direccion = Direccion.Arriba;
-    } else if (angulo >= 281.25 && angulo < 303.75) {
-      direccion = Direccion.DerechaArriba;
-    } else if (angulo >= 303.75 && angulo < 326.25) {
-      direccion = Direccion.DerechaArriba;
-    } else if (angulo >= 326.25 && angulo < 348.75) {
-      direccion = Direccion.DerechaArriba;
+    if (angulo >= 337.5 || angulo < 22.5) {
+      direccion = configurarDireccion(this.npc.etiqueta, Direccion.Derecha);
+    } else if (angulo >= 22.5 && angulo < 67.5) {
+      direccion = configurarDireccion(
+        this.npc.etiqueta,
+        Direccion.DerechaAbajo
+      );
+    } else if (angulo >= 67.5 && angulo < 112.5) {
+      direccion = configurarDireccion(this.npc.etiqueta, Direccion.Abajo);
+    } else if (angulo >= 112.5 && angulo < 157.5) {
+      direccion = configurarDireccion(
+        this.npc.etiqueta,
+        Direccion.IzquierdaAbajo
+      );
+    } else if (angulo >= 157.5 && angulo < 202.5) {
+      direccion = configurarDireccion(this.npc.etiqueta, Direccion.Izquierda);
+    } else if (angulo >= 202.5 && angulo < 247.5) {
+      direccion = configurarDireccion(
+        this.npc.etiqueta,
+        Direccion.IzquierdaArriba
+      );
+    } else if (angulo >= 247.5 && angulo < 292.5) {
+      direccion = configurarDireccion(this.npc.etiqueta, Direccion.Arriba);
+    } else if (angulo >= 292.5 && angulo < 337.5) {
+      direccion = configurarDireccion(
+        this.npc.etiqueta,
+        Direccion.DerechaArriba
+      );
     }
-
     this.animacion = direccion;
   }
 
   private goIdle() {
-    this.idle = true;
     this.velocidad = new Vector2();
-    this.animacion = Direccion.Inactivo;
-    this.moveCounter = 0;
+    this.animacion = configurarDireccion(this.npc.etiqueta, Direccion.Inactivo);
+    this.idle = true;
     const espera = between(20000, 120000);
     this.gameTimer.setTimeout(() => {
-      this.setRandomDirection();
       this.idle = false;
+      this.moveCounter = 0;
     }, espera);
   }
 
@@ -177,10 +185,17 @@ export default class RandomWalkerNPC {
   }
 
   private findPath(destination: { x: number; y: number }) {
-    console.log("encontrar", { destination });
+    let currentNPC: { x: number; y: number } = {
+      x: Math.round(this.npc.x),
+      y: Math.round(this.npc.y),
+    };
+    if (!this.grid.isWalkableAt(currentNPC.x, currentNPC.y)) {
+      currentNPC = this.findNearestWalkable(currentNPC.x, currentNPC.y);
+    }
+
     const path = this.aStar.findPath(
-      Math.round(this.npc.x),
-      Math.round(this.npc.y),
+      currentNPC.x,
+      currentNPC.y,
       destination.x,
       destination.y,
       this.grid.clone()
@@ -219,29 +234,37 @@ export default class RandomWalkerNPC {
         this.moveToNextPoint(point);
       }
     } else {
-      this.velocidad = new Vector2();
-      if (this.sitting) {
-        this.animacion = this.randomSeat?.anim!;
+      if (this.sitting && !this.seated) {
+        this.seated = true;
+        this.animacion = configurarDireccion(
+          this.npc.etiqueta,
+          this.randomSeat?.anim!
+        );
         this.npc = {
           ...this.npc,
           x: this.randomSeat?.adjustedX!,
           y: this.randomSeat?.adjustedY!,
         };
         this.gameTimer.setTimeout(() => {
-          this.randomSeat = null;
           this.sitting = false;
-          this.npc = {
-            ...this.npc,
-            x: this.closestSeat!?.x,
-            y: this.closestSeat!?.y,
-          };
-          this.closestSeat = null;
+          this.seated = false;
+          if (this.closestSeat) {
+            this.npc = {
+              ...this.npc,
+              x: this.closestSeat!?.x,
+              y: this.closestSeat!?.y,
+            };
+          }
           this.moveCounter = 0;
-          this.seatsTaken--;
+          this.seatsTaken.filter(
+            (item) => item.etiqueta !== this.randomSeat?.etiqueta
+          );
+          this.randomSeat = null;
         }, between(120000, 240000));
       } else {
         this.onPath = false;
       }
+      this.velocidad = new Vector2();
     }
   }
 
@@ -258,8 +281,11 @@ export default class RandomWalkerNPC {
 
   private async goSit() {
     this.sitting = true;
-    this.seatsTaken++;
-    this.randomSeat = this.seats[between(0, this.seats.length - 1)];
+    this.randomSeat = this.seats.filter(
+      (seat) =>
+        !this.seatsTaken.map((silla) => silla.etiqueta).includes(seat.etiqueta)
+    )?.[between(0, this.seats.length - 1)];
+    this.seatsTaken = [...this.seatsTaken, this.randomSeat];
 
     let seatX: number = this.randomSeat?.adjustedX,
       seatY: number = this.randomSeat?.adjustedY;
@@ -269,7 +295,6 @@ export default class RandomWalkerNPC {
       seatX = nearestWalkable.x;
       seatY = nearestWalkable.y;
     }
-
     this.closestSeat = {
       x: seatX,
       y: seatY,

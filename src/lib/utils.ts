@@ -1,3 +1,5 @@
+import { Direccion } from "types/src.types";
+
 export const between = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
@@ -20,3 +22,7 @@ export const distanceBetween = (
 export const radToDeg = (radians: number): number => {
   return radians * (180 / Math.PI);
 };
+
+export const configurarDireccion = (key: string, direccion: Direccion): string => {
+  return `${direccion}-${key}`
+}

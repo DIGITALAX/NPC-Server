@@ -7,14 +7,6 @@ export enum Direccion {
   IzquierdaAbajo = "izquierdaAbajo",
   DerechaArriba = "derechaArriba",
   DerechaAbajo = "derechaAbajo",
-  DerechaArribaDerecha = "derechaArriba",
-  ArribaArribaDerecha = "derechaArriba",
-  ArribaArribaIzquierda = "izquierdaArriba",
-  IzquierdaArribaIzquierda = "izquierdaArriba",
-  IzquierdaAbajoIzquierda = "izquierdaAbajo",
-  AbajoAbajoIzquierda = "izquierdaAbajo",
-  AbajoAbajoDerecha = "derechaAbajo",
-  DerechaAbajoDerecha = "derechaAbajo",
   Inactivo = "inactivo",
   Sofa = "sentadoSofa",
   Silla = "sentadoEscritorio",
@@ -108,6 +100,7 @@ export interface Sprite {
   margin: number;
   startFrame: number;
   endFrame: number;
+  maxMoves: number;
   escala: {
     x: number;
     y: number;

@@ -1,11 +1,11 @@
-import { Escena } from "./../types/src.types";
+import { Escena, Seat } from "./../types/src.types";
 import RandomWalkerNPC from "./RandomWalkerNPC.js";
 import PF from "pathfinding";
 
 export default class EscenaEstudio {
   readonly key: string;
   npcs: RandomWalkerNPC[] = [];
-  sillasOcupadas: number = 0;
+  sillasOcupadas: Seat[] = [];
 
   constructor(escena: Escena) {
     this.key = escena.key;
@@ -17,14 +17,12 @@ export default class EscenaEstudio {
         (escena.sprites?.[0]?.displayHeight * escena.sprites?.[0]?.escala.y) /
           2;
 
-    const aStar = this.initializeGrid(escena, width, height);
-
     this.npcs = escena.sprites.map((sprite) => {
       return new RandomWalkerNPC(
         sprite,
         this.sillasOcupadas,
         escena.sillas,
-        aStar,
+        this.initializeGrid(escena, width, height),
         {
           width,
           height,
