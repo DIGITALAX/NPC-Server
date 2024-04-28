@@ -18,6 +18,7 @@ export interface Escena {
     width: number;
     height: number;
   };
+  cover: string;
   prohibited: {
     x: number;
     y: number;
@@ -98,6 +99,7 @@ export interface Sprite {
   frameWidth: number;
   frameHeight: number;
   margin: number;
+  cover: string;
   startFrame: number;
   endFrame: number;
   maxMoves: number;

@@ -256,7 +256,7 @@ export default class RandomWalkerNPC {
             };
           }
           this.moveCounter = 0;
-          this.seatsTaken.filter(
+          this.seatsTaken = this.seatsTaken.filter(
             (item) => item.etiqueta !== this.randomSeat?.etiqueta
           );
           this.randomSeat = null;
@@ -299,7 +299,6 @@ export default class RandomWalkerNPC {
       x: seatX,
       y: seatY,
     };
-
     this.findPath(this.closestSeat);
   }
 
