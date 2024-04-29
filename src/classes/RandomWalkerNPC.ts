@@ -128,7 +128,19 @@ export default class RandomWalkerNPC {
   }
 
   private actualizarAnimacion() {
-    if (this.velocidad == new Vector2() || this.idle || this.seated) return;
+    if (this.idle) {
+      this.animacion = configurarDireccion(
+        this.npc.etiqueta,
+        Direccion.Inactivo
+      );
+      return;
+    } else if (this.seated) {
+      this.animacion = configurarDireccion(
+        this.npc.etiqueta,
+        this.randomSeat?.anim!
+      );
+      return;
+    }
     const dx = this.velocidad.x;
     const dy = this.velocidad.y;
     let direccion: string | null = null;
@@ -167,9 +179,9 @@ export default class RandomWalkerNPC {
   }
 
   private goIdle() {
+    this.idle = true;
     this.velocidad = new Vector2();
     this.animacion = configurarDireccion(this.npc.etiqueta, Direccion.Inactivo);
-    this.idle = true;
     const espera = between(20000, 120000);
     this.gameTimer.setTimeout(() => {
       this.idle = false;
