@@ -20,7 +20,7 @@ export const SCENE_LIST: Escena[] = [
         adjustedY: 210,
         etiqueta: "sofaUno",
         sitio: { x: 779, y: 200 },
-        talla: { x: 197, y: 107 },
+        talla: { x: 220, y: 120 },
         uri: "QmQfqKAD2Hepe9kQ9VxBSNmwZrywCvuPrnAr5AiF4bMvwB",
         escala: { x: 1.2, y: 1.2 },
         depth: 0,
@@ -32,7 +32,7 @@ export const SCENE_LIST: Escena[] = [
         adjustedY: 200,
         etiqueta: "sofaDos",
         sitio: { x: 1250, y: 200 },
-        talla: { x: 194, y: 109 },
+        talla: { x: 220, y: 120 },
         uri: "QmUFsXQpp1ZZWKWCnHAED4pgZgeLSBnp4ofMz9ae1BkhAR",
         escala: { x: 1.2, y: 1.2 },
         depth: 0,
@@ -89,32 +89,32 @@ export const SCENE_LIST: Escena[] = [
     objects: [
       {
         etiqueta: "pared",
-        sitio: { x: 850, y: 110 },
-        talla: { x: 1022, y: 204 },
+        sitio: { x: 850, y: 89 },
+        talla: { x: 1300, y: 190 },
         uri: "QmcR8PpyDhRaUzJJW5UoxhnyzqNk88imgXS2MGuhgfYsYK",
-        escala: { x: 1.3, y: 1.1 },
+        escala: { x: 1, y: 1 },
         profundidad: 0,
       },
       {
         etiqueta: "nevera",
-        sitio: { x: 145, y: 205 },
-        talla: { x: 235, y: 371 },
+        sitio: { x: 145, y: 170 },
+        talla: { x: 320, y: 360 },
         uri: "QmaGoMNwYt7aEgG6AoKGmDdmWUQgshQ8KtASkgoHKgmcS2",
-        escala: { x: 1.3, y: 1.1 },
+        escala: { x: 1, y: 1 },
         profundidad: 0,
       },
       {
         etiqueta: "maquina",
         sitio: { x: 470, y: 200 },
-        talla: { x: 106, y: 225 },
+        talla: { x: 190, y: 225 },
         uri: "QmVubKFGVcdfZS2pSEhmK8DtpFWbiC8H2BX11VPTd9xnNp",
-        escala: { x: 1.6, y: 1.1 },
+        escala: { x: 1, y: 1 },
         profundidad: 0,
       },
       {
         etiqueta: "alfombra",
         sitio: { x: 410, y: 520 },
-        talla: { x: 246, y: 179 },
+        talla: { x: 320, y: 200 },
         uri: "QmQaZhrMnuwkKbP2UbYtnMxRiUcpZfNGyuEhGuqd7xcFAj",
         escala: { x: 1.5, y: 1.2 },
         profundidad: 0,
@@ -137,7 +137,7 @@ export const SCENE_LIST: Escena[] = [
       {
         etiqueta: "audio2",
         sitio: { x: 916, y: 765 },
-        talla: { x: 160, y: 117 },
+        talla: { x: 160, y: 130 },
         uri: "QmQA2cgeuAMvLSqj75CWrhmNhKoQV2GKapy94Co6WmWQVi",
         escala: { x: 1, y: 1 },
         profundidad: 1000,
@@ -160,14 +160,14 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "capsula",
-        sitio: { x: 50, y: 468 },
+        sitio: { x: 40, y: 468 },
         talla: { x: 95, y: 302 },
         uri: "QmYjXKxmyRQHf6fDdqEaNPEdc3W7gcFuNxogsVL38kR3M9",
         escala: { x: 1, y: 1 },
       },
       {
         etiqueta: "telefono",
-        sitio: { x: 50, y: 710 },
+        sitio: { x: 40, y: 710 },
         talla: { x: 86, y: 242 },
         uri: "QmSz2dcSRdX9vtxpXH91dS4pe8PAkAakbwfb4mGZNwunkk",
         escala: { x: 1, y: 1 },
@@ -212,7 +212,7 @@ export const SCENE_LIST: Escena[] = [
     ],
     sprites: [
       {
-        etiqueta: "muchacho",
+        etiqueta: "muchacho-estudio",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -228,7 +228,7 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 6,
       },
       {
-        etiqueta: "chica",
+        etiqueta: "chica-estudio",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -281,10 +281,10 @@ export const SCENE_LIST: Escena[] = [
         width: 350,
       },
       {
-        x: 865,
+        x: 845,
         y: 360,
         height: 150,
-        width: 10,
+        width: 30,
       },
       {
         x: 645,
@@ -301,7 +301,7 @@ export const SCENE_LIST: Escena[] = [
     ],
   },
   {
-    key: "ático de comercio",
+    key: "ático de intercambio de varianza",
     world: { height: 870, width: 1700 },
     fondo: {
       uri: "QmaHcNASXr5YpgYj7uDBmt9caUL97GiDWM73JHK4E1YoKv",
@@ -323,7 +323,7 @@ export const SCENE_LIST: Escena[] = [
       {
         etiqueta: "monitor",
         sitio: { x: 850, y: 160 },
-        talla: { x: 100, y: 160 },
+        talla: { x: 280, y: 200 },
         uri: "QmSUovQbp8JByka4Nk8t3DvxZ3kXgRuVU9kh67V5kn9YgG",
         escala: { x: 1.3, y: 1.1 },
         profundidad: 0,
@@ -331,7 +331,7 @@ export const SCENE_LIST: Escena[] = [
     ],
     sprites: [
       {
-        etiqueta: "muchacho",
+        etiqueta: "muchacho-ático",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -347,7 +347,7 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 6,
       },
       {
-        etiqueta: "chica",
+        etiqueta: "chica-ático",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -367,14 +367,14 @@ export const SCENE_LIST: Escena[] = [
       {
         etiqueta: "escritoriosSuperior",
         sitio: { x: 850, y: 450 },
-        talla: { x: 800, y: 200 },
+        talla: { x: 1250, y: 250 },
         uri: "QmbW6NieKq5rkqE7F5UDyAVU2g9NF5WYAWCux7Qvuwuh54",
         escala: { x: 1, y: 1 },
       },
       {
         etiqueta: "escritoriosInferior",
         sitio: { x: 850, y: 650 },
-        talla: { x: 800, y: 200 },
+        talla: { x: 1100, y: 250 },
         uri: "QmTesaW8dD2pkTSsLvi6Nhsf3tXN9NQmfBfmMhLfht1abJ",
         escala: { x: 1, y: 1 },
       },
@@ -387,15 +387,15 @@ export const SCENE_LIST: Escena[] = [
         height: 200,
       },
       {
-        x: 130,
+        x: 230,
         y: 370,
-        width: 1500,
+        width: 1300,
         height: 150,
       },
       {
-        x: 150,
+        x: 250,
         y: 570,
-        width: 1500,
+        width: 1170,
         height: 150,
       },
     ],
@@ -403,11 +403,11 @@ export const SCENE_LIST: Escena[] = [
       {
         anim: Direccion.Silla,
         profundidad: true,
-        adjustedX: 350,
-        adjustedY: 480,
+        adjustedX: 500,
+        adjustedY: 460,
         etiqueta: "sillaSuperior1",
-        sitio: { x: 350, y: 480 },
-        talla: { x: 25, y: 50 },
+        sitio: { x: 500, y: 500 },
+        talla: { x: 189, y: 175 },
         uri: "QmRb3pPcDnR1e9WLtfqgzRZEiGdSGVWM6N9mFrLHqs16v8",
         escala: { x: 1, y: 1 },
         par: "escritoriosSuperior",
@@ -415,11 +415,11 @@ export const SCENE_LIST: Escena[] = [
       {
         anim: Direccion.Silla,
         profundidad: true,
-        adjustedX: 600,
-        adjustedY: 480,
+        adjustedX: 730,
+        adjustedY: 460,
         etiqueta: "sillaSuperior2",
-        sitio: { x: 600, y: 480 },
-        talla: { x: 25, y: 50 },
+        sitio: { x: 730, y: 500 },
+        talla: { x: 189, y: 175 },
         uri: "QmRb3pPcDnR1e9WLtfqgzRZEiGdSGVWM6N9mFrLHqs16v8",
         escala: { x: 1, y: 1 },
         par: "escritoriosSuperior",
@@ -427,11 +427,11 @@ export const SCENE_LIST: Escena[] = [
       {
         anim: Direccion.Silla,
         profundidad: true,
-        adjustedX: 850,
-        adjustedY: 480,
+        adjustedX: 980,
+        adjustedY: 460,
         etiqueta: "sillaSuperior3",
-        sitio: { x: 850, y: 480 },
-        talla: { x: 25, y: 50 },
+        sitio: { x: 980, y: 500 },
+        talla: { x: 189, y: 175 },
         uri: "QmRb3pPcDnR1e9WLtfqgzRZEiGdSGVWM6N9mFrLHqs16v8",
         escala: { x: 1, y: 1 },
         par: "escritoriosSuperior",
@@ -439,11 +439,11 @@ export const SCENE_LIST: Escena[] = [
       {
         anim: Direccion.Silla,
         profundidad: true,
-        adjustedX: 1100,
-        adjustedY: 480,
+        adjustedX: 1210,
+        adjustedY: 460,
         etiqueta: "sillaSuperior4",
-        sitio: { x: 1100, y: 480 },
-        talla: { x: 25, y: 50 },
+        sitio: { x: 1210, y: 500 },
+        talla: { x: 189, y: 175 },
         uri: "QmRb3pPcDnR1e9WLtfqgzRZEiGdSGVWM6N9mFrLHqs16v8",
         escala: { x: 1, y: 1 },
         par: "escritoriosSuperior",
@@ -451,23 +451,11 @@ export const SCENE_LIST: Escena[] = [
       {
         anim: Direccion.Silla,
         profundidad: true,
-        adjustedX: 1350,
-        adjustedY: 480,
-        etiqueta: "sillaSuperior5",
-        sitio: { x: 1350, y: 480 },
-        talla: { x: 25, y: 50 },
-        uri: "QmRb3pPcDnR1e9WLtfqgzRZEiGdSGVWM6N9mFrLHqs16v8",
-        escala: { x: 1, y: 1 },
-        par: "escritoriosSuperior",
-      },
-      {
-        anim: Direccion.Silla,
-        profundidad: true,
-        adjustedX: 350,
-        adjustedY: 750,
+        adjustedX: 550,
+        adjustedY: 725,
         etiqueta: "sillaInferior6",
-        sitio: { x: 350, y: 750 },
-        talla: { x: 30, y: 45 },
+        sitio: { x: 550, y: 750 },
+        talla: { x: 189, y: 175 },
         uri: "QmRb3pPcDnR1e9WLtfqgzRZEiGdSGVWM6N9mFrLHqs16v8",
         escala: { x: 1, y: 1 },
         par: "escritoriosInferior",
@@ -476,10 +464,10 @@ export const SCENE_LIST: Escena[] = [
         anim: Direccion.Silla,
         profundidad: true,
         adjustedX: 850,
-        adjustedY: 750,
+        adjustedY: 725,
         etiqueta: "sillaInferior7",
         sitio: { x: 850, y: 750 },
-        talla: { x: 30, y: 45 },
+        talla: { x: 189, y: 175 },
         uri: "QmYukvtXPobWiDUdFFCdSJLQ6Pga55unN3fFBAHNWKSprp",
         escala: { x: 1, y: 1 },
         par: "escritoriosInferior",
@@ -487,11 +475,11 @@ export const SCENE_LIST: Escena[] = [
       {
         anim: Direccion.Silla,
         profundidad: true,
-        adjustedX: 1350,
-        adjustedY: 750,
+        adjustedX: 1150,
+        adjustedY: 725,
         etiqueta: "sillaInferior8",
-        sitio: { x: 1350, y: 750 },
-        talla: { x: 30, y: 45 },
+        sitio: { x: 1150, y: 750 },
+        talla: { x: 189, y: 175 },
         uri: "QmYukvtXPobWiDUdFFCdSJLQ6Pga55unN3fFBAHNWKSprp",
         escala: { x: 1, y: 1 },
         par: "escritoriosInferior",
@@ -501,19 +489,19 @@ export const SCENE_LIST: Escena[] = [
   {
     key: "lote de graffiti",
     fondo: {
-      uri: "QmQho15EawdPjxhZ6QcnFoGHiEV8r2dTS1u7TczQv9cd44",
+      uri: "QmfP6z4Qw4R9zNPP2cz9hJZf2rKCFc9fxggD4ce2r21Zj7",
       etiqueta: "fondo",
-      displayHeight: 830,
+      displayHeight: 620,
       displayWidth: 1512,
-      sitio: { x: 0, y: 0 },
+      sitio: { x: 0, y: 230 },
     },
     cover: "QmVA8di3khf9Fbb1a2JLDk21UdQ4zRoBPLEwRwEwtmQYyp",
     sprites: [
       {
-        etiqueta: "muchacho",
+        etiqueta: "muchacho-lote",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
-        x: 383,
-        y: 576,
+        x: 400,
+        y: 700,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
         displayHeight: 600,
         displayWidth: 300,
@@ -526,10 +514,10 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 6,
       },
       {
-        etiqueta: "chica",
+        etiqueta: "chica-lote",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
-        x: 383,
-        y: 576,
+        x: 40,
+        y: 600,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
         displayHeight: 600,
         displayWidth: 300,
@@ -542,80 +530,543 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 4,
       },
     ],
-    objects: [],
-    profundidad: [],
-    prohibited: [],
-    sillas: [],
-    world: { height: 830, width: 1512 },
-  },
-  {
-    key: "callejero",
-    cover: "QmVA8di3khf9Fbb1a2JLDk21UdQ4zRoBPLEwRwEwtmQYyp",
-    fondo: {
-      uri: "QmQho15EawdPjxhZ6QcnFoGHiEV8r2dTS1u7TczQv9cd44",
-      etiqueta: "fondo",
-      displayHeight: 830,
-      displayWidth: 1512,
-      sitio: { x: 0, y: 0 },
-    },
-    objects: [],
-    profundidad: [],
-    prohibited: [],
-    sillas: [],
-    sprites: [
+    objects: [
       {
-        etiqueta: "muchacho",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
-        x: 383,
-        y: 576,
-        cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
-        displayHeight: 600,
-        displayWidth: 300,
-        frameWidth: 600,
-        frameHeight: 600,
-        margin: 0,
-        startFrame: 0,
-        endFrame: 143,
-        escala: { x: 0.5, y: 0.5 },
-        maxMoves: 6,
+        uri: "QmfRKEmaEX24TSkqHjtELGSF687wLoUzgvBp2wF52TR1qJ",
+        etiqueta: "paredAtras",
+        sitio: { x: 756, y: 115 },
+        talla: { x: 1512, y: 230 },
+        escala: { x: 1.3, y: 1 },
+        profundidad: 0,
       },
       {
-        etiqueta: "chica",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
-        x: 383,
-        y: 576,
-        cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
-        displayHeight: 600,
-        displayWidth: 300,
-        frameWidth: 600,
-        frameHeight: 600,
-        margin: 0,
-        startFrame: 0,
-        endFrame: 143,
-        escala: { x: 0.5, y: 0.5 },
-        maxMoves: 4,
+        etiqueta: "rincon",
+        uri: "QmWUjz1fdY8D9w5nBPERiqPYrKo5sDXYiSKXyaxF64oyx6",
+        sitio: { x: 1350, y: 220 },
+        talla: { x: 450, y: 450 },
+        escala: { x: 1.3, y: 1 },
+        profundidad: 0,
+      },
+      {
+        etiqueta: "coser",
+        uri: "QmPJt81SgAJDLRAm8MFQZFt4UAEx5VYdXtjGSfdPu6oq85",
+        sitio: { x: 910, y: 150 },
+        talla: { x: 300, y: 200 },
+        escala: { x: 1.3, y: 1 },
+        profundidad: 0,
+      },
+      {
+        etiqueta: "estante1",
+        uri: "QmTHKmEikZvaPMEBVbwDnX5w4Q1PmTbnJbezshPhd5Wgv6",
+        sitio: { x: 150, y: 150 },
+        talla: { x: 250, y: 180 },
+        escala: { x: 1.3, y: 1 },
+        profundidad: 0,
+      },
+      {
+        etiqueta: "estante2",
+        uri: "QmaSVU8Xkm1bg8ieqqM6tuJGqW8V7zeAmVwLLN7gpDqy7p",
+        sitio: { x: 470, y: 155 },
+        talla: { x: 250, y: 180 },
+        escala: { x: 1.3, y: 1 },
+        profundidad: 0,
+      },
+      {
+        etiqueta: "microondas",
+        uri: "QmZhTai6WjvYGjVZZXmDxLBDrRfmdx4MychBEWjdbq9ErQ",
+        sitio: { x: 690, y: 150 },
+        talla: { x: 100, y: 200 },
+        escala: { x: 1.3, y: 1 },
+        profundidad: 0,
+      },
+    ],
+    profundidad: [
+      {
+        etiqueta: "monitores",
+        uri: "QmbBJYZ8htPHLMkbg4dxzipGrTjsiaKui8xcPz4dTvqxzx",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 300,
+          y: 190,
+        },
+        sitio: {
+          x: 1000,
+          y: 300,
+        },
+      },
+      {
+        uri: "QmNuXtWyyN1QDcveGJC1ykRsvaipTUh9XdxyMRLU3HFKYb",
+        etiqueta: "estanteModa",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 450,
+          y: 400,
+        },
+        sitio: {
+          x: 1350,
+          y: 460,
+        },
+      },
+      {
+        uri: "QmUGmUn6graG7ZfNyNJpYLBHswphoCMwzqMn8iBY15fCKM",
+        etiqueta: "estanteInferior",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 340,
+          y: 220,
+        },
+        sitio: {
+          x: 250,
+          y: 380,
+        },
+      },
+      {
+        etiqueta: "mesa",
+        uri: "QmVSccor4cNbbKkbQfVJdi61Qzr7P27MAY8pZuRVDrWUki",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 650,
+          y: 200,
+        },
+        sitio: {
+          x: 700,
+          y: 650,
+        },
+      },
+    ],
+    prohibited: [
+      {
+        width: 1512,
+        height: 200,
+        x: 0,
+        y: 0,
+      },
+      {
+        width: 200,
+        height: 120,
+        x: 1312,
+        y: 200,
+      },
+      {
+        width: 370,
+        height: 90,
+        x: 1050,
+        y: 380,
+      },
+      {
+        width: 450,
+        height: 100,
+        x: 1100,
+        y: 450,
+      },
+      {
+        width: 410,
+        height: 100,
+        x: 40,
+        y: 380,
+      },
+      {
+        width: 310,
+        height: 60,
+        x: 850,
+        y: 260,
+      },
+      {
+        width: 650,
+        height: 90,
+        x: 380,
+        y: 560,
+      },
+    ],
+    sillas: [
+      {
+        anim: Direccion.Sofa,
+        profundidad: false,
+        adjustedX: 250,
+        adjustedY: 520,
+        etiqueta: "sofaSuperior",
+        sitio: { x: 250, y: 500 },
+        talla: { x: 380, y: 170 },
+        uri: "Qmf5HH5F4QgAKoAU4P3TZkNV6XzHWUF4LV8kND1JdYEPDp",
+        escala: { x: 1, y: 1 },
+      },
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 930,
+        adjustedY: 665,
+        etiqueta: "sillón1",
+        sitio: { x: 930, y: 720 },
+        talla: { x: 160, y: 175 },
+        uri: "QmX44D6AKP4wmx7FYMgHXBRNPCRobaRLtYhe2wdeZZnf8s",
+        escala: { x: 1, y: 1 },
+        par: "mesa",
+      },
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 700,
+        adjustedY: 665,
+        etiqueta: "sillón2",
+        sitio: { x: 700, y: 720 },
+        talla: { x: 140, y: 165 },
+        uri: "QmQSXmTMDUuGKyaukg1TRN87kT81P9AjRUySbmmFJgncTw",
+        escala: { x: 1, y: 1 },
+        par: "mesa",
+      },
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 510,
+        adjustedY: 665,
+        etiqueta: "sillón3",
+        sitio: { x: 510, y: 720 },
+        talla: { x: 189, y: 175 },
+        uri: "Qme8NKnFn7qzQtfPw23VsRUcaJAAz8cqonU58rJ1Ny3kDH",
+        escala: { x: 1, y: 1 },
+        par: "mesa",
       },
     ],
     world: { height: 830, width: 1512 },
   },
   {
     key: "boutique de ropa callejera",
-    cover: "QmUBJqUtcHZQRsrGHr8sM4UoCuKQWTUuhrXrpuVPyZBsBc",
-    objects: [],
+    world: { height: 1200, width: 2000 },
     fondo: {
-      uri: "QmQho15EawdPjxhZ6QcnFoGHiEV8r2dTS1u7TczQv9cd44",
+      uri: "QmaihjqdZER8BCZmTnVAfdeKUogNTCiRwrwEv14uLxbfr7",
       etiqueta: "fondo",
-      displayHeight: 830,
-      displayWidth: 1512,
-      sitio: { x: 0, y: 0 },
+      displayHeight: 850,
+      displayWidth: 2000,
+      sitio: { x: 0, y: 350 },
     },
-    profundidad: [],
-    prohibited: [],
-    sillas: [],
-    world: { height: 830, width: 1512 },
+    objects: [
+      {
+        uri: "QmeWniogVfBhcG1Uu69ToheyxvLqgepzKqLkQc34EyqjKB",
+        talla: { x: 2000, y: 350 },
+        sitio: {
+          x: 1000,
+          y: 175,
+        },
+        etiqueta: "base",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+      {
+        etiqueta: "mezcla",
+        uri: "QmTYHMzz6356SNeR6gCUcrEoXnXvtHkwPUNHiU3hEck3cR",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 1000, y: 500 },
+        sitio: {
+          x: 1000,
+          y: 200,
+        },
+      },
+      {
+        etiqueta: "servidores",
+        uri: "QmNpgdQ8b6eWMdxr91V3soT4pEeirHJo3q9JsGY7Lc1yoD",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 200, y: 250 },
+        sitio: {
+          x: 1850,
+          y: 300,
+        },
+      },
+      {
+        etiqueta: "flora1",
+        uri: "QmZZHARx1UMFH4zHMamyrqYYjta6ZasLzcsfNDJ5TgUC6c",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 89, y: 100 },
+        sitio: {
+          x: 1700,
+          y: 1150,
+        },
+      },
+      {
+        etiqueta: "flora2",
+        uri: "QmUEKgKQK8dz1bXM6r5opqRG4cV2M9CsDf6YvnYdogiTqU",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 89, y: 100 },
+        sitio: {
+          x: 1600,
+          y: 1150,
+        },
+      },
+      {
+        etiqueta: "flora3",
+        uri: "QmbR5Qoo5BH5Jb2ZBFbfTxbLtRXwgNf2dZzYHfZwJUhDyq",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 100, y: 120 },
+        sitio: {
+          x: 100,
+          y: 1140,
+        },
+      },
+    ],
+    profundidad: [
+      {
+        uri: "QmSnhez8ns8uNh5SVNuUbSysTmFBBsEdjp9MXqKQNjnyHt",
+        etiqueta: "callejero1",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 250, y: 200 },
+        sitio: {
+          x: 125,
+          y: 500,
+        },
+      },
+      {
+        uri: "QmYuFskfLrHBVuiEqeCT9hZUnbmUPNp11SnoTAH8UDSu6b",
+        etiqueta: "coser1",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 250, y: 200 },
+        sitio: {
+          x: 390,
+          y: 500,
+        },
+      },
+      {
+        uri: "QmUJ8imvhzEDpYg4ua5CWpAHwoyhR6Fz7gKPrZ4isuWMaR",
+        etiqueta: "callejero2",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 500, y: 200 },
+        sitio: {
+          x: 250,
+          y: 700,
+        },
+      },
+      {
+        uri: "QmdgqzbMQTdXzjWL5QorjQwZ1v2CzXj4mbnfrSjE39a4hR",
+        etiqueta: "callejero3",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 250, y: 200 },
+        sitio: {
+          x: 125,
+          y: 900,
+        },
+      },
+      {
+        uri: "QmSa57Ty2stVHA6UCsUHqg7g5iiSqFWTt5KMdznHxHXcJh",
+        etiqueta: "callejero4",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 250, y: 200 },
+        sitio: {
+          x: 1220,
+          y: 500,
+        },
+      },
+      {
+        uri: "QmZn3GrcVJWmpL6uFYBw9zsSss7Y1viH6syNSracMmeXxQ",
+        etiqueta: "coser2",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 250, y: 170 },
+        sitio: {
+          x: 930,
+          y: 530,
+        },
+      },
+
+      {
+        etiqueta: "bricolaje",
+        uri: "QmNfBuGJXvTaGKjLHT9zboso6HM4iwTNsLnnu4iyti3mcN",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 650, y: 300 },
+        sitio: {
+          x: 1100,
+          y: 800,
+        },
+      },
+      {
+        etiqueta: "mesa2",
+        uri: "QmeQkD3LBNmSXuNAHt3c9upiiYnAiRpZiGtS15wi8nbwrG",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 350, y: 200 },
+        sitio: {
+          x: 1800,
+          y: 500,
+        },
+      },
+
+      {
+        uri: "QmaxnU8aGuNAoYRq2GcYPxnAshsgfT89L5g3ZSuooxg7ff",
+        etiqueta: "callejero5",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 250, y: 200 },
+        sitio: {
+          x: 1870,
+          y: 700,
+        },
+      },
+      {
+        uri: "QmSxxgxNQaZGoYBatY5sR1F7Nv6HbFmEx2vG5rLouts881",
+        etiqueta: "coser3",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 110, y: 200 },
+        sitio: {
+          x: 1700,
+          y: 700,
+        },
+      },
+      {
+        uri: "QmSGnSvi3omWMoFAe5gFgzErAjeWs3Rkkmmaw6MCTrgT6q",
+        etiqueta: "café",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 110, y: 200 },
+        sitio: {
+          x: 1910,
+          y: 1000,
+        },
+      },
+      {
+        uri: "QmPmpaf8dqYAABbHW4xD9hkqjZKFc3czSzTWNud4wQrqiN",
+        etiqueta: "mesa3",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: { x: 450, y: 200 },
+        sitio: {
+          x: 1600,
+          y: 1000,
+        },
+      },
+    ],
+    prohibited: [
+      {
+        width: 2000,
+        height: 330,
+        x: 0,
+        y: 0,
+      },
+      {
+        width: 550,
+        height: 80,
+        x: 0,
+        y: 450,
+      },
+      {
+        width: 550,
+        height: 80,
+        x: 0,
+        y: 650,
+      },
+
+      {
+        width: 270,
+        height: 80,
+        x: 0,
+        y: 850,
+      },
+      {
+        width: 600,
+        height: 100,
+        x: 800,
+        y: 450,
+      },
+      {
+        width: 750,
+        height: 120,
+        x: 700,
+        y: 750,
+      },
+
+      {
+        width: 700,
+        height: 100,
+        x: 1300,
+        y: 900,
+      },
+      {
+        width: 400,
+        height: 100,
+        x: 1600,
+        y: 650,
+      },
+      {
+        width: 400,
+        height: 100,
+        x: 1600,
+        y: 450,
+      },
+    ],
+    sillas: [
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 1620,
+        adjustedY: 990,
+        etiqueta: "sillita1",
+        sitio: { x: 1620, y: 1050 },
+        talla: { x: 110, y: 130 },
+        uri: "QmNhsLtWepTR7igH4Wcqoh5VZ9a1PVwcE2mWTRA4czWnFN",
+        escala: { x: 1, y: 1 },
+        par: "mesa3",
+      },
+      {
+        anim: Direccion.Silla,
+        profundidad: true,
+        adjustedX: 1450,
+        adjustedY: 990,
+        etiqueta: "sillita2",
+        sitio: { x: 1450, y: 1050 },
+        talla: { x: 110, y: 130 },
+        uri: "QmT3SzD3XEoyxPfLZS9yQ1beHSpmdcfefk8BBDFzfjwV5T",
+        escala: { x: 1, y: 1 },
+        par: "mesa3",
+      },
+    ],
+    cover: "QmUBJqUtcHZQRsrGHr8sM4UoCuKQWTUuhrXrpuVPyZBsBc",
     sprites: [
       {
-        etiqueta: "muchacho",
+        etiqueta: "muchacho-boutique",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -631,8 +1082,7 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 6,
       },
       {
-        etiqueta: "chica",
-
+        etiqueta: "chica-boutique",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -651,22 +1101,246 @@ export const SCENE_LIST: Escena[] = [
   },
   {
     key: "microfábrica",
-    objects: [],
-    world: { height: 830, width: 1512 },
-    fondo: {
-      uri: "QmQho15EawdPjxhZ6QcnFoGHiEV8r2dTS1u7TczQv9cd44",
-      etiqueta: "fondo",
-      displayHeight: 830,
-      displayWidth: 1512,
-      sitio: { x: 0, y: 0 },
-    },
-    profundidad: [],
-    prohibited: [],
-    sillas: [],
     cover: "QmXvZeMcQMdEHkKZL9U2CLpocMaKJvrfq644Zcsaybu5Q2",
+    world: { height: 1200, width: 2300 },
+    fondo: {
+      uri: "QmZahhsTv8atePN1bWnH7DE9KFbreg93QhEb88dap5A2SA",
+      etiqueta: "fondo",
+      displayHeight: 900,
+      displayWidth: 2300,
+      sitio: { x: 0, y: 300 },
+    },
+    objects: [
+      {
+        uri: "QmWspbLDDaoAg9AnGt1qsHJ7uoRrraMeH18bLAS667tkrD",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 2300,
+          y: 300,
+        },
+        etiqueta: "madera",
+        sitio: {
+          x: 1150,
+          y: 150,
+        },
+      },
+      {
+        etiqueta: "escanar",
+        uri: "Qmdx8bLozpJUtHhHHjYDHvrvVsSA9Kr2fW5PxTtbh2vR53",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 300,
+          y: 350,
+        },
+        sitio: {
+          x: 160,
+          y: 250,
+        },
+      },
+      {
+        etiqueta: "fabricante",
+        uri: "QmbD8KMDYNrSaKpWKFjQyzRXfb7i5hKgFFG6pcUqbCs3Uo",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 800,
+          y: 300,
+        },
+        sitio: {
+          x: 660,
+          y: 250,
+        },
+      },
+      {
+        etiqueta: "cartel2",
+        uri: "QmcMfY4sgqME7Wx93qhuPFdsebVTNs6axG6tD8dh3XTQ73",
+        escala: { x: 1, y: 1 },
+        sitio: { x: 2000, y: 1020 },
+        talla: { x: 380, y: 290 },
+      },
+      {
+        etiqueta: "plantaFuturística2",
+        uri: "QmZKzF2sZThAi9QHFLqJPWWpkWh59x3Exje2At2MBTrHZ1",
+        escala: { x: 1, y: 1 },
+        sitio: { x: 1800, y: 1020 },
+        talla: { x: 90, y: 90 },
+      },
+    ],
+    profundidad: [
+      {
+        etiqueta: "impresor1",
+        uri: "QmZ8cb23iMgtkG4F9yZAkCLq6tMSiUxtsDvAfnfanR27LH",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 100,
+          y: 300,
+        },
+        sitio: {
+          x: 2200,
+          y: 300,
+        },
+      },
+      {
+        etiqueta: "impresor2",
+        uri: "QmTMrRovTcyiZkQTdNVTRaZYWt743vtbApWsjLjF4UVdAk",
+        escala: { x: 1, y: 1 },
+        talla: { x: 700, y: 250 },
+        sitio: {
+          x: 400,
+          y: 550,
+        },
+      },
+      {
+        etiqueta: "impresor3",
+        uri: "Qmew8rEQRhQX3YtoVtm6MoUZkh7m2obtAZfoqKKe4VQJJw",
+        escala: { x: 1, y: 1 },
+        talla: { x: 400, y: 200 },
+        sitio: {
+          x: 1700,
+          y: 580,
+        },
+      },
+      {
+        uri: "QmbPHiYrzvfXGahtpLHNMpM3ztNSK77f1ooVuScBaMWjzH",
+        etiqueta: "dispositivo",
+        escala: { x: 1, y: 1 },
+        sitio: { x: 2100, y: 500 },
+        talla: { x: 200, y: 250 },
+      },
+      {
+        etiqueta: "ropas",
+        uri: "QmPX1VfUfEjb3NoAh8KUZZmLZUHtWRyLhuyjsU2GDTXEms",
+        escala: { x: 1, y: 1 },
+        sitio: { x: 900, y: 900 },
+        talla: { x: 500, y: 250 },
+      },
+      {
+        etiqueta: "cartel1",
+        uri: "Qma6p36Y8taGDjJf2xZ4X9pchWRJTWNyQPi9NsVbjarxbR",
+        escala: { x: 1, y: 1 },
+        sitio: { x: 300, y: 1000 },
+        talla: { x: 450, y: 300 },
+      },
+      {
+        etiqueta: "plantaFuturística1",
+        uri: "QmbmQFFHFAAyXsSWgFByKWXCSrF1Q2kZbKqqPBKRaCCLJK",
+        escala: { x: 1, y: 1 },
+        sitio: { x: 600, y: 1100 },
+        talla: { x: 90, y: 90 },
+      },
+    ],
+    prohibited: [
+      {
+        width: 2300,
+        height: 220,
+        x: 0,
+        y: 0,
+      },
+      {
+        width: 300,
+        height: 220,
+        x: 0,
+        y: 100,
+      },
+      {
+        width: 800,
+        height: 220,
+        x: 300,
+        y: 100,
+      },
+      {
+        width: 800,
+        height: 100,
+        x: 1500,
+        y: 270,
+      },
+      {
+        x: 0,
+        y: 450,
+        width: 750,
+        height: 150,
+      },
+      {
+        x: 530,
+        y: 630,
+        width: 100,
+        height: 100,
+      },
+      {
+        x: 1500,
+        y: 500,
+        width: 800,
+        height: 100,
+      },
+      {
+        x: 2100,
+        y: 400,
+        width: 200,
+        height: 100,
+      },
+      {
+        x: 650,
+        y: 800,
+        width: 500,
+        height: 100,
+      },
+      {
+        x: 1750,
+        y: 900,
+        width: 550,
+        height: 300,
+      },
+      {
+        x: 0,
+        y: 900,
+        width: 520,
+        height: 140,
+      },
+      {
+        x: 560,
+        y: 1100,
+        width: 100,
+        height: 100,
+      },
+    ],
+    sillas: [
+      {
+        uri: "QmUBwCQeatnz4oz1AsnRFajjoGHRgASfCRU5dBhcHbJGvT",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        etiqueta: "camilla",
+        profundidad: false,
+        anim: Direccion.Sofa,
+        adjustedX: 1850,
+        adjustedY: 200,
+        talla: { x: 500, y: 300 },
+        sitio: {
+          x: 1850,
+          y: 300,
+        },
+      },
+      {
+        uri: "QmbhYArzZShSc1QUxoJHCpRLzEuA4B92xu6K5LAcKBCRuc",
+        etiqueta: "banco1",
+        profundidad: true,
+        anim: Direccion.Silla,
+        talla: { x: 90, y: 100 },
+        sitio: {
+          x: 600,
+          y: 700,
+        },
+        adjustedX: 600,
+        adjustedY: 610,
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+    ],
     sprites: [
       {
-        etiqueta: "muchacho",
+        etiqueta: "muchacho-micro",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -682,7 +1356,7 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 6,
       },
       {
-        etiqueta: "chica",
+        etiqueta: "chica-micro",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -701,22 +1375,486 @@ export const SCENE_LIST: Escena[] = [
   },
   {
     key: "agencia de llms",
-    fondo: {
-      uri: "QmQho15EawdPjxhZ6QcnFoGHiEV8r2dTS1u7TczQv9cd44",
-      etiqueta: "fondo",
-      displayHeight: 830,
-      displayWidth: 1512,
-      sitio: { x: 0, y: 0 },
-    },
     cover: "QmTs6DvEjiMzJHuXmtJBR13t53wo9TedjkymcFAT88qX78",
-    objects: [],
-    profundidad: [],
-    prohibited: [],
-    sillas: [],
-    world: { height: 830, width: 1512 },
+    fondo: {
+      uri: "QmWUHw3f6256Xkw18Rq6J5XjDepS2X3RsCL2uHCEeoaDLv",
+      etiqueta: "fondo",
+      displayHeight: 700,
+      displayWidth: 1512,
+      sitio: { x: 0, y: 300 },
+    },
+    objects: [
+      {
+        etiqueta: "parteAtras",
+        uri: "QmS58UDcPcGnQXipYAx2BCnAuGWD2RNJYTD8ukk6PAxxoX",
+        sitio: {
+          x: 756,
+          y: 150,
+        },
+        talla: {
+          x: 1512,
+          y: 300,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+      {
+        etiqueta: "recreacion",
+        uri: "QmX6MsiU8rHEhyAE8nQCL4esUN7xZxFaccXVbGZHyqLWUg",
+        talla: {
+          x: 400,
+          y: 150,
+        },
+        sitio: {
+          x: 1300,
+          y: 300,
+        },
+        escala: {
+          x: 1,
+          y: 1,
+        },
+      },
+    ],
+
+    profundidad: [
+      {
+        uri: "QmWNtMBq6BSLP41nmUwFKpXHqmU8rt9AnhpzpKc7EtyJAv",
+        etiqueta: "cabinaDJ",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          y: 360,
+          x: 200,
+        },
+        talla: {
+          x: 300,
+          y: 200,
+        },
+      },
+      {
+        uri: "QmPfPzfcFRjYcijD42qdLsWmHLW7dekU4wQ5qQK1G4ELuL",
+        etiqueta: "almacenamientoPatineta",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          y: 360,
+          x: 400,
+        },
+        talla: {
+          x: 100,
+          y: 200,
+        },
+      },
+      {
+        etiqueta: "eseñanzaRincón",
+        uri: "QmedtK6fazjRHCmKRsB6pHSV8DW4Vn2edaqQZqB3wCSiLF",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          y: 570,
+          x: 500,
+        },
+        talla: {
+          x: 480,
+          y: 210,
+        },
+      },
+      {
+        etiqueta: "mesaDeTrabajo1",
+        uri: "QmWaGEbJCSRfdPC1fV3PeSnSUUQM8keSjTARJ4TCNYfx6N",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: {
+          x: 250,
+          y: 160,
+        },
+        sitio: {
+          x: 850,
+          y: 480,
+        },
+      },
+      {
+        etiqueta: "mesaDeTrabajo2",
+        uri: "QmXBEDFhqgvxbwSRBBUHDVebCjEvcpznWxbm16jAEMr26n",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: {
+          x: 250,
+          y: 160,
+        },
+        sitio: {
+          x: 1100,
+          y: 480,
+        },
+      },
+      {
+        etiqueta: "mesaDeTrabajo3",
+        uri: "QmTZCpyK66xR7vmMPeB6j1okT3sRf1NPALYXUnE6gs3gtW",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: {
+          x: 250,
+          y: 160,
+        },
+        sitio: {
+          x: 1350,
+          y: 480,
+        },
+      },
+      {
+        etiqueta: "impresito",
+        uri: "QmQ21tBBTzje2LiE3SbPzWyjj56iH5gtMCcXsEGSzXuzFs",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: {
+          y: 100,
+          x: 100,
+        },
+        sitio: {
+          x: 80,
+          y: 850,
+        },
+      },
+      {
+        etiqueta: "ordenador1",
+        uri: "QmNsxpVoDgKjUcLCSNEtMhVCxUi1XkbsaY16UwBHNRZrj1",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: {
+          y: 200,
+          x: 280,
+        },
+        sitio: {
+          x: 280,
+          y: 850,
+        },
+      },
+      {
+        etiqueta: "cajón",
+        uri: "QmTFoN8mHstzX9tS1HsJ3tD1uAxJA3DNk7WHpqntTYiMac",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: {
+          y: 200,
+          x: 140,
+        },
+        sitio: {
+          x: 500,
+          y: 850,
+        },
+      },
+      {
+        etiqueta: "radio",
+        uri: "QmXmr2hUCAbQu5TBdyXeyMNnr2o2iPYf9GMAHKzAbLeKnU",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 250,
+          y: 210,
+        },
+        sitio: {
+          x: 1400,
+          y: 750,
+        },
+      },
+      {
+        etiqueta: "caja",
+        uri: "QmVFcLk49jy64Xf2qnBzXknraVmU5B6nBmAc7qQKvZCFrZ",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 100,
+          y: 190,
+        },
+        sitio: {
+          x: 1240,
+          y: 750,
+        },
+      },
+      {
+        etiqueta: "ordenador2",
+        uri: "QmQ8EktWjZAhz8qgeNzQD43atLhbvJgRNpw3Jay4LcuZM4",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 240,
+          y: 260,
+        },
+        sitio: {
+          x: 1050,
+          y: 750,
+        },
+      },
+      {
+        etiqueta: "estanteCallejero",
+        uri: "QmdhBzR297vVvqfAgKGbu6H6uFEbnqrM5W13vE3DXy1cAU",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 200,
+          y: 220,
+        },
+        sitio: {
+          x: 1400,
+          y: 880,
+        },
+      },
+      {
+        etiqueta: "plantita",
+        uri: "QmYyBFD31N7V8uqseXqVnvR6tS5hHHrAcqnCEdijubAWhR",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 150,
+          y: 160,
+        },
+        sitio: {
+          x: 750,
+          y: 920,
+        },
+      },
+      {
+        etiqueta: "altavoz",
+        uri: "QmWi3qBSiEmUQCpQhfAPjnBP4DLayzb6KbHVrbgAy8frFx",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 150,
+          y: 100,
+        },
+        sitio: {
+          x: 900,
+          y: 950,
+        },
+      },
+    ],
+    prohibited: [
+      {
+        width: 1512,
+        height: 240,
+        x: 0,
+        y: 0,
+      },
+      {
+        width: 300,
+        height: 150,
+        x: 790,
+        y: 140,
+      },
+      {
+        width: 400,
+        height: 150,
+        x: 1112,
+        y: 160,
+      },
+      {
+        y: 300,
+        x: 50,
+        width: 400,
+        height: 90,
+      },
+      {
+        y: 500,
+        x: 0,
+        width: 700,
+        height: 90,
+      },
+      {
+        y: 400,
+        x: 712,
+        width: 800,
+        height: 90,
+      },
+      {
+        width: 400,
+        height: 90,
+        x: 660,
+        y: 910,
+      },
+      {
+        y: 780,
+        x: 0,
+        width: 600,
+        height: 100,
+      },
+      {
+        y: 630,
+        x: 900,
+        width: 612,
+        height: 130,
+      },
+      {
+        y: 870,
+        x: 1312,
+        width: 200,
+        height: 130,
+      },
+    ],
+    sillas: [
+      {
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        etiqueta: "sofaAmarillo",
+        uri: "QmZ5EC8us6LuXkboTnXMGRhVwBLfasHmNfVLCypbUbdMK8",
+        sitio: {
+          x: 930,
+          y: 295,
+        },
+        profundidad: false,
+        anim: Direccion.Sofa,
+        adjustedX: 930,
+        adjustedY: 265,
+        talla: {
+          x: 300,
+          y: 150,
+        },
+      },
+      {
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        etiqueta: "sillitaIzquierda",
+        uri: "QmXT7C9Qr21F4EDwd35GiyrsR7xYsHmwXZ3E6TyRYWD73h",
+        sitio: {
+          x: 130,
+          y: 580,
+        },
+        profundidad: false,
+        anim: Direccion.Sofa,
+        adjustedX: 160,
+        adjustedY: 560,
+        talla: {
+          x: 200,
+          y: 180,
+        },
+      },
+      {
+        uri: "QmZhsyajhbNq3JbHqy3enc4byuCwuioYMjKipLuL5GGamA",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        profundidad: true,
+        par: "mesaDeTrabajo1",
+        anim: Direccion.Silla,
+        etiqueta: "sillaDeTrabajo1",
+        sitio: {
+          x: 850,
+          y: 550,
+        },
+        talla: {
+          x: 100,
+          y: 100,
+        },
+        adjustedX: 850,
+        adjustedY: 510,
+      },
+      {
+        uri: "QmZhsyajhbNq3JbHqy3enc4byuCwuioYMjKipLuL5GGamA",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        profundidad: true,
+        par: "mesaDeTrabajo2",
+        anim: Direccion.Silla,
+        etiqueta: "sillaDeTrabajo2",
+        sitio: {
+          x: 1100,
+          y: 550,
+        },
+        talla: {
+          x: 100,
+          y: 100,
+        },
+        adjustedX: 1100,
+        adjustedY: 510,
+      },
+      {
+        uri: "QmZhsyajhbNq3JbHqy3enc4byuCwuioYMjKipLuL5GGamA",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        profundidad: true,
+        par: "mesaDeTrabajo3",
+        anim: Direccion.Silla,
+        etiqueta: "sillaDeTrabajo3",
+        sitio: {
+          x: 1350,
+          y: 550,
+        },
+        talla: {
+          x: 100,
+          y: 100,
+        },
+        adjustedX: 1350,
+        adjustedY: 510,
+      },
+      {
+        uri: "QmZhsyajhbNq3JbHqy3enc4byuCwuioYMjKipLuL5GGamA",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        profundidad: true,
+        par: "ordenador1",
+        anim: Direccion.Silla,
+        etiqueta: "sillaDeTrabajo4",
+        sitio: {
+          x: 280,
+          y: 940,
+        },
+        talla: {
+          x: 100,
+          y: 100,
+        },
+        adjustedX: 280,
+        adjustedY: 920,
+      },
+      {
+        uri: "QmZhsyajhbNq3JbHqy3enc4byuCwuioYMjKipLuL5GGamA",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        profundidad: true,
+        par: "ordenador2",
+        anim: Direccion.Silla,
+        etiqueta: "sillaDeTrabajo5",
+        sitio: {
+          x: 1050,
+          y: 840,
+        },
+        talla: {
+          x: 100,
+          y: 100,
+        },
+        adjustedX: 280,
+        adjustedY: 820,
+      },
+    ],
+    world: { height: 1000, width: 1512 },
     sprites: [
       {
-        etiqueta: "muchacho",
+        etiqueta: "muchacho-agencia",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -732,7 +1870,7 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 6,
       },
       {
-        etiqueta: "chica",
+        etiqueta: "chica-agencia",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -749,24 +1887,443 @@ export const SCENE_LIST: Escena[] = [
       },
     ],
   },
+
   {
     key: "pub en ruinas",
+    world: { height: 1500, width: 2000 },
     fondo: {
-      uri: "QmQho15EawdPjxhZ6QcnFoGHiEV8r2dTS1u7TczQv9cd44",
+      uri: "QmVZ38f7115AUJwsgeoQ84YDGXwNQ8PmjLAuWZPnNNm7uy",
       etiqueta: "fondo",
-      displayHeight: 830,
-      displayWidth: 1512,
-      sitio: { x: 0, y: 0 },
+      displayHeight: 1000,
+      displayWidth: 2000,
+      sitio: { x: 0, y: 500 },
     },
     cover: "QmWQMu5z5ho4prQv43Hdv27xtUtoUh78HukEPgCVEx3aLP",
-    objects: [],
-    profundidad: [],
-    prohibited: [],
-    sillas: [],
-    world: { height: 830, width: 1512 },
+    objects: [
+      {
+        etiqueta: "parteDeAtrás",
+        uri: "QmPzut9FA8KSN6ChhioTiMdDmYKc32cBXAmVQrEa6aG9k7",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        talla: {
+          x: 2000,
+          y: 500,
+        },
+        sitio: {
+          x: 1000,
+          y: 250,
+        },
+      },
+      {
+        etiqueta: "bar",
+        uri: "QmVheHZP2BCgfo92W1Dvp3NuhR7KEBrDu6PQmw6bv2TJu9",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 150,
+          y: 560,
+        },
+        talla: {
+          x: 300,
+          y: 240,
+        },
+      },
+      {
+        etiqueta: "tableroDJ1",
+        uri: "QmZx2T5Bx4jXUg8dpquNynGkgg4yyUHJYHcgTYQUUN31Gb",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1450,
+          y: 560,
+        },
+        talla: {
+          x: 300,
+          y: 340,
+        },
+      },
+      {
+        etiqueta: "tableroDJ2",
+        uri: "QmdXrSVpmZcqjbD4qr4yV3dFfhWBPA8fLf4qffb3KEUM2t",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1820,
+          y: 560,
+        },
+        talla: {
+          x: 300,
+          y: 340,
+        },
+      },
+      {
+        etiqueta: "panel",
+        uri: "QmdwKsvH4iEpnrr1cbexsTTeNVxRYVAdmMM1gT4LY82r14",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 900,
+          y: 360,
+        },
+        talla: {
+          x: 280,
+          y: 220,
+        },
+      },
+      {
+        etiqueta: "sofita",
+        uri: "QmariqaDCJ3y7nReenA7gNyhQ6HtrwirK18udcbNJcqvnH",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 600,
+          y: 420,
+        },
+        talla: {
+          x: 240,
+          y: 110,
+        },
+      },
+      {
+        etiqueta: "dispositivoAleatorio1",
+        uri: "QmQAge34nvvgQngzcd9r1Hiz3dsJR5C19F5WtfCzkut761",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1850,
+          y: 850,
+        },
+        talla: {
+          x: 300,
+          y: 290,
+        },
+      },
+      {
+        etiqueta: "dispositivoAleatorio2",
+        uri: "Qma4zkw3MPTbHmiZeZPcmbkeYuRuVD8Q8e4QPdq3foYEQE",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1930,
+          y: 970,
+        },
+        talla: {
+          x: 140,
+          y: 250,
+        },
+      },
+    ],
+    profundidad: [
+      {
+        etiqueta: "mesaDeTaburetes",
+        uri: "QmVEXmsobZYfHif6k34tY86BwiXdPq7DGVYQW4Mxqwv3KL",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1000,
+          y: 1000,
+        },
+        talla: {
+          x: 900,
+          y: 280,
+        },
+      },
+
+      {
+        etiqueta: "cartelIluminoso",
+        uri: "QmQPUvhc9xXoSNECH1RJsKpWsqv95411WhApn8NgYFt8y9",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1850,
+          y: 1350,
+        },
+        talla: {
+          x: 250,
+          y: 315,
+        },
+      },
+      {
+        etiqueta: "zapatos",
+        uri: "QmT13zWibYMJ6tYsdqwNJvX6FGNJCUs5eXTLp7YexVyfCf",
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1600,
+          y: 1400,
+        },
+        talla: {
+          x: 210,
+          y: 150,
+        },
+      },
+      {
+        escala: { x: 1, y: 1 },
+        etiqueta: "mesaDeHerramientas",
+        uri: "Qma7XechSmdquUth7BGhZpH7U9T9FzsJrXst5BFoYUzd7Z",
+        sitio: {
+          x: 175,
+          y: 1200,
+        },
+        talla: {
+          x: 250,
+          y: 150,
+        },
+      },
+      {
+        escala: { x: 1, y: 1 },
+        etiqueta: "cajaDeMúsica",
+        uri: "QmWV2TQ3gbXFbNR5rTZQM2Y7e3xT43pviCaMK4K27bapJa",
+        sitio: {
+          x: 700,
+          y: 1420,
+        },
+        talla: {
+          x: 100,
+          y: 120,
+        },
+      },
+      {
+        escala: { x: 1, y: 1 },
+        etiqueta: "maniquí",
+        uri: "QmSYN1e6nWeCTbexJWAkiaTP18evgAq5Z5wEngUPRow86a",
+        sitio: {
+          x: 500,
+          y: 1350,
+        },
+        talla: {
+          x: 260,
+          y: 300,
+        },
+      },
+      {
+        etiqueta: "mesaDePie",
+        uri: "QmeeHffDPNXQ4XXgAggDGy12srCs8kHWNqf9YPogTR2Lzw",
+        escala: { x: 1, y: 1 },
+        sitio: {
+          x: 780,
+          y: 600,
+        },
+        talla: {
+          x: 400,
+          y: 250,
+        },
+      },
+      {
+        etiqueta: "taburete4",
+        uri: "QmcWeWeNCwSzUozA3euG7n1pE5aFZST6Sr9ALUrUJaaPYH",
+        escala: { x: 1, y: 1 },
+        sitio: {
+          x: 500,
+          y: 580,
+        },
+        talla: {
+          x: 120,
+          y: 170,
+        },
+      },
+      {
+        etiqueta: "taburete5",
+        uri: "QmZVhMo18vUUoKWACDkHWMU5qjFXyFqqCDYpatC9ZQPFwg",
+        escala: { x: 1, y: 1 },
+        sitio: {
+          x: 1000,
+          y: 700,
+        },
+        talla: {
+          x: 120,
+          y: 170,
+        },
+      },
+      {
+        etiqueta: "taburete6",
+        uri: "QmcKnVhqZL5vPQqcDYjwmHwC4WoYeJFpynha2TDJ11Znyw",
+        escala: { x: 1, y: 1 },
+        sitio: {
+          x: 750,
+          y: 700,
+        },
+        talla: {
+          x: 120,
+          y: 170,
+        },
+      },
+    ],
+    prohibited: [
+      {
+        width: 2000,
+        height: 300,
+        x: 0,
+        y: 0,
+      },
+      {
+        width: 300,
+        height: 600,
+        x: 0,
+        y: 0,
+      },
+      {
+        width: 600,
+        height: 420,
+        x: 450,
+        y: 0,
+      },
+      {
+        width: 300,
+        height: 350,
+        x: 1700,
+        y: 750,
+      },
+      {
+        width: 600,
+        height: 250,
+        x: 1400,
+        y: 1250,
+      },
+      {
+        width: 400,
+        height: 200,
+        x: 400,
+        y: 1300,
+      },
+      {
+        width: 430,
+        height: 100,
+        x: 0,
+        y: 1150,
+      },
+      {
+        width: 870,
+        height: 170,
+        x: 580,
+        y: 900,
+      },
+      {
+        width: 700,
+        height: 200,
+        x: 450,
+        y: 530,
+      },
+      {
+        width: 260,
+        height: 170,
+        x: 1330,
+        y: 450,
+      },
+      {
+        width: 320,
+        height: 180,
+        x: 1680,
+        y: 460,
+      },
+    ],
+    sillas: [
+      {
+        etiqueta: "taburete1",
+        uri: "QmT4SbbozzbmL5hWwVUNeRSTWMtEtKUH1MmiLPgnfxpUQR",
+        anim: Direccion.Silla,
+        profundidad: true,
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 700,
+          y: 1150,
+        },
+        talla: {
+          x: 120,
+          y: 150,
+        },
+        adjustedX: 700,
+        adjustedY: 1000,
+        par: "mesaDeTaburetes",
+      },
+      {
+        etiqueta: "taburete2",
+        uri: "QmT4SbbozzbmL5hWwVUNeRSTWMtEtKUH1MmiLPgnfxpUQR",
+        anim: Direccion.Silla,
+        profundidad: true,
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1000,
+          y: 1150,
+        },
+        talla: {
+          x: 120,
+          y: 150,
+        },
+        adjustedX: 1000,
+        adjustedY: 1000,
+        par: "mesaDeTaburetes",
+      },
+      {
+        etiqueta: "taburete3",
+        uri: "QmT4SbbozzbmL5hWwVUNeRSTWMtEtKUH1MmiLPgnfxpUQR",
+        anim: Direccion.Silla,
+        profundidad: true,
+        escala: {
+          x: 1,
+          y: 1,
+        },
+        sitio: {
+          x: 1300,
+          y: 1150,
+        },
+        talla: {
+          x: 120,
+          y: 150,
+        },
+        adjustedX: 1300,
+        adjustedY: 1050,
+        par: "mesaDeTaburetes",
+      },
+      {
+        escala: { x: 1, y: 1 },
+        profundidad: false,
+        anim: Direccion.Sofa,
+        etiqueta: "cátedra",
+        uri: "QmbXopW1B1PV5LeyW91Zjf3oaVM6UG7Lp9ViraQgrtTFKW",
+        sitio: {
+          x: 350,
+          y: 1200,
+        },
+        talla: {
+          x: 180,
+          y: 200,
+        },
+        adjustedX: 350,
+        adjustedY: 1000,
+      },
+    ],
     sprites: [
       {
-        etiqueta: "muchacho",
+        etiqueta: "muchacho-pub",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -782,7 +2339,7 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 6,
       },
       {
-        etiqueta: "chica",
+        etiqueta: "chica-pub",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -802,21 +2359,272 @@ export const SCENE_LIST: Escena[] = [
   {
     key: "marketing de contenido",
     fondo: {
-      uri: "QmQho15EawdPjxhZ6QcnFoGHiEV8r2dTS1u7TczQv9cd44",
+      uri: "QmYZ6w8ebp4LijMwMwURWvBrxhYLgmfzUQUdAhSwJ18JRD",
       etiqueta: "fondo",
-      displayHeight: 830,
+      displayHeight: 600,
       displayWidth: 1512,
-      sitio: { x: 0, y: 0 },
+      sitio: { x: 0, y: 230 },
     },
     cover: "Qmdriz9gdKL7riwkwagguFZLCZ56fPRo171i8MhvXuUAdx",
-    objects: [],
-    profundidad: [],
-    prohibited: [],
-    sillas: [],
+    objects: [
+      {
+        etiqueta: "ladrillos",
+        uri: "QmNv6YFKdufAFg7Ay8dXt2MqD6362xhhR2d8xpAAUJoHzX",
+        escala: { x: 1, y: 1 },
+        talla: {
+          y: 230,
+          x: 1512,
+        },
+        sitio: {
+          x: 756,
+          y: 115,
+        },
+      },
+
+      {
+        etiqueta: "floresiluminosas",
+        uri: "QmNiyyS6SzTp6JnbHZLSSGcMS6acaonzeAjhTccHM4j45c",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 180,
+          y: 170,
+        },
+        sitio: {
+          x: 390,
+          y: 200,
+        },
+      },
+      {
+        etiqueta: "patineta",
+        uri: "QmSqTTx4EUvrU1mqejqb37npumMQHZL93btZS7fu7KVeg6",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 250,
+          y: 180,
+        },
+        sitio: {
+          x: 700,
+          y: 200,
+        },
+      },
+      {
+        etiqueta: "sudaderas",
+        uri: "QmPaBviJn15di5XJPxBspXcZu4H7q3Pig7YRJkpLZjTYvV",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 180,
+          y: 200,
+        },
+        sitio: {
+          x: 1410,
+          y: 200,
+        },
+      },
+    ],
+    profundidad: [
+      {
+        etiqueta: "cajaDeEnseñanza",
+        uri: "Qmd64MnZxL3wmYyQQZpV7QyhvhtuKxiThEi3CGweK4KjyL",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 270,
+          y: 240,
+        },
+        sitio: {
+          x: 150,
+          y: 550,
+        },
+      },
+      {
+        etiqueta: "máquinaMezcla",
+        uri: "QmYvJde47HGjZvaXehWEZDeb3kkdMeWBSZFbsuAqjCBPEC",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 230,
+          y: 210,
+        },
+        sitio: {
+          x: 480,
+          y: 550,
+        },
+      },
+      {
+        etiqueta: "flores",
+        uri: "QmUHSfHBznKnpfL1gPeK7B3ciJe7MyhZRbKdPZM3V3oWCb",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 120,
+          y: 180,
+        },
+        sitio: {
+          x: 305,
+          y: 480,
+        },
+      },
+      {
+        etiqueta: "mesilla1",
+        uri: "QmYP8ZC6X43jMAa364BofdLxAd6fWFfCKtKY6gauUaxRTC",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 100,
+          y: 120,
+        },
+        sitio: {
+          x: 315,
+          y: 750,
+        },
+      },
+      {
+        etiqueta: "máquinaCoser",
+        uri: "QmXkEyFHZRc2mTr7Djg1CxQrYTVWPLBDCNWrD18fM9uh6a",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 210,
+          y: 170,
+        },
+        sitio: {
+          x: 500,
+          y: 750,
+        },
+      },
+      {
+        uri: "QmaRSfjAKFz9aB2q1fyCPoUy1V1NQnvHG3QwpmCDawNpou",
+        etiqueta: "mesilla2",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 270,
+          y: 240,
+        },
+        sitio: {
+          x: 1360,
+          y: 380,
+        },
+      },
+      {
+        etiqueta: "mesillaDeHerramientas",
+        uri: "QmVReRSMwNPCxf45afceaZKA1KQR6o3zEpD7uVPXZ11qMF",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 200,
+          y: 210,
+        },
+        sitio: {
+          x: 1400,
+          y: 700,
+        },
+      },
+      {
+        etiqueta: "armario",
+        uri: "QmNShbcuWE7sBHDn7x4fRa5xrAN7eG3848GX1mTLYEYGbi",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 180,
+          y: 240,
+        },
+        sitio: {
+          x: 1200,
+          y: 700,
+        },
+      },
+
+      {
+        etiqueta: "escritorioDeTrabajo",
+        uri: "QmaZmDJzMrteXuRWuBxp4PA9teRxatkpyq67fNgaU94wDa",
+        escala: { x: 1, y: 1 },
+        talla: {
+          x: 250,
+          y: 260,
+        },
+        sitio: {
+          x: 1000,
+          y: 700,
+        },
+      },
+    ],
+    prohibited: [
+      {
+        x: 0,
+        y: 0,
+        width: 1512,
+        height: 190,
+      },
+      {
+        x: 1300,
+        y: 100,
+        width: 212,
+        height: 150,
+      },
+      {
+        x: 550,
+        y: 110,
+        width: 290,
+        height: 100,
+      },
+      {
+        x: 850,
+        y: 330,
+        width: 682,
+        height: 100,
+      },
+      {
+        x: 0,
+        y: 460,
+        width: 650,
+        height: 130,
+      },
+      {
+        x: 300,
+        y: 730,
+        width: 300,
+        height: 100,
+      },
+      {
+        x: 862,
+        y: 630,
+        width: 650,
+        height: 200,
+      },
+    ],
+    sillas: [
+      {
+        etiqueta: "sofita1",
+        uri: "QmafPkGnTM7FzN5tCNmmgbLSLrGBKhDieBBcZ5ogfcHcXt",
+        escala: { x: 1, y: 1 },
+        talla: {
+          y: 160,
+          x: 300,
+        },
+        sitio: {
+          x: 150,
+          y: 200,
+        },
+        profundidad: false,
+        anim: Direccion.Sofa,
+        adjustedX: 150,
+        adjustedY: 150,
+      },
+      {
+        etiqueta: "sofita2",
+        uri: "QmdU4MaEZsoZ2goXxiuHuiKg3RmRWGCRaQ7EnRfd1rVkG9",
+        escala: { x: 1, y: 1 },
+        talla: {
+          y: 175,
+          x: 300,
+        },
+        sitio: {
+          x: 1100,
+          y: 410,
+        },
+        profundidad: false,
+        anim: Direccion.Sofa,
+        adjustedX: 1100,
+        adjustedY: 330,
+      },
+    ],
     world: { height: 830, width: 1512 },
     sprites: [
       {
-        etiqueta: "muchacho",
+        etiqueta: "muchacho-contenido",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
@@ -832,7 +2640,7 @@ export const SCENE_LIST: Escena[] = [
         maxMoves: 6,
       },
       {
-        etiqueta: "chica",
+        etiqueta: "chica-contenido",
         uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
         x: 383,
         y: 576,
