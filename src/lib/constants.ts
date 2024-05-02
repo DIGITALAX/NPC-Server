@@ -229,7 +229,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "chica-estudio",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
+        uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
         x: 383,
         y: 576,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -515,7 +515,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "chica-lote",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
+        uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
         x: 40,
         y: 600,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -1083,7 +1083,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "chica-boutique",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
+        uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
         x: 383,
         y: 576,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -1357,7 +1357,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "chica-micro",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
+        uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
         x: 383,
         y: 576,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -1871,7 +1871,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "chica-agencia",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
+        uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
         x: 383,
         y: 576,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -2340,7 +2340,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "chica-pub",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
+        uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
         x: 383,
         y: 576,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -2641,7 +2641,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "chica-contenido",
-        uri: "QmUHDrL3JTUMwztqyzr8cUdCjYLpjET9pRXrLTRPtfgSBx",
+        uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
         x: 383,
         y: 576,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
