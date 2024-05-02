@@ -6,9 +6,12 @@ import { SCENE_LIST } from "./lib/constants.js";
 import { Escena } from "./types/src.types.js";
 import EscenaEstudio from "./classes/ConfigurarScene.js";
 import "dotenv/config";
+import dotenv from "dotenv";
 
 const app = express();
 const server = http.createServer(app);
+dotenv.config();
+
 const io = new SocketIOServer(server, {
   cors: {
     origin: "https://npcstudio.xyz/",
