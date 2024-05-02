@@ -14,7 +14,8 @@ dotenv.config();
 
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "https://npcstudio.xyz/",
+    // origin: "https://npcstudio.xyz/",
+    origin: "*",
     methods: ["GET", "POST"],
     // allowedHeaders: ["my-custom-header"],
     credentials: true,
