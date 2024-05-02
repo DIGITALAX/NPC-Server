@@ -229,7 +229,7 @@ export const SCENE_LIST: Escena[] = [
       },
       {
         etiqueta: "chica-estudio",
-        uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
+        uri: "QmSXHXcEe9XWiVLL228NK12s9o68uWVQRVn8oedPE7boYf",
         x: 383,
         y: 576,
         cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -243,6 +243,22 @@ export const SCENE_LIST: Escena[] = [
         escala: { x: 0.5, y: 0.5 },
         maxMoves: 4,
       },
+      {
+        etiqueta: "dama-estudio",
+        uri: "QmcdYHqQQkLd77BsdmaBc7JtK8uoett4SLgPFAYa1GLtyH",
+        x: 383,
+        y: 576,
+        cover: "QmWEDPFxBuCUm8Pur2TmjFm9uq8sqbN7vThHyfcW3pVDYu",
+        displayHeight: 600,
+        displayWidth: 300,
+        frameWidth: 600,
+        frameHeight: 600,
+        margin: 0,
+        startFrame: 0,
+        endFrame: 143,
+        escala: { x: 0.5, y: 0.5 },
+        maxMoves: 4,
+      }
     ],
     prohibited: [
       { x: 0, y: 0, height: 150, width: 1512 },
@@ -515,7 +531,7 @@ export const SCENE_LIST: Escena[] = [
   //     },
   //     {
   //       etiqueta: "chica-lote",
-  //       uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
+  //       uri: "QmSXHXcEe9XWiVLL228NK12s9o68uWVQRVn8oedPE7boYf",
   //       x: 40,
   //       y: 600,
   //       cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -1083,7 +1099,7 @@ export const SCENE_LIST: Escena[] = [
   //     },
   //     {
   //       etiqueta: "chica-boutique",
-  //       uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
+  //       uri: "QmSXHXcEe9XWiVLL228NK12s9o68uWVQRVn8oedPE7boYf",
   //       x: 383,
   //       y: 576,
   //       cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -1357,7 +1373,7 @@ export const SCENE_LIST: Escena[] = [
   //     },
   //     {
   //       etiqueta: "chica-micro",
-  //       uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
+  //       uri: "QmSXHXcEe9XWiVLL228NK12s9o68uWVQRVn8oedPE7boYf",
   //       x: 383,
   //       y: 576,
   //       cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -1871,7 +1887,7 @@ export const SCENE_LIST: Escena[] = [
   //     },
   //     {
   //       etiqueta: "chica-agencia",
-  //       uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
+  //       uri: "QmSXHXcEe9XWiVLL228NK12s9o68uWVQRVn8oedPE7boYf",
   //       x: 383,
   //       y: 576,
   //       cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -2340,7 +2356,7 @@ export const SCENE_LIST: Escena[] = [
   //     },
   //     {
   //       etiqueta: "chica-pub",
-  //       uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
+  //       uri: "QmSXHXcEe9XWiVLL228NK12s9o68uWVQRVn8oedPE7boYf",
   //       x: 383,
   //       y: 576,
   //       cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
@@ -2641,7 +2657,7 @@ export const SCENE_LIST: Escena[] = [
   //     },
   //     {
   //       etiqueta: "chica-contenido",
-  //       uri: "QmXHpCCvtSy6HVd46B7hkebnCaYwKaTRaNrMoBmkPtsXSP",
+  //       uri: "QmSXHXcEe9XWiVLL228NK12s9o68uWVQRVn8oedPE7boYf",
   //       x: 383,
   //       y: 576,
   //       cover: "QmZ4HicnNtbAV4HPikPFrnsWcREFVTa6q5cYQ1AoV3Qhp9",
