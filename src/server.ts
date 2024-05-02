@@ -72,4 +72,4 @@ class NPCStudioEngine {
 
 new NPCStudioEngine();
 
-server.listen(3000, () => {});
+server.listen(process.env.PORT, () => {});
