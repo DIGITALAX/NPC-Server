@@ -31,16 +31,20 @@ class NPCStudioEngine {
     });
 
     io.use((socket, next) => {
-      if (socket.handshake.query.key === process.env.RENDER_KEY) {
+      console.log(socket.handshake.query.key, "socket", socket.handshake);
+      if (
+        socket.handshake.query.key &&
+        socket.handshake.query.key === process.env.RENDER_KEY
+      ) {
         next();
-        console.log("usuario nuevo")
+        console.log("usuario nuevo");
       } else {
         next(new Error("Authentication error"));
       }
     });
 
     io.on("connection", (socket: Socket) => {
-      console.log("conectado")
+      console.log("conectado");
       socket.on("enviarSceneIndex", (claveEscena: string) => {
         const scene = SCENE_LIST.find((e) => e.key == claveEscena);
         socket.emit("configurarEscena", {
