@@ -5,14 +5,15 @@ import { Worker } from "worker_threads";
 import { SCENE_LIST } from "./lib/constants.js";
 import { Escena } from "./types/src.types.js";
 import EscenaEstudio from "./classes/ConfigurarScene.js";
+import "dotenv/config";
 
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "*",
+    origin: "https://npcstudio.xyz/",
     methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
+    // allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
 });
@@ -23,6 +24,14 @@ class NPCStudioEngine {
   constructor() {
     SCENE_LIST.forEach((escena: Escena) => {
       this.escenas.push(new EscenaEstudio(escena));
+    });
+
+    io.use((socket, next) => {
+      if (socket.handshake.query.key === process.env.RENDER_KEY) {
+        next();
+      } else {
+        next(new Error("Authentication error"));
+      }
     });
 
     io.on("connection", (socket: Socket) => {
