@@ -14,8 +14,8 @@ dotenv.config();
 
 const io = new SocketIOServer(server, {
   cors: {
-    // origin: "https://npcstudio.xyz/",
-    origin: "*",
+    origin: "https://npcstudio.xyz/",
+    // origin: "*",
     methods: ["GET", "POST"],
     // allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -31,20 +31,17 @@ class NPCStudioEngine {
     });
 
     io.use((socket, next) => {
-      console.log(socket.handshake.query.key, "socket", socket.handshake);
       if (
         socket.handshake.query.key &&
         socket.handshake.query.key === process.env.RENDER_KEY
       ) {
         next();
-        console.log("usuario nuevo");
       } else {
         next(new Error("Authentication error"));
       }
     });
 
     io.on("connection", (socket: Socket) => {
-      console.log("conectado");
       socket.on("enviarSceneIndex", (claveEscena: string) => {
         const scene = SCENE_LIST.find((e) => e.key == claveEscena);
         socket.emit("configurarEscena", {
