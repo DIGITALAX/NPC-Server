@@ -7,6 +7,7 @@ import { Escena } from "./types/src.types.js";
 import EscenaEstudio from "./classes/ConfigurarScene.js";
 import "dotenv/config";
 import dotenv from "dotenv";
+import schedule from "node-schedule";
 
 const app = express();
 const server = http.createServer(app);
@@ -24,6 +25,7 @@ const io = new SocketIOServer(server, {
 
 class NPCStudioEngine {
   private escenas: EscenaEstudio[] = [];
+  private bufferDeEstados: { [key: string]: any } = {};
 
   constructor() {
     SCENE_LIST.forEach((escena: Escena) => {
@@ -53,6 +55,7 @@ class NPCStudioEngine {
       });
     });
     this.startGameLoopWorker();
+    this.enviarDatosPeriodicamente();
   }
 
   private startGameLoopWorker() {
@@ -61,15 +64,23 @@ class NPCStudioEngine {
     gameLoopWorker.on("message", (update: { deltaTime: number }) => {
       this.escenas.forEach((escena) => {
         escena.npcs.forEach((npc) => npc.update(update.deltaTime));
-        io.emit(
-          escena.key,
-          escena.npcs.map((npc) => npc.getState())
+        this.bufferDeEstados[escena.key] = escena.npcs.map((npc) =>
+          npc.getState()
         );
       });
     });
 
     gameLoopWorker.postMessage({
       cmd: "start",
+    });
+  }
+
+  private enviarDatosPeriodicamente() {
+    schedule.scheduleJob("*/2 * * * *", () => {
+      for (const key in this.bufferDeEstados) {
+        io.emit(key, this.bufferDeEstados[key]);
+      }
+      this.bufferDeEstados = {};
     });
   }
 }
