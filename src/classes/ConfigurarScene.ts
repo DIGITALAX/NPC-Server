@@ -11,6 +11,7 @@ export default class EscenaEstudio {
 
   constructor(escena: Escena) {
     this.key = escena.key;
+
     let width: number =
         escena.world.width -
         (escena.sprites?.[0]?.displayWidth * escena.sprites?.[0]?.escala.x) / 2,

@@ -22,7 +22,3 @@ export const distanceBetween = (
 export const radToDeg = (radians: number): number => {
   return radians * (180 / Math.PI);
 };
-
-export const configurarDireccion = (key: string, direccion: Direccion): string => {
-  return `${direccion}-${key}`
-}

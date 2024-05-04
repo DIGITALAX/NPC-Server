@@ -108,3 +108,17 @@ export interface Sprite {
     y: number;
   };
 }
+
+export interface Estado {
+  estado: Movimiento;
+  puntosDeCamino: { x: number; y: number }[];
+  duracion?: number;
+  npcEtiqueta: string;
+  randomSeat?: string;
+}
+
+export enum Movimiento {
+  Move,
+  Sit,
+  Idle,
+}
