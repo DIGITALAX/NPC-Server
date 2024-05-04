@@ -1,9 +1,8 @@
 import express from "express";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import * as http from "http";
-import { Worker } from "worker_threads";
 import { SCENE_LIST } from "./lib/constants.js";
-import { Escena } from "./types/src.types.js";
+import { Escena, Seat } from "./types/src.types.js";
 import EscenaEstudio from "./classes/ConfigurarScene.js";
 import "dotenv/config";
 import dotenv from "dotenv";
@@ -25,7 +24,17 @@ const io = new SocketIOServer(server, {
 
 class NPCStudioEngine {
   private escenas: EscenaEstudio[] = [];
-  private bufferDeEstados: { [key: string]: any } = {};
+  private bufferDeEstados: {
+    [key: string]: {
+      direccion: string | null;
+      velocidadX: number;
+      velocidadY: number;
+      npcX: number;
+      npcY: number;
+      texture: string;
+      randomSeat: Seat | null;
+    }[];
+  } = {};
 
   constructor() {
     SCENE_LIST.forEach((escena: Escena) => {
@@ -54,25 +63,7 @@ class NPCStudioEngine {
         });
       });
     });
-    this.startGameLoopWorker();
     this.enviarDatosPeriodicamente();
-  }
-
-  private startGameLoopWorker() {
-    const gameLoopWorker = new Worker(new URL("gameLoop.js", import.meta.url));
-
-    gameLoopWorker.on("message", (update: { deltaTime: number }) => {
-      this.escenas.forEach((escena) => {
-        escena.npcs.forEach((npc) => npc.update(update.deltaTime));
-        this.bufferDeEstados[escena.key] = escena.npcs.map((npc) =>
-          npc.getState()
-        );
-      });
-    });
-
-    gameLoopWorker.postMessage({
-      cmd: "start",
-    });
   }
 
   private enviarDatosPeriodicamente() {

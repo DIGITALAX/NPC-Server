@@ -1,11 +1,13 @@
 import { Escena, Seat } from "./../types/src.types";
 import RandomWalkerNPC from "./RandomWalkerNPC.js";
 import PF from "pathfinding";
+import { Worker } from "worker_threads";
 
 export default class EscenaEstudio {
   readonly key: string;
   npcs: RandomWalkerNPC[] = [];
   sillasOcupadas: Seat[] = [];
+  private worker: Worker;
 
   constructor(escena: Escena) {
     this.key = escena.key;
@@ -29,6 +31,18 @@ export default class EscenaEstudio {
         }
       );
     });
+
+    this.worker = new Worker(new URL("./../gameLoop.js", import.meta.url), {
+      workerData: {
+        npcs: this.npcs.map((npc) => npc.getState()),
+        key: this.key,
+      },
+    });
+
+    this.worker.on("message", (update: { deltaTime: number }) => {
+      this.npcs.forEach((npc) => npc.update(update.deltaTime));
+    });
+    this.worker.postMessage({ cmd: "start" });
   }
 
   private initializeGrid(
