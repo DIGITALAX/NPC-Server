@@ -2,7 +2,7 @@ import express from "express";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import * as http from "http";
 import { SCENE_LIST } from "./lib/constants.js";
-import { Escena, Seat } from "./types/src.types.js";
+import { Escena } from "./types/src.types.js";
 import EscenaEstudio from "./classes/ConfigurarScene.js";
 import "dotenv/config";
 import dotenv from "dotenv";
@@ -24,18 +24,6 @@ const io = new SocketIOServer(server, {
 
 class NPCStudioEngine {
   private escenas: EscenaEstudio[] = [];
-  private bufferDeEstados: {
-    [key: string]: {
-      direccion: string | null;
-      velocidadX: number;
-      velocidadY: number;
-      npcX: number;
-      npcY: number;
-      texture: string;
-      randomSeat: Seat | null;
-    }[];
-  } = {};
-
   constructor() {
     SCENE_LIST.forEach((escena: Escena) => {
       this.escenas.push(new EscenaEstudio(escena));
@@ -68,10 +56,14 @@ class NPCStudioEngine {
 
   private enviarDatosPeriodicamente() {
     schedule.scheduleJob("*/2 * * * *", () => {
-      for (const key in this.bufferDeEstados) {
-        io.emit(key, this.bufferDeEstados[key]);
-      }
-      this.bufferDeEstados = {};
+      this.escenas.forEach((escena) => {
+        io.emit(
+          escena.key,
+          this.escenas
+            .find((e) => e.key == escena.key)
+            ?.npcs.map((npc) => npc.getState())
+        );
+      });
     });
   }
 }
