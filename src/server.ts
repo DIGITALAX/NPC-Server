@@ -33,7 +33,7 @@ class NPCStudioEngine {
         maxYoungGenerationSizeMb: 1024,
       },
     });
-    this.gameWorker.setMaxListeners(11);
+    this.gameWorker.setMaxListeners(20);
 
     SCENE_LIST.forEach((escena: Escena) => {
       this.escenas.push(new EscenaEstudio(escena, this.gameWorker));

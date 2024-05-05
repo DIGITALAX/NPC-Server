@@ -80,15 +80,20 @@ export default class RandomWalkerNPC {
       duracion: between(20000, 120000),
       npcEtiqueta: this.npc.etiqueta,
     });
+    this.moveCounter = 0;
   }
 
   private goMove() {
     this.moveCounter++;
+    const destinacion = this.getRandomDestination();
     this.caminos.push({
       estado: Movimiento.Move,
-      puntosDeCamino: this.findPath(this.getRandomDestination()),
+      puntosDeCamino: this.findPath(destinacion),
       npcEtiqueta: this.npc.etiqueta,
     });
+
+    this.npc.x = destinacion.x;
+    this.npc.y = destinacion.y;
   }
 
   private findPath(destination: { x: number; y: number }): {
@@ -129,9 +134,6 @@ export default class RandomWalkerNPC {
       Math.hypot(x - this.npc.x, y - this.npc.y) < minDistance
     );
 
-    this.npc.x = x;
-    this.npc.y = y;
-
     return { x, y };
   }
 
@@ -162,7 +164,7 @@ export default class RandomWalkerNPC {
       npcEtiqueta: this.npc.etiqueta,
       randomSeat: randomSeat.etiqueta,
     });
-
+    this.moveCounter = 0;
     this.npc.x = this.closestSeat.x;
     this.npc.y = this.closestSeat.y;
     this.seatsTaken = this.seatsTaken.filter(
@@ -192,8 +194,8 @@ export default class RandomWalkerNPC {
   }
 
   private cleanOldPaths() {
-    if (this.caminos.length > 15) {
-      this.caminos = this.caminos.slice(-15);
+    if (this.caminos.length > 40) {
+      this.caminos = this.caminos.slice(-40);
     }
   }
 }
