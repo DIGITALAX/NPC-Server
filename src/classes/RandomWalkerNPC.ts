@@ -14,7 +14,6 @@ export default class RandomWalkerNPC {
   private seatsTaken: Seat[];
   private moveCounter: number = 0;
   private gameTimer: GameTimer;
-  private randomSeat: Seat | null = null;
   private closestSeat: { x: number; y: number } | null = null;
 
   constructor(
@@ -135,14 +134,14 @@ export default class RandomWalkerNPC {
   }
 
   private async goSit() {
-    this.randomSeat = this.seats.filter(
+    const randomSeat = this.seats.filter(
       (seat) =>
         !this.seatsTaken.map((silla) => silla.etiqueta).includes(seat.etiqueta)
     )?.[between(0, this.seats.length - 1)];
-    this.seatsTaken = [...this.seatsTaken, this.randomSeat];
+    this.seatsTaken = [...this.seatsTaken, randomSeat];
 
-    let seatX: number = this.randomSeat?.adjustedX,
-      seatY: number = this.randomSeat?.adjustedY;
+    let seatX: number = randomSeat?.adjustedX,
+      seatY: number = randomSeat?.adjustedY;
 
     if (!this.grid.isWalkableAt(seatX, seatY)) {
       const nearestWalkable = this.findNearestWalkable(seatX, seatY);
@@ -159,11 +158,14 @@ export default class RandomWalkerNPC {
       puntosDeCamino: this.findPath(this.closestSeat),
       duracion: between(120000, 240000),
       npcEtiqueta: this.npc.etiqueta,
-      randomSeat: this.randomSeat.etiqueta,
+      randomSeat: randomSeat.etiqueta,
     });
 
     this.npc.x = this.closestSeat.x;
     this.npc.y = this.closestSeat.y;
+    this.seatsTaken = this.seatsTaken.filter(
+      (item) => item.etiqueta !== randomSeat?.etiqueta
+    );
   }
 
   private findNearestWalkable(x: number, y: number): { x: number; y: number } {

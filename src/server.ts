@@ -2,10 +2,11 @@ import express from "express";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import * as http from "http";
 import { SCENE_LIST } from "./lib/constants.js";
-import { Escena } from "./types/src.types.js";
-import EscenaEstudio from "./classes/ConfigurarScene.js";
+import { Escena, Estado } from "./types/src.types.js";
+import EscenaEstudio from "./classes/ConfigurarEscena.js";
 import "dotenv/config";
 import dotenv from "dotenv";
+import { Worker } from "worker_threads";
 import schedule from "node-schedule";
 
 const app = express();
@@ -14,8 +15,7 @@ dotenv.config();
 
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "https://npcstudio.xyz/",
-    // origin: "*",
+    origin: "*",
     methods: ["GET", "POST"],
     // allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -24,6 +24,8 @@ const io = new SocketIOServer(server, {
 
 class NPCStudioEngine {
   private escenas: EscenaEstudio[] = [];
+  private schedulerWorker: Worker | null = null;
+
   constructor() {
     SCENE_LIST.forEach((escena: Escena) => {
       this.escenas.push(new EscenaEstudio(escena));
@@ -42,27 +44,32 @@ class NPCStudioEngine {
 
     io.on("connection", (socket: Socket) => {
       socket.on("enviarSceneIndex", (claveEscena: string) => {
-        const scene = SCENE_LIST.find((e) => e.key == claveEscena);
-        socket.emit("configurarEscena", {
-          scene,
-          state: this.escenas
-            .find((e) => e.key == scene?.key)
-            ?.npcs.map((npc) => npc.getState()),
-        });
+        const escena = this.escenas.find((e) => e.key == claveEscena);
+
+        if (escena) {
+          escena.requestState().then((state) => {
+            socket.emit("configurarEscena", {
+              scene: claveEscena,
+              state: state,
+            });
+          });
+        }
       });
     });
     this.enviarDatosPeriodicamente();
   }
 
   private enviarDatosPeriodicamente() {
+
     schedule.scheduleJob("*/2 * * * *", () => {
-      this.escenas.forEach((escena) => {
-        io.emit(
-          escena.key,
-          this.escenas
-            .find((e) => e.key == escena.key)
-            ?.npcs.map((npc) => npc.getState())
-        );
+      this.escenas.map((escena) => {
+        escena
+          .requestState()
+          .then((state: { cmd: string; key: string; estados: Estado[][] }) => {
+            if (state?.key && state?.estados?.length > 0) {
+              io.emit(state.key, state.estados);
+            }
+          });
       });
     });
   }
