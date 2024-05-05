@@ -64,13 +64,19 @@ export default class RandomWalkerNPC {
     if (this.grid) {
       this.gameTimer.tick(deltaTime);
       this.setRandomDirection();
+      this.cleanOldPaths();
     }
   }
 
   private goIdle() {
     this.caminos.push({
       estado: Movimiento.Idle,
-      puntosDeCamino: [],
+      puntosDeCamino: [
+        {
+          x: this.npc.x,
+          y: this.npc.y,
+        },
+      ],
       duracion: between(20000, 120000),
       npcEtiqueta: this.npc.etiqueta,
     });
@@ -183,5 +189,11 @@ export default class RandomWalkerNPC {
     }
 
     return { x, y };
+  }
+
+  private cleanOldPaths() {
+    if (this.caminos.length > 15) {
+      this.caminos = this.caminos.slice(-15);
+    }
   }
 }

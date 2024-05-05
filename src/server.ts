@@ -85,7 +85,6 @@ class NPCStudioEngine {
     });
   }
 }
-
 new NPCStudioEngine();
 
 server.listen(process.env.PORT, () => {});
