@@ -3,7 +3,7 @@ import { parentPort } from "worker_threads";
 import PF from "pathfinding";
 import { Estado, Seat, Sprite } from "./types/src.types.js";
 
-const frameDuration: number = 4000;
+const frameDuration: number = 10000;
 let scenes: {
   [key: string]: {
     getState: () => Estado[][];
