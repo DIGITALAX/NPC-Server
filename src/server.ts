@@ -27,7 +27,12 @@ class NPCStudioEngine {
   private gameWorker: Worker;
 
   constructor() {
-    this.gameWorker = new Worker(new URL("./gameLoop.js", import.meta.url));
+    this.gameWorker = new Worker(new URL("./gameLoop.js", import.meta.url), {
+      resourceLimits: {
+        maxOldGenerationSizeMb: 2048,
+        maxYoungGenerationSizeMb: 1024,
+      },
+    });
 
     SCENE_LIST.forEach((escena: Escena) => {
       this.escenas.push(new EscenaEstudio(escena, this.gameWorker));
