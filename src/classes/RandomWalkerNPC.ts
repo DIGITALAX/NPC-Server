@@ -38,10 +38,7 @@ export default class RandomWalkerNPC {
   }
 
   getState(): Estado[] {
-    const returnValues = this.caminos;
-    this.caminos = [];
-
-    return returnValues;
+    return this.caminos;
   }
 
   private setRandomDirection() {
@@ -84,7 +81,6 @@ export default class RandomWalkerNPC {
     this.caminos.push({
       estado: Movimiento.Move,
       puntosDeCamino: this.findPath(this.getRandomDestination()),
-      duracion: between(20000, 120000),
       npcEtiqueta: this.npc.etiqueta,
     });
   }

@@ -24,11 +24,13 @@ const io = new SocketIOServer(server, {
 
 class NPCStudioEngine {
   private escenas: EscenaEstudio[] = [];
-  private schedulerWorker: Worker | null = null;
+  private gameWorker: Worker;
 
   constructor() {
+    this.gameWorker = new Worker(new URL("./gameLoop.js", import.meta.url));
+
     SCENE_LIST.forEach((escena: Escena) => {
-      this.escenas.push(new EscenaEstudio(escena));
+      this.escenas.push(new EscenaEstudio(escena, this.gameWorker));
     });
 
     io.use((socket, next) => {
@@ -47,12 +49,16 @@ class NPCStudioEngine {
         const escena = this.escenas.find((e) => e.key == claveEscena);
 
         if (escena) {
-          escena.requestState().then((state) => {
-            socket.emit("configurarEscena", {
-              scene: claveEscena,
-              state: state,
-            });
-          });
+          escena
+            .requestState()
+            .then(
+              (state: { cmd: string; key: string; estados: Estado[][] }) => {
+                socket.emit("configurarEscena", {
+                  scene: SCENE_LIST.find((e) => e.key == claveEscena),
+                  state: state?.estados,
+                });
+              }
+            );
         }
       });
     });
@@ -60,7 +66,6 @@ class NPCStudioEngine {
   }
 
   private enviarDatosPeriodicamente() {
-
     schedule.scheduleJob("*/2 * * * *", () => {
       this.escenas.map((escena) => {
         escena

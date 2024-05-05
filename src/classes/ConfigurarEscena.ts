@@ -6,8 +6,9 @@ export default class EscenaEstudio {
   sillasOcupadas: Seat[] = [];
   private worker: Worker;
 
-  constructor(escena: Escena) {
+  constructor(escena: Escena, worker: Worker) {
     this.key = escena.key;
+    this.worker = worker;
 
     let width: number =
         escena.world.width -
@@ -17,9 +18,6 @@ export default class EscenaEstudio {
         (escena.sprites?.[0]?.displayHeight * escena.sprites?.[0]?.escala.y) /
           2;
 
-    this.worker = new Worker(new URL("./../gameLoop.js", import.meta.url), {
-      name: this.key,
-    });
     this.worker.postMessage({
       cmd: "initialize",
       sprites: escena.sprites,
@@ -34,23 +32,30 @@ export default class EscenaEstudio {
     this.worker.on("error", (error) => {
       console.error("Worker error for:", this.key, error);
     });
-    this.worker.postMessage({ cmd: "start" });
+
+    this.worker.postMessage({
+      cmd: "start",
+    });
   }
 
   requestState(): Promise<{
-    cmd: string,
-    key: string,
-    estados: Estado[][],
+    cmd: string;
+    key: string;
+    estados: Estado[][];
   }> {
-    return new Promise((resolve, reject) => {
-      this.worker.once("message", (message) => {
-        if (message.cmd === "stateResponse") {
-          resolve(message.state);
-        } else {
-          reject(new Error("Failed to get state"));
+    return new Promise((resolve) => {
+      const listener = (message: {
+        cmd: string;
+        key: string;
+        estados: Estado[][];
+      }) => {
+        if (message.cmd === "stateResponse" && message.key === this.key) {
+          resolve(message);
+          this.worker.off("message", listener);
         }
-      });
-      this.worker.postMessage({ cmd: "requestState" });
+      };
+      this.worker.on("message", listener);
+      this.worker.postMessage({ cmd: "requestState", key: this.key });
     });
   }
 }
