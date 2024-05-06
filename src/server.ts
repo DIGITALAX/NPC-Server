@@ -7,7 +7,6 @@ import EscenaEstudio from "./classes/ConfigurarEscena.js";
 import "dotenv/config";
 import dotenv from "dotenv";
 import { Worker } from "worker_threads";
-import schedule from "node-schedule";
 
 const app = express();
 const server = http.createServer(app);
@@ -67,20 +66,21 @@ class NPCStudioEngine {
             );
         }
       });
-    });
-    this.enviarDatosPeriodicamente();
-  }
 
-  private enviarDatosPeriodicamente() {
-    schedule.scheduleJob("*/2 * * * *", () => {
-      this.escenas.map((escena) => {
-        escena
-          .requestState()
-          .then((state: { cmd: string; key: string; estados: Estado[][] }) => {
-            if (state?.key && state?.estados?.length > 0) {
-              io.emit(state.key, state.estados);
-            }
-          });
+      socket.on("datosDeEscena", (claveEscena: string) => {
+        const escena = this.escenas.find((e) => e.key == claveEscena);
+
+        if (escena) {
+          escena
+            .requestState()
+            .then(
+              (state: { cmd: string; key: string; estados: Estado[][] }) => {
+                if (state?.key && state?.estados?.length > 0) {
+                  io.emit(state.key, state.estados);
+                }
+              }
+            );
+        }
       });
     });
   }
