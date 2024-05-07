@@ -156,20 +156,23 @@ export default class RandomWalkerNPC {
       x: seatX,
       y: seatY,
     };
-
+    const bt = between(120000, 240000);
     this.caminos.push({
       estado: Movimiento.Sit,
       puntosDeCamino: this.findPath(this.closestSeat),
-      duracion: between(120000, 240000),
+      duracion: bt,
       npcEtiqueta: this.npc.etiqueta,
       randomSeat: randomSeat.etiqueta,
     });
     this.moveCounter = 0;
     this.npc.x = this.closestSeat.x;
     this.npc.y = this.closestSeat.y;
-    this.seatsTaken = this.seatsTaken.filter(
-      (item) => item.etiqueta !== randomSeat?.etiqueta
-    );
+
+    this.gameTimer.setTimeout(() => {
+      this.seatsTaken = this.seatsTaken.filter(
+        (item) => item.etiqueta !== randomSeat?.etiqueta
+      );
+    }, bt);
   }
 
   private findNearestWalkable(x: number, y: number): { x: number; y: number } {

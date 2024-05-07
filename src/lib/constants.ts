@@ -257,7 +257,7 @@ export const SCENE_LIST: Escena[] = [
         startFrame: 0,
         endFrame: 143,
         escala: { x: 0.5, y: 0.5 },
-        maxMoves: 4,
+        maxMoves: 10,
       }
     ],
     prohibited: [
