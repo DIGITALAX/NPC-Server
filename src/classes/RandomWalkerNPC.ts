@@ -100,6 +100,7 @@ export default class RandomWalkerNPC {
     x: number;
     y: number;
   }[] {
+    
     let currentNPC: { x: number; y: number } = {
       x: Math.round(this.npc.x),
       y: Math.round(this.npc.y),
@@ -172,7 +173,7 @@ export default class RandomWalkerNPC {
       this.seatsTaken = this.seatsTaken.filter(
         (item) => item.etiqueta !== randomSeat?.etiqueta
       );
-    }, bt);
+    }, bt/600);
   }
 
   private findNearestWalkable(x: number, y: number): { x: number; y: number } {
